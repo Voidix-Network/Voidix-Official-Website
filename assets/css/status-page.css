@@ -1,0 +1,96 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+/* Styles specific to status.html */
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  flex-shrink: 0; /* Prevent shrinking in flex containers */
+}
+
+/* Styles for the server status dot when it's online (green, pulsing) */
+/* Class applied dynamically by JavaScript based on WebSocket data */
+.status-dot.online {
+  background-color: #4ade80;
+  /* green-400 */
+  animation: pulse 2s infinite;
+}
+
+/* Styles for the server status dot when it's offline (red) */
+/* Class applied dynamically by JavaScript */
+.status-dot.offline {
+  background-color: #f87171;
+  /* red-400 */
+}
+
+/* Styles for the server status dot when it's in maintenance (amber) */
+/* Class applied dynamically by JavaScript */
+.status-dot.maintenance {
+  background-color: #fbbf24;
+  /* amber-400 */
+}
+
+/* Keyframe animation for the pulsing effect on online status dots */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Styles for the player list tooltip, shown on hover over server entries */
+/* Visibility and content managed by assets/js/status-page.js */
+#player-tooltip {
+  max-width: 250px; /* Adjust as needed */
+  word-wrap: break-word;
+}
+/* Styles for the scrollable list within the player tooltip */
+#player-tooltip ul {
+  max-height: 200px; /* Or other suitable height */
+  overflow-y: auto;
+  padding-right: 5px; /* Space for scrollbar */
+}
+#player-tooltip ul::-webkit-scrollbar {
+  width: 6px;
+}
+#player-tooltip ul::-webkit-scrollbar-track {
+  background: #2d3748; /* gray-700 from Tailwind */
+}
+#player-tooltip ul::-webkit-scrollbar-thumb {
+  background: #4a5568; /* gray-600 from Tailwind */
+  border-radius: 3px;
+}
+#player-tooltip ul::-webkit-scrollbar-thumb:hover {
+  background: #718096; /* gray-500 from Tailwind */
+}
+
+/* Style for individual player name list items within the tooltip */
+#player-tooltip ul li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px 4px; /* Add some horizontal padding too */
+}
+
+/* Styles for SVG elements used as status dots (e.g., triangle for Bedwars aggregate) */
+/* Color and animation are applied dynamically by JavaScript via these classes */
+/* Styles for SVG acting as a status dot (triangle) */
+svg.status-dot.online {
+  fill: #4ade80; /* green-400 */
+  animation: pulse 2s infinite; /* Re-use existing pulse animation */
+}
+svg.status-dot.offline {
+  fill: #f87171; /* red-400 */
+}
+svg.status-dot.maintenance {
+  fill: #fbbf24; /* amber-400 */
+} 

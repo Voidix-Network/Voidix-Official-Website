@@ -1,0 +1,385 @@
+<!--
+  This textual content is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+  To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+  or see the LICENSE_CONTENT file.
+-->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>服务器状态 | Voidix</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <!-- 字体 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
+      rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/status-page.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-[#111827] text-gray-100 font-['Inter']">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a class="flex items-center" href="index.html">
+            <span class="text-2xl font-bold gradient-text">VOIDIX</span>
+          </a>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-center space-x-8">
+              <a
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                href="index.html#about">
+                关于我们
+              </a>
+              <a
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                href="index.html#servers">
+                服务器
+              </a>
+              <a
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                href="index.html#versions">
+                跨版本
+              </a>
+              <a
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                href="index.html#timeline">
+                发展历程
+              </a>
+              <a
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                href="index.html#team">
+                团队
+              </a>
+            </div>
+          </div>
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+              <button id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu-items" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
+                  <span class="sr-only">打开主菜单</span>
+                  <svg id="hamburger-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path class="line line1 transition-all duration-300 ease-in-out origin-center" d="M4 6h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                      <path class="line line2 transition-all duration-300 ease-in-out origin-center" d="M4 12h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                      <path class="line line3 transition-all duration-300 ease-in-out origin-center" d="M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+          </button>
+        </div>
+        </div>
+      </div>
+      <!-- Mobile Menu Dropdown -->
+      <div class="md:hidden max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="mobile-menu-items">
+          <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <a href="index.html#about" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">关于我们</a>
+              <a href="index.html#servers" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">服务器</a>
+              <a href="index.html#versions" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">跨版本</a>
+              <a href="index.html#timeline" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">发展历程</a>
+              <a href="index.html#team" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">团队</a>
+          </div>
+      </div>
+    </nav>
+    <!-- 主内容区 for Status Page -->
+    <main class="pt-20 sm:pt-24 pb-12 sm:pb-16">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="bg-[#1a1f2e]/50 border border-[#2a365c] rounded-2xl p-4 sm:p-6 md:p-8 backdrop-blur-sm shadow-xl">
+          <h1 class="text-3xl font-bold mb-8 gradient-text">服务器状态</h1>
+          <div
+            class="motion-element mb-10 p-6 bg-[#151b2d] rounded-lg border border-[#2a365c]/70"
+            data-initial='{"opacity": 0, "y": 20}'
+            data-transition='{"duration": 0.5, "delay": 0.1}'
+            data-viewport='{"once": true}'
+            data-whileinview='{"opacity": 1, "y": 0}'>
+            <h2 class="text-xl font-semibold text-white mb-4">当前服务器状态</h2>
+            
+            <!-- General Uptime Stats -->
+            <div class="grid grid-cols-2 gap-3 mb-6 text-sm">
+                <div class="bg-[#1a2541]/70 p-3 rounded-lg">
+                    <div class="text-gray-400 mb-1 text-center sm:text-left">运行时间</div>
+                    <!-- Controlled by assets/js/status-page.js -->
+                    <div class="font-mono text-base font-bold text-center sm:text-left whitespace-nowrap flex justify-center sm:justify-start items-center" id="status-page-uptime">获取中...</div>
+                </div>
+                <div class="bg-[#1a2541]/70 p-3 rounded-lg">
+                    <div class="text-gray-400 mb-1 text-center sm:text-left">总运行时长</div>
+                    <!-- Controlled by assets/js/status-page.js -->
+                    <div class="font-mono text-base font-bold text-center sm:text-left whitespace-nowrap flex justify-center sm:justify-start items-center" id="status-page-total-uptime">获取中...</div>
+                </div>
+            </div>
+            
+            <!-- Server status list, dynamically updated by assets/js/status-page.js -->
+            <div class="space-y-3 sm:space-y-4" id="server-status-list">
+
+              <!-- Static Header: 小游戏服务器 (总览) -->
+              <!-- Status dot and text (e.g., 'X 在线') updated by assets/js/status-page.js -->
+              <div class="p-3 sm:p-4 bg-[#1a2541]/90 rounded-lg" id="minigames-overall-header">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                    <span class="status-dot online flex-shrink-0" id="minigames-aggregate-dot"></span>
+                    <span class="truncate text-sm sm:text-base">小游戏服务器 (minigame.voidix.top)</span>
+                  </div>
+                  <div class="flex items-center">
+                      <span class="font-mono text-green-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="minigames-aggregate-status">正在获取...</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Container for minigame sub-sections (e.g., Bedwars accordion) -->
+              <div id="minigames-content-container"> 
+                <div class="pt-1 space-y-1 sm:space-y-2 pl-3 sm:pl-4">
+
+                  <!-- Lobby Server (Moved Here - Above Bedwars) -->
+                  <!-- Status dot and text updated by assets/js/status-page.js -->
+                  <div class="p-3 sm:p-4 bg-[#1a2541]/90 rounded-lg">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                      <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                        <span class="status-dot online flex-shrink-0" id="lobby-dot"></span>
+                        <span class="truncate text-sm sm:text-base">大厅服务器</span>
+                      </div>
+                      <span class="font-mono text-green-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="lobby-live-status">正在获取...</span>
+                    </div>
+                  </div>
+
+                  <!-- Nested Accordion: 起床战争 (总览) -->
+                  <!-- Accordion functionality by assets/js/status-page.js (setupAccordion) -->
+                  <!-- Status text updated by assets/js/status-page.js -->
+                  <div class="p-3 sm:p-4 bg-[#1f2538]/80 rounded-lg cursor-pointer" id="bedwars-sub-accordion-button">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                      <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                        <svg class="h-3 w-3 text-gray-200 transform transition-transform duration-300 bedwars-sub-accordion-icon mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="truncate text-sm sm:text-base">起床战争 (总览)</span>
+                      </div>
+                      <div class="flex items-center">
+                          <span class="font-mono text-green-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0 mr-2" id="bedwars-sub-aggregate-status">正在获取...</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Content for Bedwars accordion, visibility toggled by assets/js/status-page.js -->
+                  <div id="bedwars-sub-accordion-content" class="overflow-hidden transition-all duration-300 ease-in-out">
+                      <div class="pt-1 space-y-1 sm:space-y-2 pl-3 sm:pl-4">
+                          <!-- Bedwars Lobby Server -->
+                          <!-- Status dot and text updated by assets/js/status-page.js -->
+                          <div class="p-3 sm:p-4 bg-[#1f2538]/70 rounded-lg">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                              <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                                  <span class="status-dot maintenance flex-shrink-0" id="bedwars-dot"></span>
+                                  <span class="truncate text-xs sm:text-sm">起床大厅 (bedwars)</span>
+                              </div>
+                              <span class="font-mono text-yellow-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="bedwars-status">获取中...</span>
+                            </div>
+                          </div>
+                          <!-- Bedwars Solo Server -->
+                          <!-- Status dot and text updated by assets/js/status-page.js -->
+                          <div class="p-3 sm:p-4 bg-[#1f2538]/70 rounded-lg">
+                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                                  <span class="status-dot maintenance flex-shrink-0" id="bedwars_solo-dot"></span>
+                                  <span class="truncate text-xs sm:text-sm">起床战争 (单人) (bedwars_solo)</span>
+                                </div>
+                                <span class="font-mono text-yellow-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="bedwars_solo-status">获取中...</span>
+                              </div>
+                          </div>
+                          <!-- Bedwars Other Server -->
+                          <!-- Status dot and text updated by assets/js/status-page.js -->
+                          <div class="p-3 sm:p-4 bg-[#1f2538]/70 rounded-lg">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                                  <span class="status-dot maintenance flex-shrink-0" id="bedwars_other-dot"></span>
+                                  <span class="truncate text-xs sm:text-sm">起床战争 (其他) (bedwars_other)</span>
+                                </div>
+                                <span class="font-mono text-yellow-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="bedwars_other-status">获取中...</span>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Other minigame groups could be added here, at the same level as the bedwars-sub-accordion-button -->
+                </div>
+              </div>
+
+              <!-- Survival Server -->
+              <!-- Status dot and text updated by assets/js/status-page.js -->
+              <div class="p-3 sm:p-4 bg-[#1a2541]/90 rounded-lg">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                    <span class="status-dot online flex-shrink-0" id="survival-dot"></span>
+                    <span class="truncate text-sm sm:text-base">生存服务器 (survival.voidix.top)</span>
+                  </div>
+                  <span class="font-mono text-green-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="survival-live-status">正在获取...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--
+          <div
+            class="motion-element"
+            data-initial='{"opacity": 0, "y": 20}'
+            data-transition='{"duration": 0.5, "delay": 0.2}'
+            data-viewport='{"once": true}'
+            data-whileinview='{"opacity": 1, "y": 0}'>
+            <h2 class="text-xl font-semibold text-white mb-4">历史事件与通知</h2>
+            <div class="space-y-4" id="status-notifications">
+              <div class="p-4 bg-[#151b2d] rounded-lg border border-[#2a365c]/70">
+                <div class="flex justify-between items-center mb-1">
+                  <h3 class="font-semibold text-blue-400">例行维护通知</h3>
+                  <span class="text-xs text-gray-500">2024-05-15 08:00 UTC</span>
+                </div>
+                <p class="text-gray-300 text-sm">
+                  所有服务器将于 2024-05-20 02:00 至 04:00 (UTC+8)
+                  进行例行维护，预计持续2小时。届时服务器将无法访问，敬请谅解。
+                </p>
+              </div>
+              <div class="p-4 bg-[#151b2d] rounded-lg border border-[#2a365c]/70">
+                <div class="flex justify-between items-center mb-1">
+                  <h3 class="font-semibold text-green-400">小游戏服更新完成</h3>
+                  <span class="text-xs text-gray-500">2024-05-14 10:00 UTC</span>
+                </div>
+                <p class="text-gray-300 text-sm">小游戏服务器已更新完毕，新增XX游戏，修复YY Bug。祝您游戏愉快！</p>
+              </div>
+            </div>
+          </div>
+          -->
+        </div>
+      </div>
+    </main>
+    <!-- 页脚 -->
+    <footer class="bg-gray-800/50 border-t border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+          <div>
+            <h3 class="text-lg font-bold mb-6">Voidix</h3>
+            <p class="text-gray-400 text-sm">
+              下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar的精神。
+            </p>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6"
+              >快速链接</h3
+            >
+            <ul class="space-y-3">
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="index.html#about"
+                  >关于我们</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="index.html#servers"
+                  >服务器</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="index.html#versions">
+                  跨版本
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="index.html#team"
+                  >管理团队</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6"
+              >技术支持</h3
+            >
+            <ul class="space-y-3">
+              <li>
+                <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html"
+                  >常见问题</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="bug-report.html"
+                  >Bug反馈</a
+                >
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="status.html"
+                  >状态页</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6"
+              >联系我们</h3
+            >
+            <ul class="space-y-3">
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr"
+                  target="_blank">
+                  QQ群: 186438621
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="https://discord.gg/uXC3XrwVrk"
+                  target="_blank">
+                  Discord
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="https://github.com/Voidix-Network/"
+                  target="_blank">
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a
+                  class="text-gray-400 hover:text-white text-sm transition-colors"
+                  href="mailto:support@voidix.top">
+                  support@voidix.top
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
+          <p class="text-gray-500 text-sm mt-4 md:mt-0"
+            >本服务器为非商业公益项目，与Mojang Studios无官方关联。</p
+          >
+        </div>
+      </div>
+    </footer>
+    <script defer src="assets/js/status-page.js"></script>
+    <script defer src="assets/js/script.js"></script>
+    <script defer src="assets/js/menu.js"></script>
+    <!-- General script for navbar, framer motion etc. -->
+
+    <!-- Player tooltip, managed by assets/js/status-page.js -->
+    <div id="player-tooltip" class="absolute hidden bg-gray-900 text-white text-sm p-3 rounded-lg shadow-lg z-[100] border border-gray-700 transition-opacity duration-200 opacity-0 pointer-events-none">
+        <h4 class="font-semibold mb-2 text-base border-b border-gray-700 pb-1">在线玩家</h4>
+        <ul id="player-tooltip-list" class="list-none p-0 m-0 space-y-1 mt-2">
+            <!-- Player names will be injected here -->
+        </ul>
+        <div id="player-tooltip-empty" class="hidden text-gray-400 mt-2">此服务器当前没有玩家在线。</div>
+    </div>
+  </body>
+</html>

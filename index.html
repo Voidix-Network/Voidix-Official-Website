@@ -1,0 +1,1042 @@
+<!--
+  This textual content is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+  To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+  or see the LICENSE_CONTENT file.
+-->
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Voidix | 公平至上的Minecraft体验</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <!-- 字体 -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
+        rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+</head>
+
+<body class="bg-[#111827] text-gray-100 font-['Inter']">
+    <!-- 导航栏 -->
+    <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a class="flex items-center" href="#">
+                    <span class="text-2xl font-bold gradient-text">VOIDIX</span>
+                </a>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-baseline space-x-8">
+                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        href="#about">关于我们</a>
+                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        href="#servers">服务器</a>
+                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        href="#versions">跨版本</a>
+                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        href="#timeline">发展历程</a>
+                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        href="#team">团队</a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu-items" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
+                        <span class="sr-only">打开主菜单</span>
+                        <svg id="hamburger-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path class="line line1 transition-all duration-300 ease-in-out origin-center" d="M4 6h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            <path class="line line2 transition-all duration-300 ease-in-out origin-center" d="M4 12h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            <path class="line line3 transition-all duration-300 ease-in-out origin-center" d="M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Dropdown -->
+        <div class="md:hidden max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="mobile-menu-items">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#about" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">关于我们</a>
+                <a href="#servers" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">服务器</a>
+                <a href="#versions" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">跨版本</a>
+                <a href="#timeline" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">发展历程</a>
+                <a href="#team" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">团队</a>
+            </div>
+        </div>
+    </nav>
+    <!-- 英雄区 -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center">
+            <div class="motion-element inline-block px-4 py-2 bg-[#1a2541] rounded-full mb-6"
+                data-animate='{"opacity": 1, "y": 0}' data-initial='{"opacity": 0, "y": 20}'
+                data-transition='{"duration": 0.5}'>
+                <span class="text-sm font-medium text-indigo-400">公平至上的Minecraft体验</span>
+            </div>
+            <h1 class="motion-element text-4xl sm:text-5xl md:text-6xl tracking-tight font-bold"
+                data-animate='{"opacity": 1, "y": 0}' data-initial='{"opacity": 0, "y": 20}'
+                data-transition='{"duration": 0.5, "delay": 0.1}'>
+                <span class="text-white">下一代</span>
+                <span class="gradient-text">公益服务器</span>
+            </h1>
+            <p class="motion-element mt-6 text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto"
+                data-animate='{"opacity": 1, "y": 0}' data-initial='{"opacity": 0, "y": 20}'
+                data-transition='{"duration": 0.5, "delay": 0.2}'>
+                由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar精神的公益小游戏服务器</p>
+            <div class="motion-element mt-12 flex flex-col items-center sm:flex-row sm:justify-center gap-4"
+                data-animate='{"opacity": 1, "y": 0}' data-initial='{"opacity": 0, "y": 20}'
+                data-transition='{"duration": 0.5, "delay": 0.3}'>
+                <div class="bg-[#1a1f2e]/50 border border-gray-700 rounded-xl p-6 backdrop-blur-sm max-w-xs w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                        <span class="text-sm font-medium text-gray-300">MINIGAME</span>
+                    </div>
+                    <div class="font-mono text-lg font-bold">minigame.voidix.top</div>
+                    <div class="mt-2 text-xs text-gray-500">兼容 1.7.2-最新版</div>
+                </div>
+                <div class="bg-[#1a1f2e]/50 border border-gray-700 rounded-xl p-6 backdrop-blur-sm max-w-xs w-full">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                        <span class="text-sm font-medium text-gray-300">SURVIVAL</span>
+                    </div>
+                    <div class="font-mono text-lg font-bold">survival.voidix.top</div>
+                    <div class="mt-2 text-xs text-gray-500">兼容 1.7.2-最新版</div>
+                </div>
+            </div>
+            <div class="motion-element mt-8 flex justify-center" 
+                data-animate='{"opacity": 1, "y": 0}' data-initial='{"opacity": 0, "y": 20}'
+                data-transition='{"duration": 0.5, "delay": 0.4}'>
+                <div class="inline-flex items-center gap-2 bg-[#1a1f2e]/50 border border-gray-700 rounded-full px-4 py-2">
+                    <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewbox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd"
+                            d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                            fill-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-sm font-medium">基岩版兼容 | GeyserMC技术实现</span>
+                </div>
+            </div>
+        </div>
+        <div class="motion-element mt-20 flex justify-center" data-animate='{"opacity": 1}'
+            data-initial='{"opacity": 0}' data-transition='{"duration": 0.5, "delay": 0.5}'>
+            <div
+                class="relative w-full max-w-4xl h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden border border-[#2a365c]">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-indigo-900/20"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center p-8">
+                        <div class="text-2xl sm:text-3xl font-bold mb-4">探索无限可能的世界</div>
+                        <p class="text-gray-400 max-w-lg mx-auto">完全公平的游戏环境，无付费优势，只有纯粹的Minecraft乐趣</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 主要内容区 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 2xl:py-16">
+        <!-- 关于我们 -->
+        <section class="mb-32 2xl:mb-24 scroll-mt-32" id="about">
+            <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+                <div class="motion-element md:w-1/2" data-initial='{"opacity": 0, "x": -20}'
+                    data-transition='{"duration": 0.5}' data-viewport='{"once": true}'
+                    data-whileinview='{"opacity": 1, "x": 0}'>
+                    <h2 class="text-3xl font-bold mb-6">
+                        关于
+                        <span class="gradient-text">Voidix</span>
+                    </h2>
+                    <p class="text-gray-400 mb-6">
+                        Voidix是一个由开发者NekoEpisode和CYsonHab创建的公益小游戏Minecraft服务器，继承VBPIXEL和EternalStar的精神。我们坚持无商业化运营，致力于为所有玩家提供公平与和谐的游戏环境。
+                    </p>
+                    <!-- 桌面端显示 -->
+                    <div class="hidden sm:grid grid-cols-3 gap-3 mt-6">
+                        <div class="px-4 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c] hover:bg-[#1f2538]/60 transition-colors duration-200">
+                            <div class="text-xs text-gray-400 mb-1 whitespace-nowrap">在线玩家</div>
+                            <!-- Controlled by assets/js/index-page.js -->
+                            <div class="text-base font-bold text-center" id="online-players-count-desktop">-1人</div>
+                        </div>
+                        <div class="px-4 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c] hover:bg-[#1f2538]/60 transition-colors duration-200">
+                            <div class="text-xs text-gray-400 mb-1 whitespace-nowrap">运行时间</div>
+                            <!-- Controlled by assets/js/index-page.js -->
+                            <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="uptime-days-desktop">-1天</div>
+                        </div>
+                        <div class="px-4 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c] hover:bg-[#1f2538]/60 transition-colors duration-200">
+                            <div class="text-xs text-gray-400 mb-1 whitespace-nowrap">总运行时长</div>
+                            <!-- Controlled by assets/js/index-page.js (displays totalRunningTime) -->
+                            <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="gamemode-count-desktop">-1个</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 移动端显示 -->
+                    <div class="sm:hidden grid grid-cols-3 gap-2 mt-6">
+                        <div class="px-3 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c]">
+                            <div class="text-xs text-gray-400 mb-1 text-center">在线玩家</div>
+                            <!-- Controlled by assets/js/index-page.js -->
+                            <div class="text-sm font-bold text-center" id="online-players-count-mobile">-1人</div>
+                        </div>
+                        <div class="px-3 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c]">
+                            <div class="text-xs text-gray-400 mb-1 text-center">运行时间</div>
+                            <!-- Controlled by assets/js/index-page.js -->
+                            <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="uptime-days-mobile">-1天</div>
+                        </div>
+                        <div class="px-3 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c]">
+                            <div class="text-xs text-gray-400 mb-1 text-center">总运行时长</div>
+                            <!-- Controlled by assets/js/index-page.js (displays totalRunningTime) -->
+                            <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="gamemode-count-mobile">-1个</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="motion-element md:w-1/2 relative mt-10 md:mt-0" data-initial='{"opacity": 0, "x": 20}'
+                    data-transition='{"duration": 0.5}' data-viewport='{"once": true}'
+                    data-whileinview='{"opacity": 1, "x": 0}'>
+                    <div
+                        class="absolute -top-8 -left-8 w-32 h-32 bg-blue-600 rounded-full filter blur-3xl opacity-20">
+                    </div>
+                    <div
+                        class="absolute -bottom-8 -right-8 w-32 h-32 bg-indigo-600 rounded-full filter blur-3xl opacity-20">
+                    </div>
+                    <div class="relative bg-[#1a1f2e]/50 border border-[#2a365c] rounded-2xl p-6 md:p-8 backdrop-blur-sm">
+                        <h3 class="text-xl font-bold mb-5 text-center md:text-left">服务器状态</h3>
+                        <!-- Server status preview, dynamically updated by assets/js/index-page.js -->
+                        <div class="space-y-4">
+                            <!-- 小游戏服务器 -->
+                            <!-- Status dot and badge updated by assets/js/index-page.js -->
+                            <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-3 mr-3 flex-shrink-1">
+                                        <div class="w-4 h-4 flex-shrink-0 rounded-full bg-green-500" id="minigame-status-dot-desktop"></div>
+                                        <span class="text-sm md:text-base font-medium text-gray-200">小游戏总览</span>
+                                    </div>
+                                    <div class="text-sm md:text-base font-mono font-semibold text-blue-400 whitespace-nowrap flex-shrink-0 min-w-[70px] text-right" id="minigame-status-badge-desktop">0 在线</div>
+                                </div>
+                            </div>
+
+                            <!-- 生存服务器 -->
+                            <!-- Status dot and badge updated by assets/js/index-page.js -->
+                            <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-3 mr-3 flex-shrink-1">
+                                        <div class="w-4 h-4 flex-shrink-0 rounded-full bg-green-500" id="survival-status-dot-desktop"></div>
+                                        <span class="text-sm md:text-base font-medium text-gray-200">生存服务器</span>
+                                    </div>
+                                    <div class="text-sm md:text-base font-mono font-semibold text-blue-400 whitespace-nowrap flex-shrink-0 min-w-[70px] text-right" id="survival-status-badge-desktop">0 在线</div>
+                                </div>
+                            </div>
+
+                            <!-- 大厅服务器 -->
+                            <!-- Status dot and badge updated by assets/js/index-page.js -->
+                            <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-3 mr-3 flex-shrink-1">
+                                        <div class="w-4 h-4 flex-shrink-0 rounded-full bg-green-500" id="lobby-status-dot-desktop"></div>
+                                        <span class="text-sm md:text-base font-medium text-gray-200">大厅服务器</span>
+                                    </div>
+                                    <div class="text-sm md:text-base font-mono font-semibold text-blue-400 whitespace-nowrap flex-shrink-0 min-w-[70px] text-right" id="lobby-status-badge-desktop">0 在线</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center md:text-right">
+                            <a href="status.html" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                                查看完整状态
+                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 服务器介绍 -->
+        <section class="mb-32 2xl:mb-24 scroll-mt-32" id="servers">
+            <div class="text-center mb-16">
+                <h2 class="motion-element text-3xl font-bold mb-4" data-initial='{"opacity": 0, "y": 20}'
+                    data-transition='{"duration": 0.5}' data-viewport='{"once": true}'
+                    data-whileinview='{"opacity": 1, "y": 0}'>
+                    我们的
+                    <span class="gradient-text">服务器</span>
+                </h2>
+                <p class="motion-element text-gray-400 max-w-2xl mx-auto" data-initial='{"opacity": 0, "y": 20}'
+                    data-transition='{"duration": 0.5, "delay": 0.1}' data-viewport='{"once": true}'
+                    data-whileinview='{"opacity": 1, "y": 0}'>我们提供多种游戏模式，所有服务器均采用公平机制设计，没有任何付费优势。</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="motion-element card-hover bg-gray-800/50 border border-gray-700 rounded-2xl p-8 backdrop-blur-sm"
+                    data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5}'
+                    data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="p-3 bg-indigo-900/30 rounded-lg">
+                            <svg class="h-6 w-6 text-indigo-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">小游戏服务器</h3>
+                    </div>
+                    <p class="text-gray-400 mb-6">我们有起床战争等玩法，更多玩法正在持续更新中！</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span>支持 1.8-最新 所有版本</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span>尽最大努力的优化</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span>会检测基岩版玩家的反作弊系统</span>
+                        </li>
+                    </ul>
+                    <!--<a class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+                        href="#">
+                        <span>查看服务器规则</span>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            </path>
+                        </svg>
+                    </a>-->
+                </div>
+                <div class="motion-element card-hover bg-gray-800/50 border border-gray-700 rounded-2xl p-8 backdrop-blur-sm"
+                    data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.1}'
+                    data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="p-3 bg-purple-900/30 rounded-lg">
+                            <svg class="h-6 w-6 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">生存服务器</h3>
+                    </div>
+                    <p class="text-gray-400 mb-6">没有花里胡哨的特效，没有乱糟糟的界面，只有最纯净的生存</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span>Minecraft最新版本支持</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span>超纯净生存</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    fill-rule="evenodd"></path>
+                            </svg>
+                            <span>装有回档保护</span>
+                        </li>
+                    </ul>
+                    <!--<a class="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors"
+                        href="#">
+                        <span>查看生存指南</span>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            </path>
+                        </svg>
+                    </a>-->
+                </div>
+            </div>
+        </section>
+        <!-- 跨版本说明 -->
+        <section class="mb-32 2xl:mb-24 scroll-mt-32" id="versions">
+            <div class="text-center mb-16">
+                <h2 class="motion-element text-3xl font-bold mb-4" data-initial='{"opacity": 0, "y": 20}'
+                    data-transition='{"duration": 0.5}' data-viewport='{"once": true}'
+                    data-whileinview='{"opacity": 1, "y": 0}'>
+                    <span class="gradient-text">跨平台</span>
+                    连接
+                </h2>
+                <p class="motion-element text-gray-400 max-w-2xl mx-auto" data-initial='{"opacity": 0, "y": 20}'
+                    data-transition='{"duration": 0.5, "delay": 0.1}' data-viewport='{"once": true}'
+                    data-whileinview='{"opacity": 1, "y": 0}'>我们采用先进技术实现Java版与基岩版的互通，让不同平台的玩家可以一起游戏。</p>
+            </div>
+            <div class="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden">
+                <div class="flex border-b border-gray-700 relative">
+                    <button class="tab-btn active px-6 py-4 text-sm font-medium text-white whitespace-nowrap"
+                        data-tab-target="java-content" data-tab-index="0">Java版连接</button>
+                    <button class="tab-btn px-6 py-4 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap"
+                        data-tab-target="bedrock-content" data-tab-index="1">基岩版连接</button>
+                    <div id="active-tab-underline" class="absolute bottom-0 h-0.5 bg-indigo-400 transition-all duration-300 ease-in-out"></div>
+                </div>
+                <div class="relative overflow-hidden">
+                    <div id="content-slider" class="flex items-start transition-transform duration-300 ease-in-out">
+                        <div class="tab-content w-full flex-shrink-0 p-8" id="java-content">
+                            <div class="flex flex-col md:flex-row gap-12">
+                                <div class="md:w-1/2">
+                                    <h3 class="text-xl font-bold mb-6">Java版玩家连接指南</h3>
+                                    <ol class="space-y-4">
+                                        <li class="flex items-start gap-4">
+                                            <div
+                                                class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">
+                                                1</div>
+                                            <div>启动Minecraft Java版</div>
+                                        </li>
+                                        <li class="flex items-start gap-4">
+                                            <div
+                                                class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">
+                                                2</div>
+                                            <div>点击"多人游戏"</div>
+                                        </li>
+                                        <li class="flex items-start gap-4">
+                                            <div
+                                                class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">
+                                                3</div>
+                                            <div>点击"添加服务器"</div>
+                                        </li>
+                                        <li class="flex items-start gap-4">
+                                            <div
+                                                class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">
+                                                4</div>
+                                            <div>
+                                                输入服务器地址：
+                                                <div class="mt-2 font-mono bg-gray-900 rounded-lg p-3 inline-block">
+                                                    minigame.voidix.top</div>
+                                                或
+                                                <div class="mt-2 font-mono bg-gray-900 rounded-lg p-3 inline-block">
+                                                    survival.voidix.top</div>
+                                            </div>
+                                        </li>
+                                        <li class="flex items-start gap-4">
+                                            <div
+                                                class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">
+                                                5</div>
+                                            <div>点击"完成"并加入服务器</div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-content w-full flex-shrink-0 p-8" id="bedrock-content">
+                            <!-- 基岩版内容 -->
+                            <h3 class="text-xl font-bold mb-6">基岩版玩家连接指南</h3>
+                            <ol class="space-y-4">
+                                <li class="flex items-start gap-4">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">
+                                        1</div>
+                                    <div>启动Minecraft基岩版 (Windows 10/11, Mobile, Xbox, PS, Switch)</div>
+                                </li>
+                                <li class="flex items-start gap-4">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">
+                                        2</div>
+                                    <div>点击"游戏" -&gt; "服务器"选项卡</div>
+                                </li>
+                                <li class="flex items-start gap-4">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">
+                                        3</div>
+                                    <div>滚动到底部，点击"添加服务器"</div>
+                                </li>
+                                <li class="flex items-start gap-4">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">
+                                        4</div>
+                                    <div>
+                                        输入以下信息:
+                                        <div class="mt-2 space-y-1">
+                                            <div>
+                                                服务器名称:
+                                                <span class="font-mono bg-gray-900 rounded-lg p-1 inline-block">Voidix
+                                                    (任意)</span>
+                                            </div>
+                                            <div>
+                                                服务器地址：
+                                                <div class="mt-2 font-mono bg-gray-900 rounded-lg p-3 inline-block">
+                                                    minigame.voidix.top</div>
+                                                或
+                                                <div class="mt-2 font-mono bg-gray-900 rounded-lg p-3 inline-block">
+                                                    survival.voidix.top</div>
+                                            </div>
+                                            <div>
+                                                端口:
+                                                <span class="font-mono bg-gray-900 rounded-lg p-1 inline-block">10205</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-4">
+                                    <div
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">
+                                        5</div>
+                                    <div>点击"保存"，然后在服务器列表中找到并加入Voidix</div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 发展历程 -->
+<section class="mb-32 2xl:mb-24 scroll-mt-32" id="timeline">
+    <div class="text-center mb-16">
+        <h2 class="motion-element text-3xl font-bold mb-4" data-initial='{"opacity": 0, "y": 20}'
+            data-transition='{"duration": 0.5}' data-viewport='{"once": true}'
+            data-whileinview='{"opacity": 1, "y": 0}'>
+            从
+            <span class="vbpixel-gradient-text">VBPIXEL</span>
+            到
+            <span class="gradient-text">Voidix</span>
+        </h2>
+        <p class="motion-element text-gray-400 max-w-2xl mx-auto" data-initial='{"opacity": 0, "y": 20}'
+            data-transition='{"duration": 0.5, "delay": 0.1}' data-viewport='{"once": true}'
+            data-whileinview='{"opacity": 1, "y": 0}'>我们的发展历程，记录着每一次技术突破和社区成长</p>
+    </div>
+    <div class="relative max-w-4xl mx-auto">
+        <!-- Vertical line -->
+        <div class="absolute top-0 bottom-0 w-0.5 bg-gray-700 left-5 transform -translate-x-1/2 md:left-1/2"></div>
+        <div class="space-y-8">
+            <!-- Timeline Item 1 (Right on md+) -->
+            <div class="motion-element relative"
+                data-initial='{"opacity": 0, "x": 20}' data-transition='{"duration": 0.5, "delay": 0.1}'
+                data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "x": 0}'>
+                <!-- Dot -->
+                <div class="absolute top-1 left-5 w-4 h-4 rounded-full bg-purple-400 border-4 border-gray-900 transform -translate-x-1/2 
+                            md:left-1/2"></div>
+                <!-- Content for mobile and desktop -->
+                <div class="ml-12 md:ml-0 md:pl-[calc(50%+2rem)]">
+                    <div class="card-hover bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm md:w-[calc(70%-2rem)]">
+                        <div class="text-sm text-purple-400 font-medium mb-2">2022年7月16日</div>
+                        <h3 class="text-xl font-bold mb-3">VBPIXEL成立</h3>
+                        <p class="text-gray-400">VBPIXEL开始运营，在之后的两年里保持稳定运行，积累了110+名入群玩家。但由于初期架构原因，技术债逐渐积累，仅Neko一人已难以处理所有服务器问题。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 2 (Left on md+) -->
+            <div class="motion-element relative"
+                data-initial='{"opacity": 0, "x": -20}' data-transition='{"duration": 0.5, "delay": 0.2}'
+                data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "x": 0}'>
+                <!-- Dot -->
+                <div class="absolute top-1 left-5 w-4 h-4 rounded-full bg-indigo-400 border-4 border-gray-900 transform -translate-x-1/2
+                            md:left-1/2"></div>
+                <!-- Content for mobile and desktop -->
+                <div class="ml-12 md:ml-0 md:mr-[calc(50%+2rem)] md:flex md:justify-end">
+                    <div class="card-hover bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm md:w-[calc(70%-2rem)] text-left">
+                        <div class="text-sm text-indigo-400 font-medium mb-2">2025年5月4日</div>
+                        <h3 class="text-xl font-bold mb-3">新服务器的构想</h3>
+                        <p class="text-gray-400">Neko在EternalStar中与cyh2讨论是否需要搭建新服务器的问题，开始规划Voidix的雏形，最终正式确定将Voidix设为服务器名称。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 3 (Right on md+) -->
+            <div class="motion-element relative"
+                data-initial='{"opacity": 0, "x": 20}' data-transition='{"duration": 0.5, "delay": 0.3}'
+                data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "x": 0}'>
+                <!-- Dot -->
+                <div class="absolute top-1 left-5 w-4 h-4 rounded-full bg-purple-400 border-4 border-gray-900 transform -translate-x-1/2 
+                            md:left-1/2"></div>
+                <!-- Content for mobile and desktop -->
+                <div class="ml-12 md:ml-0 md:pl-[calc(50%+2rem)]">
+                    <div class="card-hover bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm md:w-[calc(70%-2rem)]">
+                        <div class="text-sm text-purple-400 font-medium mb-2">2025年5月10日</div>
+                        <h3 class="text-xl font-bold mb-3">Voidix开始搭建</h3>
+                        <p class="text-gray-400">基于全新的技术架构，Voidix项目正式启动开发，采用现代化技术栈解决历史遗留问题。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 4 (Left on md+) -->
+            <div class="motion-element relative"
+                data-initial='{"opacity": 0, "x": -20}' data-transition='{"duration": 0.5, "delay": 0.4}'
+                data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "x": 0}'>
+                <!-- Dot -->
+                <div class="absolute top-1 left-5 w-4 h-4 rounded-full bg-indigo-400 border-4 border-gray-900 transform -translate-x-1/2
+                            md:left-1/2"></div>
+                <!-- Content for mobile and desktop -->
+                <div class="ml-12 md:ml-0 md:mr-[calc(50%+2rem)] md:flex md:justify-end">
+                    <div class="card-hover bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm md:w-[calc(70%-2rem)] text-left">
+                        <div class="text-sm text-indigo-400 font-medium mb-2">2025年5月11日</div>
+                        <h3 class="text-xl font-bold mb-3">新老交替</h3>
+                        <p class="text-gray-400">Voidix正式替换VBPIXEL，后者完成历史使命。Voidix同时继承了EternalStar和VBPIXEL的核心理念：公益、免费、和谐的游戏环境。</p>
+                        <p class="text-gray-400">Voidix将带着这些理念，继续走下去。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Item 5 (Right on md+) -->
+            <div class="motion-element relative"
+                data-initial='{"opacity": 0, "x": 20}' data-transition='{"duration": 0.5, "delay": 0.5}'
+                data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "x": 0}'>
+                <!-- Dot -->
+                <div class="absolute top-1 left-5 w-4 h-4 rounded-full bg-purple-400 border-4 border-gray-900 transform -translate-x-1/2 
+                            md:left-1/2"></div>
+                <!-- Content for mobile and desktop -->
+                <div class="ml-12 md:ml-0 md:pl-[calc(50%+2rem)]">
+                    <div class="card-hover bg-gray-800/50 border border-gray-700 rounded-xl p-4 backdrop-blur-sm md:w-[calc(70%-2rem)]">
+                        <div class="text-sm text-purple-400 font-medium mb-2">2025年5月13日</div>
+                        <h3 class="text-xl font-bold mb-3">官网建设</h3>
+                        <p class="text-gray-400">Voidix官网开始搭建，采用现代化设计语言，展示服务器理念和技术特点。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+        <!-- 管理团队 -->
+<section class="mb-32 2xl:mb-24 scroll-mt-32" id="team">
+    <div class="text-center mb-16">
+        <h2 class="motion-element text-3xl font-bold mb-4" data-initial='{"opacity": 0, "y": 20}'
+            data-transition='{"duration": 0.5}' data-viewport='{"once": true}'
+            data-whileinview='{"opacity": 1, "y": 0}'>
+            我们的
+            <span class="gradient-text">团队</span>
+        </h2>
+        <p class="motion-element text-gray-400 max-w-2xl mx-auto" data-initial='{"opacity": 0, "y": 20}'
+            data-transition='{"duration": 0.5, "delay": 0.1}' data-viewport='{"once": true}'
+            data-whileinview='{"opacity": 1, "y": 0}'>这些热爱Minecraft的开发者/管理员——与热爱游戏的你们，撑起了整个Voidix</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- NekoEpisode 卡片 - 主紫色 -->
+        <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+            data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5}'
+            data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+            <div
+                class="relative h-64 bg-gradient-to-br from-violet-900/40 to-purple-900/40 flex items-center justify-center">
+                <div
+                    class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?abstract,purple')] bg-cover bg-center opacity-20">
+                </div>
+                <div class="relative text-6xl font-bold text-violet-400/50">Neko</div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">NekoEpisode (起司猫)</h3>
+                <div class="text-violet-400 text-sm mb-4">核心开发者</div>
+                <p class="text-gray-400 mb-6">项目创始人，主导服务器架构设计和核心插件开发</p>
+                <div class="group-hover:max-h-96 max-h-0 overflow-hidden transition-all duration-500">
+                    <div class="pt-4 border-t border-gray-700">
+                        <h4 class="text-sm font-medium text-gray-300 mb-3">主要贡献</h4>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-violet-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>2025-至今: Voidix项目创始人</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-violet-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>成立VBPIXEL的服主，在运营两年VBPIXEL后认为VBPIXEL问题过多，于是带上CYsonHab开启了Voidix的旅途</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-violet-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>励志于搭建一个环境友好，无需付费，可以和大家欢乐游玩的地方</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-violet-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>负责网站后端服务搭建与主要编程开发</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CYsonHab 卡片 - 蓝紫色 -->
+        <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+            data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.1}'
+            data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+            <div
+                class="relative h-64 bg-gradient-to-br from-indigo-900/40 to-blue-900/40 flex items-center justify-center">
+                <div
+                    class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?tech,blue')] bg-cover bg-center opacity-20">
+                </div>
+                <div class="relative text-6xl font-bold text-indigo-400/50">cyh</div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">CYsonHab (cyh2)</h3>
+                <div class="text-indigo-400 text-sm mb-4">核心开发者</div>
+                <p class="text-gray-400 mb-6">项目联合创始人，主导插件开发与服务器维护等，也参与部分服务器架构搭建</p>
+                <div class="group-hover:max-h-96 max-h-0 overflow-hidden transition-all duration-500">
+                    <div class="pt-4 border-t border-gray-700">
+                        <h4 class="text-sm font-medium text-gray-300 mb-3">主要贡献</h4>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-indigo-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>2025-至今: Voidix联合创始人</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-indigo-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>现任EternalStar服主</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-indigo-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>主打"慢工出细活"的理念</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-indigo-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>负责次要编程开发</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hao_zi_Rat 卡片 - 紫粉色 -->
+        <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+            data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.2}'
+            data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+            <div
+                class="relative h-64 bg-gradient-to-br from-purple-900/40 to-fuchsia-900/40 flex items-center justify-center">
+                <div
+                    class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?nature,pink')] bg-cover bg-center opacity-20">
+                </div>
+                <div class="relative text-6xl font-bold text-fuchsia-400/50">Hao_zi</div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">Hao_zi_Rat</h3>
+                <div class="text-fuchsia-400 text-sm mb-4">服务器管理员</div>
+                <p class="text-gray-400 mb-6">游戏玩法设计师，擅长构思创新玩法并提出建设性意见</p>
+                <div class="group-hover:max-h-96 max-h-0 overflow-hidden transition-all duration-500">
+                    <div class="pt-4 border-t border-gray-700">
+                        <h4 class="text-sm font-medium text-gray-300 mb-3">主要贡献</h4>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-fuchsia-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>2025-至今: 服务器玩法顾问</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-fuchsia-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>提出多个服务器特色玩法方案</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-fuchsia-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>善于发现游戏平衡性问题并提供解决方案</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- XXJNOTFOUND 卡片 - 深蓝紫色 -->
+        <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+            data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.3}'
+            data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+            <div
+                class="relative h-64 bg-gradient-to-br from-blue-900/40 to-indigo-900/40 flex items-center justify-center">
+                <div
+                    class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?code,dark')] bg-cover bg-center opacity-20">
+                </div>
+                <div class="relative text-6xl font-bold text-blue-400/50">XXJ</div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">XXJNOTFOUND</h3>
+                <div class="text-blue-400 text-sm mb-4">服务器管理员</div>
+                <p class="text-gray-400 mb-6">拥有出色的服务器配置能力与玩家管理能力</p>
+                <div class="group-hover:max-h-96 max-h-0 overflow-hidden transition-all duration-500">
+                    <div class="pt-4 border-t border-gray-700">
+                        <h4 class="text-sm font-medium text-gray-300 mb-3">主要贡献</h4>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>2025-至今: 服务器技术与社区管理</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>WTFXXJ服务器创始人</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>技术能力出众但情绪管理有待提高</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASKLL 卡片 - 粉紫色 -->
+        <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+            data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.4}'
+            data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+            <div
+                class="relative h-64 bg-gradient-to-br from-purple-900/40 to-blue-900/40 flex items-center justify-center">
+                <div
+                    class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?design,art')] bg-cover bg-center opacity-20">
+                </div>
+                <div class="relative text-6xl font-bold text-blue-400/50">ASKLL</div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">ASKLL</h3>
+                <div class="text-blue-400 text-sm mb-4">服务器管理员</div>
+                <p class="text-gray-400 mb-6">网站设计，负责Voidix官网的视觉设计和用户体验</p>
+                <div class="group-hover:max-h-96 max-h-0 overflow-hidden transition-all duration-500">
+                    <div class="pt-4 border-t border-gray-700">
+                        <h4 class="text-sm font-medium text-gray-300 mb-3">主要贡献</h4>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>2025-至今: 网站设计与开发</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>负责Voidix网站功能设计</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" fill="currentColor"
+                                    viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path clip-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        fill-rule="evenodd"></path>
+                                </svg>
+                                <span>提升用户界面友好度和交互体验</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 玩家卡片 - 深蓝色 -->
+        <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+            data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.5}'
+            data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+            <div
+                class="relative h-64 bg-gradient-to-br from-slate-900/40 to-blue-900/40 flex items-center justify-center">
+                <div
+                    class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?community,people')] bg-cover bg-center opacity-20">
+                </div>
+                <div class="relative text-6xl font-bold text-slate-400/50">Player</div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-1">玩家们</h3>
+                <div class="text-slate-400 text-sm mb-4">服务器支持者</div>
+                <p class="text-gray-400 mb-6">正因为有了你们游玩，Voidix才会继续走下去</p>
+            </div>
+        </div>
+    </div>
+
+            <div class="motion-element mt-16 max-w-3xl mx-auto bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
+                data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5}'
+                data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
+                <button class="accordion-btn w-full text-left px-6 py-4 flex items-center justify-between">
+                    <span class="font-medium">玩家公约</span>
+                    <svg class="h-5 w-5 text-gray-400 transform transition-transform duration-300" fill="currentColor"
+                        viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            fill-rule="evenodd"></path>
+                    </svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="px-6 pb-6 pt-2 border-t border-gray-700">
+                        <h4 class="text-lg font-bold mb-4">Voidix玩家行为准则</h4>
+                        <ol class="space-y-4">
+                            <li>
+                                <strong class="text-indigo-400">禁止作弊</strong>
+                                - 作弊会破坏其他玩家的游戏体验
+                            </li>
+                            <li>
+                                <strong class="text-indigo-400">和谐交流</strong>
+                                - 请勿攻击他人，维护Voidix的社区环境需共同努力
+                            </li>
+                            <li>
+                                <strong class="text-indigo-400">禁止恶意使用游戏bug</strong>
+                                - 好玩的bug可以使游戏更欢乐——利用恶意bug则会破坏游戏公平性
+                            </li>
+                            <li>
+                                <strong class="text-indigo-400">...</strong>
+                                - 在之后，这里还会列出更多准则，请自觉遵守
+                            </li>
+                        </ol>
+                        <div class="mt-6 p-4 bg-gray-900 rounded-lg">
+                            <p class="text-sm text-gray-400">
+                                违反公约可能导致警告、暂时封禁或永久封禁。所有管理决定都经过团队讨论并记录在案。如果您对处罚有异议，可以通过正式渠道申诉。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- 页脚 -->
+    <footer class="bg-gray-800/50 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+                <div>
+                    <h3 class="text-lg font-bold mb-6">Voidix</h3>
+                    <p class="text-gray-400 text-sm">
+                        下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar的精神。</p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">快速链接</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#about">关于我们</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#servers">服务器</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#versions">跨版本</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#team">管理团队</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">技术支持</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html">常见问题</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                                href="bug-report.html">Bug反馈</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                                href="status.html">状态页</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">联系我们</h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                                href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr" target="_blank">QQ群: 186438621</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                                href="https://discord.gg/uXC3XrwVrk" target="_blank">Discord</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                                href="https://github.com/Voidix-Network/" target="_blank">GitHub</a>
+                        </li>
+                        <li>
+                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                                href="mailto:support@voidix.top">support@voidix.top</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
+                <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>
+            </div>
+        </div>
+    </footer>
+    <script defer src="assets/js/script.js"></script>
+    <!-- Removed inline script block -->
+    <script defer src="assets/js/index-page.js"></script>
+    <script defer src="assets/js/menu.js"></script>
+</body>
+</html>
