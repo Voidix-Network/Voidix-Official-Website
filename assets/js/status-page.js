@@ -8,7 +8,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Remove existing mock fetch logic
 
-    const WS_URL = 'ws://ikuaiservice.catpixel.cn:10203';
+    const RECONNECT_INTERVAL = 5000;
+    const MAX_RECONNECT_ATTEMPTS = 10;
+    const WS_URL = 'wss://server.voidix.top:10203';
     let ws;
 
     // Configuration mapping server keys to their respective HTML elements for status display.
