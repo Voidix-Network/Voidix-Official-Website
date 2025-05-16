@@ -18,14 +18,14 @@ const initializeFramerMotion = () => {
       const initialProps = el.dataset.initial ? JSON.parse(el.dataset.initial) : null;
       const animateProps = el.dataset.animate ? JSON.parse(el.dataset.animate) : null;
       const transitionProps = el.dataset.transition
-        ? JSON.parse(el.dataset.transition)
-        : {};
+          ? JSON.parse(el.dataset.transition)
+          : {};
       const whileInViewProps = el.dataset.whileinview
-        ? JSON.parse(el.dataset.whileinview)
-        : null;
+          ? JSON.parse(el.dataset.whileinview)
+          : null;
       const viewportProps = el.dataset.viewport
-        ? JSON.parse(el.dataset.viewport)
-        : { once: true };
+          ? JSON.parse(el.dataset.viewport)
+          : { once: true };
 
       if (initialProps) {
         fmSet(el, initialProps);
@@ -33,9 +33,9 @@ const initializeFramerMotion = () => {
 
       if (whileInViewProps) {
         fmInView(
-          el,
-          () => { fmAnimate(el, whileInViewProps, transitionProps); },
-          viewportProps
+            el,
+            () => { fmAnimate(el, whileInViewProps, transitionProps); },
+            viewportProps
         );
       } else if (animateProps) {
         fmAnimate(el, animateProps, transitionProps);
@@ -197,7 +197,7 @@ const runScripts = () => {
   setupTabs();              // Set up tab functionality
   setupAccordions();        // Set up accordion functionality
   setupSmoothScroll();      // Set up smooth scrolling for anchor links
-  
+
   // The updateServerStatusPlaceholder and its interval were likely for mock data.
   // Since index-page.js now handles real data via WebSocket, these might conflict or be redundant.
   // If index.html elements (like 'minigame-status-badge') are solely updated by index-page.js,

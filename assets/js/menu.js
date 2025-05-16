@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuItems = document.getElementById('mobile-menu-items');
     const hamburgerIcon = document.getElementById('hamburger-icon');
     let line1, line2, line3;
-    
+
     if (hamburgerIcon) {
         line1 = hamburgerIcon.querySelector('.line1');
         line2 = hamburgerIcon.querySelector('.line2');
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         mobileMenuItems.classList.add('max-h-0', 'opacity-0');
                         mobileMenuItems.classList.remove('max-h-96');
                         mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        
+
                         if (line1 && line2 && line3) {
                             line1.classList.remove('translate-y-[6px]', 'rotate-45');
                             line2.classList.remove('opacity-0');

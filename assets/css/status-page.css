@@ -75,10 +75,10 @@
 
 /* Style for individual player name list items within the tooltip */
 #player-tooltip ul li {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 2px 4px; /* Add some horizontal padding too */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 4px; /* Add some horizontal padding too */
 }
 
 /* Styles for SVG elements used as status dots (e.g., triangle for Bedwars aggregate) */

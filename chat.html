@@ -9,8 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 字体 -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
-        rel="stylesheet" />
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
+            rel="stylesheet" />
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet" />
     <style>
@@ -20,16 +20,16 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .card-hover {
             transition: all 0.3s ease;
         }
-        
+
         .card-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        
+
         .vbpixel-gradient-text {
             background: linear-gradient(90deg, #3b82f6, #10b981);
             -webkit-background-clip: text;
@@ -40,308 +40,305 @@
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter']">
-    <!-- 导航栏 -->
-    <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <a class="flex items-center" href="index.html">
-                    <span class="text-2xl font-bold gradient-text">VOIDIX</span>
-                </a>
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-baseline space-x-8">
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                        href="index.html">首页</a>
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                        href="status.html">服务器状态</a>
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                        href="chat.html">在线聊天</a>
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                        href="faq.html">常见问题</a>
+<!-- 导航栏 -->
+<nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <a class="flex items-center" href="index.html">
+                <span class="text-2xl font-bold gradient-text">VOIDIX</span>
+            </a>
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-baseline space-x-8">
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="index.html">首页</a>
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="status.html">服务器状态</a>
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="chat.html">在线聊天</a>
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="faq.html">常见问题</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu-items" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
+                    <span class="sr-only">打开主菜单</span>
+                    <svg id="hamburger-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path class="line line1 transition-all duration-300 ease-in-out origin-center" d="M4 6h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <path class="line line2 transition-all duration-300 ease-in-out origin-center" d="M4 12h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <path class="line line3 transition-all duration-300 ease-in-out origin-center" d="M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile Menu Dropdown -->
+    <div class="md:hidden max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="mobile-menu-items">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="index.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">首页</a>
+            <a href="status.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">服务器状态</a>
+            <a href="chat.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">在线聊天</a>
+            <a href="faq.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">常见问题</a>
+        </div>
+    </div>
+</nav>
+
+<!-- 聊天主内容区 -->
+<main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl tracking-tight font-bold mb-6">
+            <span class="gradient-text">Voidix</span>
+            社区聊天
+        </h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">与Voidix社区的其他玩家交流，分享游戏心得和建议</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- 左侧边栏 - 在线用户列表 -->
+        <div class="lg:col-span-1 bg-gray-800/50 border border-gray-700 rounded-2xl p-6 backdrop-blur-sm h-fit">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                </svg>
+                在线用户
+                <span class="text-sm font-mono text-blue-400 ml-auto" id="online-count">0</span>
+            </h2>
+
+            <div class="space-y-3" id="user-list">
+                <!-- 用户列表将在这里动态生成 -->
+                <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
+                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                    <div class="flex-1 truncate">NekoEpisode</div>
+                    <span class="text-xs text-gray-400">管理员</span>
                 </div>
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu-items" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
-                        <span class="sr-only">打开主菜单</span>
-                        <svg id="hamburger-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path class="line line1 transition-all duration-300 ease-in-out origin-center" d="M4 6h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                            <path class="line line2 transition-all duration-300 ease-in-out origin-center" d="M4 12h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                            <path class="line line3 transition-all duration-300 ease-in-out origin-center" d="M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
+                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                    <div class="flex-1 truncate">CYsonHab</div>
+                    <span class="text-xs text-gray-400">管理员</span>
+                </div>
+                <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
+                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                    <div class="flex-1 truncate">Player1</div>
+                </div>
+                <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
+                    <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                    <div class="flex-1 truncate">Player2</div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-700">
+                <h3 class="text-sm font-semibold text-gray-300 mb-3">聊天频道</h3>
+                <div class="space-y-2">
+                    <button class="w-full text-left px-3 py-2 bg-indigo-900/30 rounded-lg text-indigo-400 font-medium"># 全局聊天</button>
+                    <button class="w-full text-left px-3 py-2 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"># 生存讨论</button>
+                    <button class="w-full text-left px-3 py-2 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"># 小游戏讨论</button>
+                    <button class="w-full text-left px-3 py-2 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"># 技术交流</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主聊天区域 -->
+        <div class="lg:col-span-3 flex flex-col">
+            <!-- 聊天消息区域 -->
+            <div class="flex-1 bg-gray-800/50 border border-gray-700 rounded-t-2xl p-6 backdrop-blur-sm overflow-y-auto max-h-[60vh] min-h-[60vh]">
+                <div class="space-y-6" id="chat-messages">
+                    <!-- 系统消息 -->
+                    <div class="flex flex-col items-center text-gray-500 text-sm my-4">
+                        <div class="px-4 py-1 bg-gray-800/50 rounded-full">今天</div>
+                    </div>
+
+                    <!-- 示例消息 -->
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">N</div>
+                        <div class="flex-1">
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="font-bold text-indigo-400">NekoEpisode</span>
+                                <span class="text-xs text-gray-500">14:30</span>
+                                <span class="text-xs bg-indigo-900/30 text-indigo-400 px-2 py-0.5 rounded">管理员</span>
+                            </div>
+                            <div class="text-gray-300">
+                                欢迎来到Voidix社区聊天室！这里可以讨论任何与Minecraft相关的内容，请遵守社区规则。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">C</div>
+                        <div class="flex-1">
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="font-bold text-purple-400">CYsonHab</span>
+                                <span class="text-xs text-gray-500">14:32</span>
+                                <span class="text-xs bg-purple-900/30 text-purple-400 px-2 py-0.5 rounded">管理员</span>
+                            </div>
+                            <div class="text-gray-300">
+                                生存服务器已经更新到1.20.4版本，欢迎大家来体验新内容！
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold">P</div>
+                        <div class="flex-1">
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="font-bold">Player1</span>
+                                <span class="text-xs text-gray-500">14:35</span>
+                            </div>
+                            <div class="text-gray-300">
+                                小游戏服务器什么时候会增加新的玩法呀？很期待！
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">N</div>
+                        <div class="flex-1">
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="font-bold text-indigo-400">NekoEpisode</span>
+                                <span class="text-xs text-gray-500">14:36</span>
+                                <span class="text-xs bg-indigo-900/30 text-indigo-400 px-2 py-0.5 rounded">管理员</span>
+                            </div>
+                            <div class="text-gray-300">
+                                @Player1 我们正在开发一个新的小游戏模式，预计下个月上线，敬请期待！
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold">P</div>
+                        <div class="flex-1">
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="font-bold">Player2</span>
+                                <span class="text-xs text-gray-500">14:38</span>
+                            </div>
+                            <div class="text-gray-300">
+                                生存服务器的建筑大赛什么时候开始报名呀？
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 消息输入区域 -->
+            <div class="bg-gray-800/50 border border-gray-700 border-t-0 rounded-b-2xl p-4 backdrop-blur-sm">
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 relative">
+                        <textarea id="message-input" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none" rows="2" placeholder="输入消息..."></textarea>
+                        <div class="absolute right-3 bottom-3 flex gap-2">
+                            <button class="text-gray-400 hover:text-gray-300 transition-colors">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                </svg>
+                            </button>
+                            <button class="text-gray-400 hover:text-gray-300 transition-colors">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="send-button" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
                     </button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu Dropdown -->
-        <div class="md:hidden max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="mobile-menu-items">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">首页</a>
-                <a href="status.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">服务器状态</a>
-                <a href="chat.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">在线聊天</a>
-                <a href="faq.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">常见问题</a>
+    </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-gray-800/50 border-t border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+                <h3 class="text-lg font-bold mb-4">Voidix</h3>
+                <p class="text-gray-400 text-sm">
+                    下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建。
+                </p>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">快速链接</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html">首页</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="status.html">服务器状态</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="chat.html">在线聊天</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">帮助</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html">常见问题</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">联系我们</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr" target="_blank">QQ群</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="mailto:support@voidix.top">support@voidix.top</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </nav>
-
-    <!-- 聊天主内容区 -->
-    <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl tracking-tight font-bold mb-6">
-                <span class="gradient-text">Voidix</span>
-                社区聊天
-            </h1>
-            <p class="text-gray-400 max-w-2xl mx-auto">与Voidix社区的其他玩家交流，分享游戏心得和建议</p>
+        <div class="mt-12 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
+            <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>
         </div>
+    </div>
+</footer>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <!-- 左侧边栏 - 在线用户列表 -->
-            <div class="lg:col-span-1 bg-gray-800/50 border border-gray-700 rounded-2xl p-6 backdrop-blur-sm h-fit">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
-                    </svg>
-                    在线用户
-                    <span class="text-sm font-mono text-blue-400 ml-auto" id="online-count">0</span>
-                </h2>
-                
-                <div class="space-y-3" id="user-list">
-                    <!-- 用户列表将在这里动态生成 -->
-                    <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
-                        <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                        <div class="flex-1 truncate">NekoEpisode</div>
-                        <span class="text-xs text-gray-400">管理员</span>
-                    </div>
-                    <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
-                        <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                        <div class="flex-1 truncate">CYsonHab</div>
-                        <span class="text-xs text-gray-400">管理员</span>
-                    </div>
-                    <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
-                        <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                        <div class="flex-1 truncate">Player1</div>
-                    </div>
-                    <div class="flex items-center gap-3 px-3 py-2 bg-gray-700/30 rounded-lg">
-                        <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                        <div class="flex-1 truncate">Player2</div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 pt-4 border-t border-gray-700">
-                    <h3 class="text-sm font-semibold text-gray-300 mb-3">聊天频道</h3>
-                    <div class="space-y-2">
-                        <button class="w-full text-left px-3 py-2 bg-indigo-900/30 rounded-lg text-indigo-400 font-medium"># 全局聊天</button>
-                        <button class="w-full text-left px-3 py-2 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"># 生存讨论</button>
-                        <button class="w-full text-left px-3 py-2 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"># 小游戏讨论</button>
-                        <button class="w-full text-left px-3 py-2 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors"># 技术交流</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 主聊天区域 -->
-            <div class="lg:col-span-3 flex flex-col">
-                <!-- 聊天消息区域 -->
-                <div class="flex-1 bg-gray-800/50 border border-gray-700 rounded-t-2xl p-6 backdrop-blur-sm overflow-y-auto max-h-[60vh] min-h-[60vh]">
-                    <div class="space-y-6" id="chat-messages">
-                        <!-- 系统消息 -->
-                        <div class="flex flex-col items-center text-gray-500 text-sm my-4">
-                            <div class="px-4 py-1 bg-gray-800/50 rounded-full">今天</div>
-                        </div>
-                        
-                        <!-- 示例消息 -->
-                        <div class="flex gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">N</div>
-                            <div class="flex-1">
-                                <div class="flex items-baseline gap-2 mb-1">
-                                    <span class="font-bold text-indigo-400">NekoEpisode</span>
-                                    <span class="text-xs text-gray-500">14:30</span>
-                                    <span class="text-xs bg-indigo-900/30 text-indigo-400 px-2 py-0.5 rounded">管理员</span>
-                                </div>
-                                <div class="text-gray-300">
-                                    欢迎来到Voidix社区聊天室！这里可以讨论任何与Minecraft相关的内容，请遵守社区规则。
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-400 font-bold">C</div>
-                            <div class="flex-1">
-                                <div class="flex items-baseline gap-2 mb-1">
-                                    <span class="font-bold text-purple-400">CYsonHab</span>
-                                    <span class="text-xs text-gray-500">14:32</span>
-                                    <span class="text-xs bg-purple-900/30 text-purple-400 px-2 py-0.5 rounded">管理员</span>
-                                </div>
-                                <div class="text-gray-300">
-                                    生存服务器已经更新到1.20.4版本，欢迎大家来体验新内容！
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold">P</div>
-                            <div class="flex-1">
-                                <div class="flex items-baseline gap-2 mb-1">
-                                    <span class="font-bold">Player1</span>
-                                    <span class="text-xs text-gray-500">14:35</span>
-                                </div>
-                                <div class="text-gray-300">
-                                    小游戏服务器什么时候会增加新的玩法呀？很期待！
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">N</div>
-                            <div class="flex-1">
-                                <div class="flex items-baseline gap-2 mb-1">
-                                    <span class="font-bold text-indigo-400">NekoEpisode</span>
-                                    <span class="text-xs text-gray-500">14:36</span>
-                                    <span class="text-xs bg-indigo-900/30 text-indigo-400 px-2 py-0.5 rounded">管理员</span>
-                                </div>
-                                <div class="text-gray-300">
-                                    @Player1 我们正在开发一个新的小游戏模式，预计下个月上线，敬请期待！
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold">P</div>
-                            <div class="flex-1">
-                                <div class="flex items-baseline gap-2 mb-1">
-                                    <span class="font-bold">Player2</span>
-                                    <span class="text-xs text-gray-500">14:38</span>
-                                </div>
-                                <div class="text-gray-300">
-                                    生存服务器的建筑大赛什么时候开始报名呀？
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 消息输入区域 -->
-                <div class="bg-gray-800/50 border border-gray-700 border-t-0 rounded-b-2xl p-4 backdrop-blur-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="flex-1 relative">
-                            <textarea id="message-input" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none" rows="2" placeholder="输入消息..."></textarea>
-                            <div class="absolute right-3 bottom-3 flex gap-2">
-                                <button class="text-gray-400 hover:text-gray-300 transition-colors">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
-                                    </svg>
-                                </button>
-                                <button class="text-gray-400 hover:text-gray-300 transition-colors">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <button id="send-button" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-lg transition-colors">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+<script>
+    // 简单的菜单切换逻辑
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        const menu = document.getElementById('mobile-menu-items');
+        const isOpen = menu.classList.contains('max-h-0');
 
-    <!-- 页脚 -->
-    <footer class="bg-gray-800/50 border-t border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Voidix</h3>
-                    <p class="text-gray-400 text-sm">
-                        下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建。
-                    </p>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">快速链接</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html">首页</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="status.html">服务器状态</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="chat.html">在线聊天</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">帮助</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html">常见问题</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="rules.html">社区规则</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">联系我们</h3>
-                    <ul class="space-y-2">
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr" target="_blank">QQ群</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="mailto:support@voidix.top">support@voidix.top</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-12 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
-                <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>
-            </div>
-        </div>
-    </footer>
+        if (isOpen) {
+            menu.classList.remove('max-h-0', 'opacity-0');
+            menu.classList.add('max-h-screen', 'opacity-100', 'py-2');
+        } else {
+            menu.classList.add('max-h-0', 'opacity-0');
+            menu.classList.remove('max-h-screen', 'opacity-100', 'py-2');
+        }
 
-    <script>
-        // 简单的菜单切换逻辑
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu-items');
-            const isOpen = menu.classList.contains('max-h-0');
-            
-            if (isOpen) {
-                menu.classList.remove('max-h-0', 'opacity-0');
-                menu.classList.add('max-h-screen', 'opacity-100', 'py-2');
-            } else {
-                menu.classList.add('max-h-0', 'opacity-0');
-                menu.classList.remove('max-h-screen', 'opacity-100', 'py-2');
-            }
-            
-            // 切换汉堡菜单图标
-            const icon = document.getElementById('hamburger-icon');
-            if (isOpen) {
-                icon.classList.add('open');
-            } else {
-                icon.classList.remove('open');
-            }
-        });
-        
-        // 模拟在线用户数量更新
-        setInterval(() => {
-            document.getElementById('online-count').textContent = 
-                Math.floor(4 + Math.random() * 10) + '人在线';
-        }, 5000);
-        
-        // 简单的消息发送模拟
-        document.getElementById('send-button').addEventListener('click', function() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
-            
-            if (message) {
-                const messagesContainer = document.getElementById('chat-messages');
-                const now = new Date();
-                const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-                
-                const newMessage = document.createElement('div');
-                newMessage.className = 'flex gap-3 mt-6';
-                newMessage.innerHTML = `
+        // 切换汉堡菜单图标
+        const icon = document.getElementById('hamburger-icon');
+        if (isOpen) {
+            icon.classList.add('open');
+        } else {
+            icon.classList.remove('open');
+        }
+    });
+
+    // 模拟在线用户数量更新
+    setInterval(() => {
+        document.getElementById('online-count').textContent =
+            Math.floor(4 + Math.random() * 10) + '人在线';
+    }, 5000);
+
+    // 简单的消息发送模拟
+    document.getElementById('send-button').addEventListener('click', function() {
+        const input = document.getElementById('message-input');
+        const message = input.value.trim();
+
+        if (message) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const now = new Date();
+            const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+            const newMessage = document.createElement('div');
+            newMessage.className = 'flex gap-3 mt-6';
+            newMessage.innerHTML = `
                     <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-gray-300 font-bold">Y</div>
                     <div class="flex-1">
                         <div class="flex items-baseline gap-2 mb-1">
@@ -351,27 +348,27 @@
                         <div class="text-gray-300">${message}</div>
                     </div>
                 `;
-                
-                messagesContainer.appendChild(newMessage);
-                input.value = '';
-                
-                // 滚动到底部
-                messagesContainer.parentElement.scrollTop = messagesContainer.parentElement.scrollHeight;
-                
-                // 模拟回复
-                setTimeout(() => {
-                    const replies = [
-                        "听起来不错！",
-                        "感谢你的分享！",
-                        "我们会考虑你的建议。",
-                        "欢迎加入我们的社区！",
-                        "有什么我们可以帮忙的吗？"
-                    ];
-                    const randomReply = replies[Math.floor(Math.random() * replies.length)];
-                    
-                    const replyMessage = document.createElement('div');
-                    replyMessage.className = 'flex gap-3 mt-6';
-                    replyMessage.innerHTML = `
+
+            messagesContainer.appendChild(newMessage);
+            input.value = '';
+
+            // 滚动到底部
+            messagesContainer.parentElement.scrollTop = messagesContainer.parentElement.scrollHeight;
+
+            // 模拟回复
+            setTimeout(() => {
+                const replies = [
+                    "听起来不错！",
+                    "感谢你的分享！",
+                    "我们会考虑你的建议。",
+                    "欢迎加入我们的社区！",
+                    "有什么我们可以帮忙的吗？"
+                ];
+                const randomReply = replies[Math.floor(Math.random() * replies.length)];
+
+                const replyMessage = document.createElement('div');
+                replyMessage.className = 'flex gap-3 mt-6';
+                replyMessage.innerHTML = `
                         <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-900/30 flex items-center justify-center text-indigo-400 font-bold">N</div>
                         <div class="flex-1">
                             <div class="flex items-baseline gap-2 mb-1">
@@ -382,21 +379,21 @@
                             <div class="text-gray-300">${randomReply}</div>
                         </div>
                     `;
-                    
-                    messagesContainer.appendChild(replyMessage);
-                    messagesContainer.parentElement.scrollTop = messagesContainer.parentElement.scrollHeight;
-                }, 1000 + Math.random() * 2000);
-            }
-        });
-        
-        // 允许按Enter键发送消息
-        document.getElementById('message-input').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                document.getElementById('send-button').click();
-            }
-        });
-    </script>
+
+                messagesContainer.appendChild(replyMessage);
+                messagesContainer.parentElement.scrollTop = messagesContainer.parentElement.scrollHeight;
+            }, 1000 + Math.random() * 2000);
+        }
+    });
+
+    // 允许按Enter键发送消息
+    document.getElementById('message-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('send-button').click();
+        }
+    });
+</script>
 </body>
 
 </html>

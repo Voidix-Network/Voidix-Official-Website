@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const translateXValue = -activeIndex * 100;
         contentSlider.style.transform = `translateX(${translateXValue}%)`;
     }
-    
+
     if (tabButtons.length > 0 && contentSlider && activeTabUnderline && tabContentWrapper && tabContents.length > 0) {
         let initialActiveIndex = 0;
         tabButtons.forEach((btn, index) => {
@@ -46,17 +46,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 initialActiveIndex = index;
             }
         });
-        
+
         // Set initial height of the wrapper (for the active tab) WITHOUT animation
         if (tabContents[initialActiveIndex]) {
             tabContentWrapper.style.maxHeight = tabContents[initialActiveIndex].scrollHeight + 'px';
         }
-        
+
         // Apply transition for future height changes AFTER initial height is set
         // Use a timeout to ensure initial height is applied before transition starts for max-height
         setTimeout(() => {
-            if (tabContentWrapper) { 
-                 tabContentWrapper.style.transition = 'max-height 0.3s ease-in-out';
+            if (tabContentWrapper) {
+                tabContentWrapper.style.transition = 'max-height 0.3s ease-in-out';
             }
         }, 0);
 
@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const targetIndex = parseInt(button.dataset.tabIndex);
-                
-                updateTabUnderlineAndStyles(button); 
-                switchTabContent(targetIndex);      
+
+                updateTabUnderlineAndStyles(button);
+                switchTabContent(targetIndex);
             });
         });
     }
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             accordionContent.style.transition = 'max-height 0.3s ease-out';
 
             // Accordion starts OPEN by default
-            let isPlayerAccordionOpen = true; 
+            let isPlayerAccordionOpen = true;
             accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px'; // Set to scrollHeight to be open
             accordionIcon.classList.add('rotate-180'); // Icon points up for open state
 
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         mobileMenuItems.classList.add('max-h-0', 'opacity-0');
                         mobileMenuItems.classList.remove('max-h-96');
                         if (mobileMenuButton) mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        
+
                         if (line1 && line2 && line3) {
                             line1.classList.remove('translate-y-[6px]', 'rotate-45');
                             line2.classList.remove('opacity-0');
@@ -172,13 +172,13 @@ document.addEventListener('DOMContentLoaded', () => {
         desktop: document.getElementById('online-players-count-desktop'),
         mobile: document.getElementById('online-players-count-mobile')
     };
-    
+
     // HTML elements for displaying server running time (desktop and mobile versions).
     const uptimeDaysEl = {
         desktop: document.getElementById('uptime-days-desktop'),
         mobile: document.getElementById('uptime-days-mobile')
     };
-    
+
     // HTML elements for displaying total server running time (desktop and mobile versions).
     // Note: IDs 'gamemode-count-desktop/mobile' are legacy, now used for totalRunningTime.
     const gamemodeCountEl = {
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setInitialLoadingStatus() {
         if (onlinePlayersCountEl.desktop) onlinePlayersCountEl.desktop.textContent = '获取中...';
         if (onlinePlayersCountEl.mobile) onlinePlayersCountEl.mobile.textContent = '获取中...';
-        
+
         Object.values(statusElementsSimplified).forEach(server => {
             if (server.badge) server.badge.textContent = '获取中...';
             if (server.dot) server.dot.className = 'w-3 h-3 rounded-full bg-yellow-400 animate-pulse';
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initialTotalRunningTimeSeconds = null;
         lastUptimeUpdateTimestamp = null;
     }
-    
+
     setInitialLoadingStatus();
 
     // Updates the total online players count on the page (desktop and mobile).
@@ -272,10 +272,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 minigameIsEffectivelyOnline = true;
             }
         });
-        
+
         if (Object.keys(serverData.servers).length === 0 && ws?.readyState !== WebSocket.OPEN) {
-             // 使用简化版状态元素
-             Object.values(statusElementsSimplified).forEach(server => {
+            // 使用简化版状态元素
+            Object.values(statusElementsSimplified).forEach(server => {
                 if (server.badge) server.badge.textContent = '获取中...';
                 if (server.dot) server.dot.className = 'w-3 h-3 rounded-full bg-yellow-400 animate-pulse';
             });
@@ -320,14 +320,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const days = Math.floor(seconds / (3600 * 24));
             const hours = Math.floor((seconds % (3600 * 24)) / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
-            let formattedTime = "";
+            let formattedTime;
 
             if (days >= 100) formattedTime = `${days}天`;
             else if (days >= 1) formattedTime = `${days}天 ${hours}时`;
             else if (hours > 0) formattedTime = `${hours}时 ${minutes}分`;
             else if (seconds > 0 && seconds < 60) formattedTime = "<1分"; // Consistent with status page
             else formattedTime = `${minutes}分`;
-            
+
             if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = formattedTime;
             if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = formattedTime;
         } else {
@@ -346,10 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof totalSeconds !== 'number') {
                 totalSeconds = 0;
             }
-            
+
             if (totalSeconds < 0) totalSeconds = 0;
 
-            let formattedTotalTime = "";
+            let formattedTotalTime;
             const secondsInYear = 365 * 24 * 3600;
             const secondsInDay = 24 * 3600;
 
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (totalSeconds > 0 && totalSeconds < 60) formattedTotalTime = "<1分";
                 else formattedTotalTime = `${minutes}分`;
             }
-            
+
             if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = formattedTotalTime;
             if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = formattedTotalTime;
         } else {
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (serverData.runningTime !== undefined && serverData.runningTime !== null) {
             initialRunningTimeSeconds = parseInt(serverData.runningTime, 10) || 0;
         } else {
-            initialRunningTimeSeconds = 0; 
+            initialRunningTimeSeconds = 0;
         }
 
         if (serverData.totalRunningTime !== undefined && serverData.totalRunningTime !== null) {
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const elapsedSeconds = Math.floor((Date.now() - lastUptimeUpdateTimestamp) / 1000);
             const currentRunningTime = initialRunningTimeSeconds + elapsedSeconds;
             // totalRunningTime also increases with real-time elapsed seconds from its initial value
-            const currentTotalRunningTime = initialTotalRunningTimeSeconds + elapsedSeconds; 
+            const currentTotalRunningTime = initialTotalRunningTimeSeconds + elapsedSeconds;
 
             updateUptimeDisplay(currentRunningTime, currentTotalRunningTime);
         }, 1000);
@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (messageData.totalRunningTime !== undefined) {
                         serverData.totalRunningTime = messageData.totalRunningTime;
                     }
-                     if (messageData.gamemodeCount !== undefined) { // Keep gamemodeCount if provided
+                    if (messageData.gamemodeCount !== undefined) { // Keep gamemodeCount if provided
                         serverData.gamemodeCount = messageData.gamemodeCount;
                     }
 
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateServerStatusBadges();
                     // updateUptimeDisplay(serverData.runningTime, serverData.totalRunningTime); // This direct call is now handled by startRealtimeUptimeUpdates
                     startRealtimeUptimeUpdates(); // Start/Restart the real-time counter with new base values
-                    updateGamemodeCount(); 
+                    updateGamemodeCount();
 
                 } else if (messageData.type === 'player_join') {
                     if (serverData.players.online !== undefined) {
@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setDisconnectedStatus() {
         if (onlinePlayersCountEl.desktop) onlinePlayersCountEl.desktop.textContent = '连接已断开';
         if (onlinePlayersCountEl.mobile) onlinePlayersCountEl.mobile.textContent = '连接已断开';
-        
+
         Object.values(statusElementsSimplified).forEach(server => {
             if (server.badge) server.badge.textContent = '状态未知';
             if (server.dot) server.dot.className = 'w-3 h-3 rounded-full bg-gray-500'; // Disconnected/Unknown color
@@ -505,10 +505,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = '未知';
         if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = '未知';
-        
+
         if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = '未知';
         if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = '未知';
-        
+
         // 重置serverData，这样重新连接尝试时不会显示陈旧数据
         serverData = {
             servers: {},
@@ -524,6 +524,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initialTotalRunningTimeSeconds = null;
         lastUptimeUpdateTimestamp = null;
     }
-    
+
     connectWebSocket();
 });
