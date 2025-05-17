@@ -62,9 +62,9 @@ window.VOIDIX_SHARED_CONFIG = {
         },
         // Base classes for status dots on the status page (more generic)
         statusPage: {
-            dotOnline: 'w-3 h-3 rounded-full bg-green-500', // Green dot for online servers
-            dotOffline: 'w-3 h-3 rounded-full bg-red-500',   // Red dot for offline servers
-            dotMaintenance: 'w-3 h-3 rounded-full bg-yellow-500' // Yellow dot for maintenance/unknown
+            dotOnline: 'w-3 h-3 rounded-full bg-green-500 flex-shrink-0 mr-2', // Green dot for online servers
+            dotOffline: 'w-3 h-3 rounded-full bg-red-500 flex-shrink-0 mr-2',   // Red dot for offline servers
+            dotMaintenance: 'w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0 mr-2' // Yellow dot for maintenance/unknown
         },
         // Text color classes
         textGreen: 'text-green-400',
