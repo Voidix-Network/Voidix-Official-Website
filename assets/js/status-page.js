@@ -577,7 +577,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Append "(连接已断开)" only if not already there from a previous call or reconnecting text
             let baseText = `${SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix}${startTimeText}`;
             const disconnectedSuffix = ` (${SHARED_CONFIG.statusTexts.disconnected})`;
-            const reconnectingSuffixPattern = new RegExp(` \(${SHARED_CONFIG.statusTexts.reconnecting}\)$`);
+            const reconnectingSuffixPattern = new RegExp(` \\\\(${SHARED_CONFIG.statusTexts.reconnecting}\\\\)\$`);
 
             // Remove reconnecting suffix if present before adding disconnected suffix
             if (maintenanceInfoTextEl.textContent.match(reconnectingSuffixPattern)) {
