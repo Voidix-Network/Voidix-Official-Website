@@ -48,7 +48,8 @@ window.VOIDIX_SHARED_CONFIG = {
         errorConnecting: '连接错误', // Generic connection error
         maintenance: '维护中',
         maintenanceStartTimePrefix: '维护开始于: ',
-        connectionFailedPermanently: '连接失败，请检查网络或稍后重试。'
+        connectionFailedPermanently: '连接失败，请检查网络或稍后重试。',
+        reconnecting: '重连中...' // Added for reconnecting state
     },
 
     statusClasses: {
@@ -68,13 +69,12 @@ window.VOIDIX_SHARED_CONFIG = {
         },
         // Text color classes
         textGreen: 'text-green-400',
-        textYellow: 'text-yellow-400', // Changed from 'font-mono text-yellow-400'
+        textYellow: 'text-yellow-400', 
         textRed: 'text-red-400',
-        // General classes for player list items
-        // Common text styling classes (Tailwind based)
-        textGreen: 'font-mono text-green-400',
-        textRed: 'font-mono text-red-400',
-        textYellow: 'font-mono text-yellow-400'
+        // Renamed mono versions to avoid conflict
+        textMonoGreen: 'font-mono text-green-400',
+        textMonoRed: 'font-mono text-red-400',
+        textMonoYellow: 'font-mono text-yellow-400'
     },
 
     /**

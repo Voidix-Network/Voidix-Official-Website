@@ -610,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onclose = (event) => {
             clearTimeout(connectionTimeoutTimer); // Clear timeout on close
             console.log(`[DEBUG] Voidix WebSocket disconnected (index.html). Code: ${event.code}, Reason: ${event.reason}.`);
-            setDisconnectedStatus(); 
+            // setDisconnectedStatus(); // Removed: UI will be handled by reconnecting or permanent error status
 
             const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
             const maxAttempts = SHARED_CONFIG.websocket.maxReconnectAttempts;
@@ -619,6 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentReconnectAttempts < maxAttempts) {
                 // Get the next interval from the sequence.
                 // If currentReconnectAttempts (0-indexed) is beyond the sequence, use the last interval.
+                setIndexReconnectingStatus(); // Show "Reconnecting..." UI
                 const nextInterval = intervalSequence[currentReconnectAttempts] !== undefined 
                                    ? intervalSequence[currentReconnectAttempts] 
                                    : intervalSequence[intervalSequence.length - 1];
@@ -631,6 +632,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 setPermanentConnectionErrorStatus();
             }
         };
+    }
+
+    // Sets UI elements on the index page to a "Reconnecting..." state.
+    function setIndexReconnectingStatus() {
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
+        const reconnectingText = SHARED_CONFIG.statusTexts.reconnecting || '重连中...';
+        const yellowTextClass = SHARED_CONFIG.statusClasses.textYellow;
+        const yellowDotBaseClass = `${SHARED_CONFIG.statusClasses.indexPage.dotBase} ${SHARED_CONFIG.statusClasses.indexPage.colorYellow} ${SHARED_CONFIG.statusClasses.indexPage.animatePulse}`;
+
+        if (serverData.isMaintenance) {
+            // If in maintenance, keep maintenance UI but maybe add a reconnecting hint?
+            // For now, displayMaintenanceStatusOnIndex already handles the visual styling for maintenance.
+            // We can append to specific elements if needed, but let's keep it simple.
+            displayMaintenanceStatusOnIndex(); 
+            // Potentially update a specific small indicator or log, but avoid cluttering maintenance UI.
+            if (onlinePlayersCountEl.desktop && onlinePlayersCountEl.desktop.textContent === SHARED_CONFIG.statusTexts.maintenance) {
+                 if(!onlinePlayersCountEl.desktop.textContent.includes(reconnectingText)){
+                    onlinePlayersCountEl.desktop.textContent += ` (${reconnectingText.substring(0,2)})`; // 小提示
+                 }
+            }
+             if (onlinePlayersCountEl.mobile && onlinePlayersCountEl.mobile.textContent === SHARED_CONFIG.statusTexts.maintenance) {
+                 if(!onlinePlayersCountEl.mobile.textContent.includes(reconnectingText)){
+                    onlinePlayersCountEl.mobile.textContent += ` (${reconnectingText.substring(0,2)})`;
+                 }
+            }
+            return; // Keep maintenance UI dominant
+        }
+
+        if (onlinePlayersCountEl.desktop) {
+            onlinePlayersCountEl.desktop.textContent = reconnectingText;
+            onlinePlayersCountEl.desktop.className = `text-base font-bold text-center ${yellowTextClass}`;
+        }
+        if (onlinePlayersCountEl.mobile) {
+            onlinePlayersCountEl.mobile.textContent = reconnectingText;
+            onlinePlayersCountEl.mobile.className = `text-base font-bold flex justify-center items-center whitespace-nowrap ${yellowTextClass}`;
+        }
+
+        Object.values(statusElementsSimplified).forEach(server => {
+            if (server.badge) {
+                server.badge.textContent = reconnectingText;
+                // server.badge.className = ...; // Assuming text color is handled by parent or yellowTextClass if needed
+            }
+            if (server.dot) {
+                server.dot.className = yellowDotBaseClass;
+            }
+        });
+
+        const uptimeElements = [uptimeDaysEl.desktop, uptimeDaysEl.mobile, gamemodeCountEl.desktop, gamemodeCountEl.mobile];
+        uptimeElements.forEach(el => {
+            if (el) {
+                el.textContent = reconnectingText;
+                el.className = `text-base font-bold flex justify-center items-center whitespace-nowrap ${yellowTextClass}`;
+            }
+        });
+
+        clearInterval(uptimeIntervalId);
+        initialRunningTimeSeconds = null;
+        initialTotalRunningTimeSeconds = null;
+        lastUptimeUpdateTimestamp = null;
+        // Do NOT reset serverData here, to allow quick recovery if reconnect succeeds.
     }
 
     // Sets all dynamic status elements on the index page to a 'disconnected' state and resets local data.
@@ -662,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initialTotalRunningTimeSeconds = null;
         lastUptimeUpdateTimestamp = null;
 
-        // Reset server data to avoid showing stale info on reconnect attempt
+        // Reset server data to avoid showing stale info
         serverData = {
             servers: {},
             players: { online: "0", currentPlayers: {} },

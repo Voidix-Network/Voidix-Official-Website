@@ -421,19 +421,22 @@ document.addEventListener("DOMContentLoaded", () => {
         wsStatusPage.onerror = (error) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on error
             console.error('[DEBUG] Status WS: Error:', error);
-            setDisconnectedStatusOnStatusPage(); // Update UI to disconnected
+            // Call setDisconnectedStatusOnStatusPage directly on error, as no reconnection attempt is initiated by onerror itself.
+            // onclose will likely follow and handle reconnection if applicable, or confirm disconnected state.
+            setDisconnectedStatusOnStatusPage(); 
         };
 
         wsStatusPage.onclose = (event) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on close
             console.log(`[DEBUG] Status WS: Disconnected. Code: ${event.code}, Reason: "${event.reason}".`);
-            setDisconnectedStatusOnStatusPage(); // Update UI
+            // setDisconnectedStatusOnStatusPage(); // Old logic: Update UI (Replaced by conditional logic below)
             
             const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
             const maxAttempts = SHARED_CONFIG.websocket.maxReconnectAttempts;
             const intervalSequence = SHARED_CONFIG.websocket.reconnectIntervalSequence || [5000]; // Fallback
 
             if (statusPageReconnectAttempts < maxAttempts) {
+                setReconnectingStatusOnStatusPage(); // Show "Reconnecting..."
                 const nextInterval = intervalSequence[statusPageReconnectAttempts] !== undefined
                                    ? intervalSequence[statusPageReconnectAttempts]
                                    : intervalSequence[intervalSequence.length - 1];
@@ -442,9 +445,73 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log(`[DEBUG] Status WS: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000}s...`);
                 setTimeout(connectStatusPageWebSocket, nextInterval);
             } else {
-                console.log(`[DEBUG] Status WS: Max reconnect attempts (${maxAttempts}) reached.`);
+                console.log(`[DEBUG] Status WS: Max reconnect attempts (${maxAttempts}) reached. Displaying disconnected status.`);
+                setDisconnectedStatusOnStatusPage(); // Show permanent "Disconnected"
             }
         };
+    }
+
+    // Sets UI to a "Reconnecting..." state
+    function setReconnectingStatusOnStatusPage() {
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
+        const reconnectingText = SHARED_CONFIG.statusTexts.reconnecting || '重连中...';
+        const yellowTextClass = SHARED_CONFIG.statusClasses.textYellow; // e.g., 'text-yellow-400'
+        // For individual server dots (w-3 h-3)
+        const yellowDotClass = SHARED_CONFIG.statusClasses.statusPage.dotMaintenance; // Already yellow, includes flex-shrink-0 mr-2
+        const pulseAnimationClass = SHARED_CONFIG.statusClasses.indexPage.animatePulse;
+
+        if (currentServerData.isMaintenance) {
+            displayMaintenanceInfoOnStatusPage(); // Keep maintenance UI dominant
+            if (maintenanceInfoTextEl && maintenanceInfoTextEl.textContent.includes(SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix)) {
+                if (!maintenanceInfoTextEl.textContent.includes(reconnectingText)) { // Avoid appending multiple times
+                    maintenanceInfoTextEl.textContent += ` (${reconnectingText})`;
+                }
+            }
+            // Most elements are already yellow/dashed by displayMaintenanceInfoOnStatusPage
+            return;
+        }
+
+        Object.values(serverStatusListConfig).forEach(s => {
+            if (s.statusEl) {
+                s.statusEl.textContent = reconnectingText;
+                s.statusEl.className = yellowTextClass;
+            }
+            if (s.dotEl) {
+                s.dotEl.className = `${yellowDotClass} ${pulseAnimationClass}`;
+            }
+        });
+
+        if (statusPageUptimeEl) statusPageUptimeEl.textContent = reconnectingText;
+        if (statusPageTotalUptimeEl) statusPageTotalUptimeEl.textContent = reconnectingText;
+
+        const overallStatusTextEl = document.getElementById('overall-status-text');
+        const overallStatusDotEl = document.getElementById('overall-status-dot');
+        const totalOnlinePlayersEl = document.getElementById('total-online-players'); // Summary
+
+        if (overallStatusTextEl) {
+            overallStatusTextEl.textContent = reconnectingText;
+            overallStatusTextEl.className = `text-lg font-semibold ${yellowTextClass}`;
+        }
+        if (overallStatusDotEl) {
+            // Uses w-4 h-4, like index page dots
+            overallStatusDotEl.className = `w-4 h-4 rounded-full ${SHARED_CONFIG.statusClasses.indexPage.colorYellow} ${pulseAnimationClass}`;
+        }
+
+        if (totalOnlinePlayersEl) {
+            totalOnlinePlayersEl.textContent = reconnectingText;
+            totalOnlinePlayersEl.className = `text-2xl font-bold ${yellowTextClass}`;
+        }
+        
+        const playerListOnlineCountEl = document.getElementById('player-list-online-count');
+        const playerListContainerEl = document.getElementById('player-list-container');
+        if (playerListOnlineCountEl) playerListOnlineCountEl.textContent = reconnectingText;
+        if (playerListContainerEl) playerListContainerEl.innerHTML = `<div class="text-center ${yellowTextClass}">${reconnectingText}</div>`;
+
+        clearInterval(uptimeIntervalId_status);
+        initialRunningTimeSeconds_status = null;
+        initialTotalRunningTimeSeconds_status = null;
+        lastUptimeUpdateTimestamp_status = null;
+        // Do NOT reset currentServerData here.
     }
 
     // Sets all server status displays and uptime fields to a 'disconnected' state.
@@ -507,7 +574,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     startTimeText = '时间解析错误';
                 }
             }
-            maintenanceInfoTextEl.textContent = `${SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix}${startTimeText}`;
+            // Append "(连接已断开)" only if not already there from a previous call or reconnecting text
+            let baseText = `${SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix}${startTimeText}`;
+            const disconnectedSuffix = ` (${SHARED_CONFIG.statusTexts.disconnected})`;
+            const reconnectingSuffixPattern = new RegExp(` \(${SHARED_CONFIG.statusTexts.reconnecting}\)$`);
+
+            // Remove reconnecting suffix if present before adding disconnected suffix
+            if (maintenanceInfoTextEl.textContent.match(reconnectingSuffixPattern)) {
+                maintenanceInfoTextEl.textContent = maintenanceInfoTextEl.textContent.replace(reconnectingSuffixPattern, '');
+            }
+            // Ensure base text is set before potentially appending disconnected suffix
+            maintenanceInfoTextEl.textContent = baseText;
+
+            if (!maintenanceInfoTextEl.textContent.endsWith(disconnectedSuffix)) {
+                 maintenanceInfoTextEl.textContent += disconnectedSuffix;
+            }
         }
 
         // Ensure these elements exist before trying to update them
