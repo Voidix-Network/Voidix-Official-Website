@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         minigames_aggregate: {
             statusEl: document.getElementById("minigames-aggregate-status"), // Element ID in status.html
             dotEl: document.getElementById("minigames-aggregate-dot"),       // Element ID in status.html
-            keys: ["bedwars", "bedwars_solo", "bedwars_other", "lobby"], // Server keys from WS data
+            keys: ["bedwars", "bedwars_solo", "bedwars_other", "lobby", "knockioffa"], // Server keys from WS data
             name: "小游戏服务器 (minigame.voidix.top)"
         },
         bedwars_sub_aggregate: {
@@ -61,7 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
             dotEl: document.querySelector("#server-status-list > div:last-child .status-dot"), // More robust selector needed if survival isn't last before lobby or if lobby isn't last overall. Let's give lobby dot an ID.
             keys: ["lobby"],
             name: "大厅服务器"
-        }
+        },
+        knockioffa: {
+            statusEl: document.getElementById("knockioffa-live-status"),
+            dotEl: document.getElementById("knockioffa-dot"),
+            keys: ["knockioffa"],
+            name: "Knockioffa"
+        },
     };
 
     // Ensure survival and lobby dots have IDs for robust selection

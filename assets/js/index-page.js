@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 小游戏服务器（汇总）
         let minigameOnlineCount = 0;
         let minigameIsEffectivelyOnline = false;
-        const minigameKeys = ["bedwars", "bedwars_solo", "bedwars_other"];
+        const minigameKeys = ["bedwars", "bedwars_solo", "bedwars_other", "knockioffa"];
         let allMinigameKeysPresent = minigameKeys.every(key => serverData.servers[key] !== undefined);
 
         minigameKeys.forEach(key => {
