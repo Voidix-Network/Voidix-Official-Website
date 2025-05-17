@@ -3,7 +3,7 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
-// Please copy the JavaScript code from index.html (lines approx. 835-1353) into this file.
+// Manages dynamic content and WebSocket communication for the main index page.
 document.addEventListener('DOMContentLoaded', () => {
     // Tabs (Java/Bedrock Connection)
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -157,8 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Object mapping server types to their corresponding HTML badge and status dot elements on the index page.
     const statusElementsSimplified = {
         minigame: {
-            badge: document.getElementById('minigame-status-badge-desktop'), // Badge for minigame server status
-            dot: document.getElementById('minigame-status-dot-desktop')      // Status dot for minigame server
+            badge: document.getElementById('minigame-status-badge-desktop'), // Badge for minigame server status (aggregate)
+            dot: document.getElementById('minigame-status-dot-desktop')      // Status dot for minigame server (aggregate)
         },
         survival: {
             badge: document.getElementById('survival-status-badge-desktop'), // Badge for survival server status
@@ -192,9 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let serverData = {
         servers: {},
         players: { online: "0", currentPlayers: {} },
-        runningTime: undefined, // Added for running time
-        totalRunningTime: undefined, // Updated for total running time
-        gamemodeCount: "3", // 默认游戏模式数量
+        runningTime: undefined,
+        totalRunningTime: undefined,
         isMaintenance: false,
         maintenanceStartTime: null
     };
@@ -205,7 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastUptimeUpdateTimestamp = null;
     let uptimeIntervalId = null;
 
-    // Sets the initial display text of various status elements to a 'loading' state.
+    /**
+     * Sets the initial display text of various status elements on the index page to a 'loading' state.
+     * Also resets uptime tracking variables.
+     */
     function setInitialLoadingStatus() {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
         if (serverData.isMaintenance) {
@@ -237,11 +239,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setInitialLoadingStatus();
 
-    // Updates the total online players count on the page (desktop and mobile).
+    /**
+     * Updates the total online players count display on the index page (desktop and mobile).
+     * Shows maintenance status if applicable.
+     */
     function updateTotalOnlinePlayers() {
-        console.log('[DEBUG] updateTotalOnlinePlayers CALLED. serverData.isMaintenance:', serverData.isMaintenance); 
         if (serverData.isMaintenance) {
-            console.log('[DEBUG] updateTotalOnlinePlayers: In maintenance, calling displayMaintenanceStatusOnIndex.'); 
             displayMaintenanceStatusOnIndex();
             return;
         }
@@ -254,12 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
             onlinePlayersCountEl.mobile.className = 'text-base font-bold flex justify-center items-center whitespace-nowrap'; 
             onlinePlayersCountEl.mobile.textContent = `${serverData.players.online || '0'}人`;
         }
-        console.log('[DEBUG] updateTotalOnlinePlayers: Updated player count display.'); 
     }
 
-    // Function to display maintenance status on index page
+    /**
+     * Displays maintenance status across various elements on the index page.
+     * This includes player counts, server badges/dots, and uptime fields.
+     * Clears the real-time uptime interval.
+     */
     function displayMaintenanceStatusOnIndex() {
-        console.log('[DEBUG] displayMaintenanceStatusOnIndex START. serverData.isMaintenance:', serverData.isMaintenance, 'forceShowMaintenance:', forceShowMaintenance); 
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
         
         if (onlinePlayersCountEl.desktop) {
@@ -297,38 +302,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         clearInterval(uptimeIntervalId);
-        console.log('[DEBUG] Cleared uptimeIntervalId & set maintenance UI elements.'); 
-        console.log('[DEBUG] displayMaintenanceStatusOnIndex END.'); 
     }
 
-    // Updates the 'gamemode count' elements. Note: These elements now display totalRunningTime.
-    // This function remains for historical reasons but doesn't update gamemode count anymore.
+    /**
+     * @deprecated This function is a remnant of older logic that updated a gamemode count.
+     * The HTML elements it once targeted (gamemode-count-desktop/mobile) are now used to display
+     * total server running time, which is handled by `updateUptimeDisplay`.
+     * This function currently has no active logic.
+     */
     function updateGamemodeCount() {
-        // These lines are no longer needed as these elements now display total uptime
-        // if (gamemodeCountEl.desktop) {
-        //     gamemodeCountEl.desktop.textContent = `${serverData.gamemodeCount || '3'}个`;
-        // }
-        // if (gamemodeCountEl.mobile) {
-        //     gamemodeCountEl.mobile.textContent = `${serverData.gamemodeCount || '3'}个`;
-        // }
+        // This function is deprecated. Its original functionality to update gamemode count
+        // is no longer active as the associated HTML elements are now used for total uptime display.
     }
 
-    // Updates the status badges and dots for individual server types (minigame, survival, lobby) on the index page.
+    /**
+     * Updates the status badges and dots for individual server types (minigame, survival, lobby) on the index page.
+     * Handles normal, maintenance, and partial/unknown states.
+     */
     function updateServerStatusBadges() {
-        console.log('[DEBUG] updateServerStatusBadges CALLED. serverData.isMaintenance:', serverData.isMaintenance, 'forceShowMaintenance:', forceShowMaintenance); 
         if (serverData.isMaintenance) {
-            console.log('[DEBUG] updateServerStatusBadges: In maintenance, calling displayMaintenanceStatusOnIndex and returning.'); 
             displayMaintenanceStatusOnIndex(); 
             return;
         }
         if (!serverData.servers) {
-            console.log('[DEBUG] updateServerStatusBadges: No serverData.servers, returning.'); 
             return;
         }
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
 
-        console.log('[DEBUG] updateServerStatusBadges: Proceeding with normal status update.'); 
-        // 使用简化版状态元素更新函数 (已使用共享配置重构)
+        // Helper to update display for a single server type (badge and dot)
         const updateStatusDisplay = (serverKey, elements, count, isOnline, isPartial = false) => {
             const statusText = isPartial ? SHARED_CONFIG.statusTexts.partialUnknown : (isOnline ? `${count} ${SHARED_CONFIG.statusTexts.online}` : SHARED_CONFIG.statusTexts.offline);
             const dotColorClass = isPartial ? SHARED_CONFIG.statusClasses.indexPage.colorYellow : (isOnline ? SHARED_CONFIG.statusClasses.indexPage.colorGreen : SHARED_CONFIG.statusClasses.indexPage.colorRed);
@@ -346,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.dot) elements.dot.className = finalDotClass;
         };
 
-        // 小游戏服务器（汇总）
+        // Minigame servers (aggregate)
         let minigameOnlineCount = 0;
         let minigameIsEffectivelyOnline = false;
         let allMinigameKeysPresent = SHARED_CONFIG.minigameKeys.every(key => serverData.servers[key] !== undefined);
@@ -397,11 +398,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateStatusDisplay('lobby', statusElementsSimplified.lobby, 0, false, true); // Mark as partial/unknown
             }
         }
-        console.log('[DEBUG] updateServerStatusBadges: Updated server statuses.'); // DEBUG
     }
 
-    // Updates the 'runningTime' and 'totalRunningTime' display elements.
-    // Accepts current running time and total running time in seconds.
+    /**
+     * Updates the 'runningTime' (uptime-days-desktop/mobile) and 'totalRunningTime' (gamemode-count-desktop/mobile)
+     * display elements on the index page using formatted duration strings from sharedConfig.
+     * @param {number} currentRunningTime - Current server running time in seconds.
+     * @param {number} currentTotalRunningTime - Total server running time in seconds.
+     */
     function updateUptimeDisplay(currentRunningTime, currentTotalRunningTime) {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG; 
         // console.log('[DEBUG] updateUptimeDisplay CALLED. currentRunningTime:', currentRunningTime, 'currentTotalRunningTime:', currentTotalRunningTime);
@@ -423,10 +427,13 @@ document.addEventListener('DOMContentLoaded', () => {
             gamemodeCountEl.mobile.className = 'text-base font-bold flex justify-center items-center whitespace-nowrap'; // Reset to base
             gamemodeCountEl.mobile.innerHTML = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'totalUptime'); 
         }
-        console.log('[DEBUG] updateUptimeDisplay: Updated uptime elements.'); // DEBUG
+        // console.log('[DEBUG] updateUptimeDisplay: Updated uptime elements.'); // DEBUG
     }
 
-    // Starts or restarts the real-time uptime counter
+    /**
+     * Starts or restarts the real-time uptime counter for the index page.
+     * Calculates elapsed time and updates the uptime display every second.
+     */
     function startRealtimeUptimeUpdates() {
         clearInterval(uptimeIntervalId); // Clear existing interval before starting a new one
 
@@ -464,136 +471,184 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // Establishes and manages the WebSocket connection for receiving real-time server status updates for the index page.
+    /**
+     * Handles 'full' WebSocket messages for the index page.
+     * Updates server data and refreshes UI elements like player counts, server badges, and uptime.
+     * @param {object} data The parsed data object from the WebSocket message.
+     */
+    function handleIndexFullMessage(data) {
+        // console.log('[DEBUG] Processing "full". serverData.isMaint:', serverData.isMaintenance, 'forceShowMaint:', forceShowMaintenance);
+        let isMaintenanceFromFull = data.isMaintenance;
+        let maintenanceStartTimeFromFull = data.maintenanceStartTime;
+
+        // Update non-maintenance related data first
+        if (data.servers) {
+            serverData.servers = data.servers;
+        }
+        if (data.players) {
+            serverData.players.online = data.players.online;
+        }
+        if (data.runningTime !== undefined) {
+            serverData.runningTime = data.runningTime;
+        }
+        if (data.totalRunningTime !== undefined) {
+            serverData.totalRunningTime = data.totalRunningTime;
+        }
+        if (data.gamemodeCount !== undefined) {
+            serverData.gamemodeCount = data.gamemodeCount;
+        }
+
+        if (forceShowMaintenance) {
+            serverData.isMaintenance = true;
+            // console.log('[DEBUG] "full": forceShowMaint TRUE. Calling displayMaintStatus.');
+            displayMaintenanceStatusOnIndex();
+        } else {
+            serverData.isMaintenance = (typeof isMaintenanceFromFull === 'boolean') ? isMaintenanceFromFull : false;
+            serverData.maintenanceStartTime = maintenanceStartTimeFromFull || null;
+            // console.log('[DEBUG] "full": forceShowMaint FALSE. serverData.isMaint set to:', serverData.isMaintenance);
+            
+            if (serverData.isMaintenance) {
+                // console.log('[DEBUG] "full": serverData.isMaint TRUE. Calling displayMaintStatus.');
+                displayMaintenanceStatusOnIndex();
+            } else {
+                // console.log('[DEBUG] "full": serverData.isMaint FALSE. Updating normal UI.');
+                updateTotalOnlinePlayers();
+                updateServerStatusBadges();
+                startRealtimeUptimeUpdates();
+            }
+        }
+        // console.log('[DEBUG] "full" message processing END.');
+    }
+
+    /**
+     * Handles 'maintenance_status_update' WebSocket messages for the index page.
+     * Updates maintenance state and refreshes UI accordingly.
+     * @param {object} data The parsed data object from the WebSocket message.
+     */
+    function handleIndexMaintenanceUpdate(data) {
+        const isEnteringMaintenance = (data.status === true || data.status === 'true');
+        // console.log('[DEBUG] Processing "maint_update". raw status:', data.status, 'isEnteringMaint:', isEnteringMaintenance);
+        serverData.maintenanceStartTime = data.maintenanceStartTime || null;
+
+        if (isEnteringMaintenance) {
+            forceShowMaintenance = true;
+            serverData.isMaintenance = true;
+            // console.log('[DEBUG] "maint_update" (true): Set forceShowMaint=T, serverData.isMaint=T. Calling displayMaintStatus.');
+            displayMaintenanceStatusOnIndex();
+        } else {
+            forceShowMaintenance = false;
+            serverData.isMaintenance = false;
+            // console.log('[DEBUG] "maint_update" (false): Set forceShowMaint=F, serverData.isMaint=F. Updating normal UI.');
+            updateTotalOnlinePlayers();
+            updateServerStatusBadges();
+            startRealtimeUptimeUpdates();
+        }
+        // console.log('[DEBUG] "maintenance_status_update" processing END.');
+    }
+
+    /**
+     * Handles 'players_update_add' and 'players_update_remove' WebSocket messages for the index page.
+     * Updates the total online player count if not in maintenance.
+     * @param {object} data The parsed data object from the WebSocket message.
+     */
+    function handleIndexPlayerCountUpdate(data) {
+        // console.log('[DEBUG] Processing "player_update". serverData.isMaint:', serverData.isMaintenance);
+        if (!serverData.isMaintenance && data.totalOnlinePlayers !== undefined) {
+            serverData.players.online = data.totalOnlinePlayers.toString();
+            updateTotalOnlinePlayers();
+        } else {
+            // console.log('[DEBUG] "player_update": In maint or no totalOnlinePlayers. No UI update for player count.');
+        }
+        // console.log('[DEBUG] "players_update_add/remove" processing END.');
+    }
+
+    /**
+     * Handles 'server_update' WebSocket messages for the index page.
+     * Updates specific server online counts and refreshes server status badges.
+     * @param {object} data The parsed data object from the WebSocket message.
+     */
+    function handleIndexServerUpdate(data) {
+        // console.log('[DEBUG] Processing "server_update". serverData.isMaint BEFORE:', serverData.isMaintenance);
+        if (data.servers) {
+             for (const serverName in data.servers) {
+                const newOnlineCount = data.servers[serverName]; // This is the direct count.
+                if (serverData.servers[serverName]) {
+                    // Server exists, update its online count.
+                    // The 'isOnline' status comes from the 'full' message and is not changed by 'server_update'.
+                    serverData.servers[serverName].online = newOnlineCount;
+                } else {
+                    // Server does not exist in our local cache (e.g., 'login', 'anticheat_test').
+                    // Initialize it.
+                    serverData.servers[serverName] = {
+                        online: newOnlineCount,
+                        isOnline: true // Default for a newly appearing server in this message type.
+                    };
+                    // console.log(`[DEBUG] "server_update": Server ${serverName} was not in serverData.servers. Initialized with count ${newOnlineCount}.`);
+                }
+            }
+        }
+        if (!serverData.isMaintenance) {
+            // console.log('[DEBUG] "server_update": NOT in maint. Calling updateServerStatusBadges.');
+            updateServerStatusBadges();
+        } else {
+            // console.log('[DEBUG] "server_update": IN maint. Manually setting dots to yellow.');
+            Object.values(statusElementsSimplified).forEach(server => {
+                if (server.dot) {
+                    server.dot.className = `${window.VOIDIX_SHARED_CONFIG.statusClasses.indexPage.dotBase} ${window.VOIDIX_SHARED_CONFIG.statusClasses.indexPage.colorYellow}`;
+                }
+            });
+        }
+        // console.log('[DEBUG] "server_update" processing END.');
+    }
+
+    /**
+     * Establishes and manages the WebSocket connection for receiving real-time server status
+     * updates for the index page. Handles connection, messages, errors, and reconnection logic.
+     */
     function connectWebSocket() {
         // Clear any existing timeout timer before attempting a new connection
         if (connectionTimeoutTimer) clearTimeout(connectionTimeoutTimer);
 
         ws = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
-        console.log('[DEBUG] Attempting to connect to Voidix WebSocket...');
+        // console.log('[DEBUG] Attempting to connect to Voidix WebSocket...');
         // setInitialLoadingStatus(); // Called by onclose/onerror or explicit UI update needed before connect
 
         // Start a 5-second timeout for the connection attempt
         connectionTimeoutTimer = setTimeout(() => {
             if (ws.readyState !== WebSocket.OPEN) {
-                console.log('[DEBUG] WebSocket connection attempt timed out after 5 seconds. Closing and retrying.');
+                // console.log('[DEBUG] WebSocket connection attempt timed out after 5 seconds. Closing and retrying.');
                 ws.close(); // This will trigger onclose, which handles reconnection logic
             }
         }, 5000); // 5 seconds timeout
 
         ws.onopen = () => {
             clearTimeout(connectionTimeoutTimer); // Connection successful, clear the timeout
-            console.log('[DEBUG] Voidix WebSocket connected (onopen)');
-            currentReconnectAttempts = 0; 
+            // console.log('[DEBUG] Voidix WebSocket connected (onopen)');
+            currentReconnectAttempts = 0;
         };
 
         ws.onmessage = (event) => {
             try {
                 const messageData = JSON.parse(event.data);
-                console.log('[DEBUG] WS MSG (index): টাইপ:', messageData.type, 'isMaint:', messageData.isMaintenance, 'status:', messageData.status, 'Payload:', JSON.stringify(messageData));
+                // Simplified logging
+                // console.log(`[DEBUG] Index WS MSG: type: ${messageData.type}, isMaint: ${messageData.isMaintenance}, status: ${messageData.status}`);
 
-                if (messageData.type === 'full') {
-                    console.log('[DEBUG] Processing "full". serverData.isMaint:', serverData.isMaintenance, 'forceShowMaint:', forceShowMaintenance);
-                    let isMaintenanceFromFull = messageData.isMaintenance;
-                    let maintenanceStartTimeFromFull = messageData.maintenanceStartTime;
-
-                    // Update non-maintenance related data first
-                    if (messageData.servers) {
-                        serverData.servers = messageData.servers;
-                    }
-                    if (messageData.players) {
-                        serverData.players.online = messageData.players.online;
-                    }
-                    if (messageData.runningTime !== undefined) {
-                        serverData.runningTime = messageData.runningTime;
-                    }
-                    if (messageData.totalRunningTime !== undefined) {
-                        serverData.totalRunningTime = messageData.totalRunningTime;
-                    }
-                    if (messageData.gamemodeCount !== undefined) { 
-                        serverData.gamemodeCount = messageData.gamemodeCount;
-                    }
-
-                    if (forceShowMaintenance) {
-                        serverData.isMaintenance = true;
-                        console.log('[DEBUG] "full": forceShowMaint TRUE. Calling displayMaintStatus.');
-                        displayMaintenanceStatusOnIndex(); 
-                    } else {
-                        serverData.isMaintenance = (typeof isMaintenanceFromFull === 'boolean') ? isMaintenanceFromFull : false;
-                        serverData.maintenanceStartTime = maintenanceStartTimeFromFull || null;
-                        console.log('[DEBUG] "full": forceShowMaint FALSE. serverData.isMaint set to:', serverData.isMaintenance);
-                        
-                        if (serverData.isMaintenance) {
-                            console.log('[DEBUG] "full": serverData.isMaint TRUE. Calling displayMaintStatus.');
-                            displayMaintenanceStatusOnIndex();
-                        } else {
-                            console.log('[DEBUG] "full": serverData.isMaint FALSE. Updating normal UI.');
-                            updateTotalOnlinePlayers();
-                            updateServerStatusBadges();
-                            startRealtimeUptimeUpdates();
-                        }
-                    }
-                    console.log('[DEBUG] "full" message processing END.'); // DEBUG
-                } else if (messageData.type === 'maintenance_status_update') {
-                    const isEnteringMaintenance = (messageData.status === true || messageData.status === 'true');
-                    console.log('[DEBUG] Processing "maint_update". raw status:', messageData.status, 'isEnteringMaint:', isEnteringMaintenance);
-                    serverData.maintenanceStartTime = messageData.maintenanceStartTime || null;
-
-                    if (isEnteringMaintenance) {
-                        forceShowMaintenance = true;
-                        serverData.isMaintenance = true;
-                        console.log('[DEBUG] "maint_update" (true): Set forceShowMaint=T, serverData.isMaint=T. Calling displayMaintStatus.');
-                        displayMaintenanceStatusOnIndex();
-                    } else { 
-                        forceShowMaintenance = false;
-                        serverData.isMaintenance = false;
-                        console.log('[DEBUG] "maint_update" (false): Set forceShowMaint=F, serverData.isMaint=F. Updating normal UI.');
-                        updateTotalOnlinePlayers(); 
-                        updateServerStatusBadges(); 
-                        startRealtimeUptimeUpdates(); 
-                    }
-                    console.log('[DEBUG] "maintenance_status_update" processing END.'); // DEBUG
-                } else if (messageData.type === 'players_update_add' || messageData.type === 'players_update_remove') {
-                    console.log('[DEBUG] Processing "player_update". serverData.isMaint:', serverData.isMaintenance);
-                    if (!serverData.isMaintenance && messageData.totalOnlinePlayers !== undefined) {
-                        serverData.players.online = messageData.totalOnlinePlayers.toString();
-                        updateTotalOnlinePlayers();
-                    } else {
-                        // console.log('[DEBUG] "player_update": In maint or no totalOnlinePlayers. No UI update for player count.');
-                    }
-                    console.log('[DEBUG] "players_update_add/remove" processing END.'); // DEBUG
-                } else if (messageData.type === 'server_update') {
-                    console.log('[DEBUG] Processing "server_update". serverData.isMaint BEFORE:', serverData.isMaintenance);
-                    if (messageData.servers) {
-                         for (const serverName in messageData.servers) {
-                            const newOnlineCount = messageData.servers[serverName]; // This is the direct count.
-                            if (serverData.servers[serverName]) {
-                                // Server exists, update its online count.
-                                // The 'isOnline' status comes from the 'full' message and is not changed by 'server_update'.
-                                serverData.servers[serverName].online = newOnlineCount;
-                            } else {
-                                // Server does not exist in our local cache (e.g., 'login', 'anticheat_test').
-                                // Initialize it.
-                                serverData.servers[serverName] = {
-                                    online: newOnlineCount,
-                                    isOnline: true // Default for a newly appearing server in this message type.
-                                };
-                                console.log(`[DEBUG] "server_update": Server ${serverName} was not in serverData.servers. Initialized with count ${newOnlineCount}.`);
-                            }
-                        }
-                    }
-                    if (!serverData.isMaintenance) {
-                        console.log('[DEBUG] "server_update": NOT in maint. Calling updateServerStatusBadges.');
-                        updateServerStatusBadges();
-                    } else {
-                        console.log('[DEBUG] "server_update": IN maint. Manually setting dots to yellow.');
-                        Object.values(statusElementsSimplified).forEach(server => {
-                            if (server.dot) {
-                                server.dot.className = `${window.VOIDIX_SHARED_CONFIG.statusClasses.indexPage.dotBase} ${window.VOIDIX_SHARED_CONFIG.statusClasses.indexPage.colorYellow}`;
-                            }
-                        });
-                    }
-                    console.log('[DEBUG] "server_update" processing END.'); // DEBUG
+                switch (messageData.type) {
+                    case 'full':
+                        handleIndexFullMessage(messageData);
+                        break;
+                    case 'maintenance_status_update':
+                        handleIndexMaintenanceUpdate(messageData);
+                        break;
+                    case 'players_update_add':
+                    case 'players_update_remove':
+                        handleIndexPlayerCountUpdate(messageData);
+                        break;
+                    case 'server_update':
+                        handleIndexServerUpdate(messageData);
+                        break;
+                    default:
+                        // console.warn(`[DEBUG] Index WS: Received unhandled message type: ${messageData.type}`);
                 }
 
             } catch (error) {
@@ -609,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ws.onclose = (event) => {
             clearTimeout(connectionTimeoutTimer); // Clear timeout on close
-            console.log(`[DEBUG] Voidix WebSocket disconnected (index.html). Code: ${event.code}, Reason: ${event.reason}.`);
+            // console.log(`[DEBUG] Voidix WebSocket disconnected (index.html). Code: ${event.code}, Reason: ${event.reason}.`);
             // setDisconnectedStatus(); // Removed: UI will be handled by reconnecting or permanent error status
 
             const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
@@ -625,16 +680,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                    : intervalSequence[intervalSequence.length - 1];
                 
                 currentReconnectAttempts++; // Increment for the next attempt's log and sequence index
-                console.log(`[DEBUG] Attempting reconnect ${currentReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000} seconds... (Index page)`);
+                // console.log(`[DEBUG] Attempting reconnect ${currentReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000} seconds... (Index page)`);
                 setTimeout(connectWebSocket, nextInterval);
             } else {
-                console.log(`[DEBUG] Max reconnect attempts (${maxAttempts}) reached. Stopping reconnection for index page.`);
+                // console.log(`[DEBUG] Max reconnect attempts (${maxAttempts}) reached. Stopping reconnection for index page.`);
                 setPermanentConnectionErrorStatus();
             }
         };
     }
 
-    // Sets UI elements on the index page to a "Reconnecting..." state.
+    /**
+     * Sets UI elements on the index page to a "Reconnecting..." state during WebSocket reconnection attempts.
+     * Handles maintenance mode by showing a smaller reconnecting hint.
+     */
     function setIndexReconnectingStatus() {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
         const reconnectingText = SHARED_CONFIG.statusTexts.reconnecting || '重连中...';
@@ -649,12 +707,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Potentially update a specific small indicator or log, but avoid cluttering maintenance UI.
             if (onlinePlayersCountEl.desktop && onlinePlayersCountEl.desktop.textContent === SHARED_CONFIG.statusTexts.maintenance) {
                  if(!onlinePlayersCountEl.desktop.textContent.includes(reconnectingText)){
-                    onlinePlayersCountEl.desktop.textContent += ` (${reconnectingText.substring(0,2)})`; // 小提示
+                    onlinePlayersCountEl.desktop.textContent += ` (${reconnectingText.substring(0,2)})`; // Brief hint
                  }
             }
              if (onlinePlayersCountEl.mobile && onlinePlayersCountEl.mobile.textContent === SHARED_CONFIG.statusTexts.maintenance) {
                  if(!onlinePlayersCountEl.mobile.textContent.includes(reconnectingText)){
-                    onlinePlayersCountEl.mobile.textContent += ` (${reconnectingText.substring(0,2)})`;
+                    onlinePlayersCountEl.mobile.textContent += ` (${reconnectingText.substring(0,2)})`; // Brief hint
                  }
             }
             return; // Keep maintenance UI dominant
@@ -694,7 +752,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Do NOT reset serverData here, to allow quick recovery if reconnect succeeds.
     }
 
-    // Sets all dynamic status elements on the index page to a 'disconnected' state and resets local data.
+    /**
+     * Sets all dynamic status elements on the index page to a 'disconnected' state.
+     * Resets local serverData to avoid showing stale information.
+     */
     function setDisconnectedStatus() {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
 
@@ -729,13 +790,15 @@ document.addEventListener('DOMContentLoaded', () => {
             players: { online: "0", currentPlayers: {} },
             runningTime: undefined,
             totalRunningTime: undefined,
-            gamemodeCount: "3", // Reset to original default "3"
-            isMaintenance: false,
-            maintenanceStartTime: null
+            isMaintenance: serverData.isMaintenance,
+            maintenanceStartTime: serverData.maintenanceStartTime
         };
     }
 
-    // Function to set UI to a permanent connection error state
+    /**
+     * Sets UI elements on the index page to a permanent connection error state
+     * after maximum WebSocket reconnection attempts are exhausted.
+     */
     function setPermanentConnectionErrorStatus() {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
         const errorText = SHARED_CONFIG.statusTexts.connectionFailedPermanently;
