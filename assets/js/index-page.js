@@ -566,16 +566,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[DEBUG] Processing "server_update". serverData.isMaint BEFORE:', serverData.isMaintenance);
                     if (messageData.servers) {
                          for (const serverName in messageData.servers) {
+                            const newOnlineCount = messageData.servers[serverName]; // This is the direct count.
                             if (serverData.servers[serverName]) {
-                                serverData.servers[serverName].online = messageData.servers[serverName].online;
-                                if(messageData.servers[serverName].isOnline !== undefined) {
-                                    serverData.servers[serverName].isOnline = messageData.servers[serverName].isOnline;
-                                }
+                                // Server exists, update its online count.
+                                // The 'isOnline' status comes from the 'full' message and is not changed by 'server_update'.
+                                serverData.servers[serverName].online = newOnlineCount;
                             } else {
+                                // Server does not exist in our local cache (e.g., 'login', 'anticheat_test').
+                                // Initialize it.
                                 serverData.servers[serverName] = {
-                                    online: messageData.servers[serverName].online,
-                                    isOnline: messageData.servers[serverName].isOnline !== undefined ? messageData.servers[serverName].isOnline : true
+                                    online: newOnlineCount,
+                                    isOnline: true // Default for a newly appearing server in this message type.
                                 };
+                                console.log(`[DEBUG] "server_update": Server ${serverName} was not in serverData.servers. Initialized with count ${newOnlineCount}.`);
                             }
                         }
                     }
