@@ -23,8 +23,11 @@ window.VOIDIX_SHARED_CONFIG = {
     // New shared items:
     websocket: {
         url: 'wss://server.voidix.top:10203',
-        reconnectInterval: 5000,
-        maxReconnectAttempts: 10
+        // reconnectInterval: 5000, // Replaced by reconnectIntervalSequence
+        maxReconnectAttempts: 10,
+        // Sequence of retry intervals in milliseconds. Matches maxReconnectAttempts length.
+        // e.g., 5s, 5s, 5s, 15s, 15s, 15s, 30s, 30s, 30s, 30s
+        reconnectIntervalSequence: [5000, 5000, 5000, 15000, 15000, 15000, 30000, 30000, 30000, 30000] 
     },
 
     timeConstants: {
@@ -42,24 +45,32 @@ window.VOIDIX_SHARED_CONFIG = {
         unknown: '状态未知',
         partialUnknown: '部分状态未知', // Used in status-page for aggregates
         lessThanAMinute: '<1分', // HTML entity for <
-        errorConnecting: '连接错误' // Generic connection error
+        errorConnecting: '连接错误', // Generic connection error
+        maintenance: '维护中',
+        maintenanceStartTimePrefix: '维护开始于: ',
+        connectionFailedPermanently: '连接失败，请检查网络或稍后重试。'
     },
 
     statusClasses: {
-        // For status.html specific styling
-        statusPage: {
-            dotOnline: 'status-dot online',
-            dotOffline: 'status-dot offline',
-            dotMaintenance: 'status-dot maintenance' // Typically for loading/unknown as well
-        },
-        // For index.html specific styling (Tailwind based)
+        // Base classes for status dots on the index page (applied to all server status dots)
         indexPage: {
-            dotBase: 'w-3 h-3 rounded-full',
-            colorGreen: 'bg-green-400',
-            colorRed: 'bg-red-400',
-            colorYellow: 'bg-yellow-400', // For loading/maintenance/unknown
-            animatePulse: 'animate-pulse' // Often combined with yellow
+            dotBase: 'w-4 h-4 flex-shrink-0 rounded-full',
+            colorGreen: 'bg-green-500',
+            colorYellow: 'bg-yellow-500',
+            colorRed: 'bg-red-500',
+            animatePulse: 'animate-pulse' // Added for pulsing animation
         },
+        // Base classes for status dots on the status page (more generic)
+        statusPage: {
+            dotOnline: 'w-3 h-3 rounded-full bg-green-500', // Green dot for online servers
+            dotOffline: 'w-3 h-3 rounded-full bg-red-500',   // Red dot for offline servers
+            dotMaintenance: 'w-3 h-3 rounded-full bg-yellow-500' // Yellow dot for maintenance/unknown
+        },
+        // Text color classes
+        textGreen: 'text-green-400',
+        textYellow: 'text-yellow-400', // Changed from 'font-mono text-yellow-400'
+        textRed: 'text-red-400',
+        // General classes for player list items
         // Common text styling classes (Tailwind based)
         textGreen: 'font-mono text-green-400',
         textRed: 'font-mono text-red-400',

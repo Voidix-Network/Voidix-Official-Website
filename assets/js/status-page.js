@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Remove existing mock fetch logic
 
     let ws;
+    let wsStatusPage;
+    let statusPageReconnectAttempts = 0;
+    let forceShowStatusPageMaintenance = false; // Flag for maintenance precedence
+    let statusPageConnectionTimeoutTimer = null; // Timer for status page connection timeout
 
     // Configuration mapping server keys to their respective HTML elements for status display.
     // - statusEl: The HTML element (usually a <span>) to display the server's online count/status text.
@@ -88,7 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
         servers: {},
         players: { currentPlayers: {} }, // To track player's current server for decrementing on remove
         runningTime: undefined,
-        totalRunningTime: undefined
+        totalRunningTime: undefined,
+        isMaintenance: false,
+        maintenanceStartTime: null
     };
 
     // Variables for real-time uptime tracking on status page
@@ -99,9 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const statusPageUptimeEl = document.getElementById('status-page-uptime');
     const statusPageTotalUptimeEl = document.getElementById('status-page-total-uptime');
+    const maintenanceInfoContainerEl = document.getElementById('maintenance-info-container');
+    const maintenanceInfoTextEl = document.getElementById('maintenance-info-text');
 
     // Sets the initial display text of server statuses and uptime fields to a loading state.
     function setInitialLoadingStatusOnStatusPage() {
+        if (currentServerData.isMaintenance) {
+            displayMaintenanceInfoOnStatusPage();
+            return; // Already displaying maintenance info
+        }
         Object.values(serverStatusListConfig).forEach(s => {
             if (s.statusEl) s.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading;
             if (s.dotEl) s.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
@@ -122,6 +134,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateServerDisplay(serverKey) {
         const serverInfo = serverStatusListConfig[serverKey];
         if (!serverInfo || !serverInfo.statusEl) return;
+
+        if (currentServerData.isMaintenance) {
+            serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.maintenance;
+            serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
+            if (serverInfo.dotEl) {
+                serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
+            }
+            return;
+        }
 
         let onlineCount = 0;
         let isEffectivelyOnline = false; // True if any underlying physical server is reported as isOnline=true
@@ -267,16 +288,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Establishes and manages the WebSocket connection for receiving real-time server status updates.
-    function connectWebSocket() {
-        ws = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
-        console.log('Attempting to connect to Voidix Status WebSocket...');
-        setInitialLoadingStatusOnStatusPage();
+    function connectStatusPageWebSocket() {
+        // Clear any existing timeout timer
+        if (statusPageConnectionTimeoutTimer) clearTimeout(statusPageConnectionTimeoutTimer);
 
-        ws.onopen = () => {
-            console.log('Voidix Status WebSocket connected');
+        wsStatusPage = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
+        console.log('[DEBUG] Attempting to connect to Voidix Status WebSocket (status-page)...');
+        
+        // if (currentServerData.isMaintenance) { 
+        //     displayMaintenanceInfoOnStatusPage();
+        // } else {
+        //     setInitialLoadingStatusOnStatusPage();
+        // }
+        // Initial status is typically loading, handled by setInitialLoadingStatusOnStatusPage unless connection is instant
+        // or an immediate error/close occurs triggering setDisconnectedStatusOnStatusPage.
+
+        statusPageConnectionTimeoutTimer = setTimeout(() => {
+            if (wsStatusPage.readyState !== WebSocket.OPEN) {
+                console.log('[DEBUG] Status Page WebSocket connection attempt timed out after 5 seconds. Closing and retrying.');
+                wsStatusPage.close(); // Triggers onclose for reconnect
+            }
+        }, 5000);
+
+        wsStatusPage.onopen = () => {
+            clearTimeout(statusPageConnectionTimeoutTimer); // Connection successful
+            console.log('[DEBUG] Voidix Status WebSocket connected (status-page onopen)');
+            statusPageReconnectAttempts = 0; // Reset on successful connection
         };
 
-        ws.onmessage = (event) => {
+        wsStatusPage.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
                 console.log('WS Message (status.html):', data);
@@ -286,6 +326,43 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentServerData.players = data.players || { currentPlayers: {} };
                     currentServerData.runningTime = data.runningTime;
                     currentServerData.totalRunningTime = data.totalRunningTime;
+                    // Handle isMaintenance and maintenanceStartTime from full message
+                    if (typeof data.isMaintenance === 'boolean') {
+                        currentServerData.isMaintenance = data.isMaintenance;
+                        currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
+                    } else {
+                         // If not present in full message, assume not in maintenance unless previously set
+                        // This handles the case where backend stops sending it when maintenance is false
+                        if (!currentServerData.isMaintenance) { // only reset if not already in maintenance
+                            currentServerData.isMaintenance = false;
+                            currentServerData.maintenanceStartTime = null;
+                        }
+                    }
+
+                    if (currentServerData.isMaintenance) {
+                        displayMaintenanceInfoOnStatusPage();
+                    } else {
+                        if (maintenanceInfoContainerEl) maintenanceInfoContainerEl.classList.add('hidden');
+                        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+                        startStatusPageRealtimeUptimeUpdates();
+                    }
+                } else if (data.type === 'maintenance_status_update') {
+                    // Correctly check for boolean true or string 'true' for robust handling
+                    const isEnteringMaintenance = (data.status === true || data.status === 'true');
+                    // console.log for status-page can be added if needed, similar to index-page.js
+                    currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
+                    
+                    if (isEnteringMaintenance) {
+                        displayMaintenanceInfoOnStatusPage(); // Update UI based on new maintenance state
+                    } else { // Exiting maintenance
+                        // Hide maintenance-specific info
+                        if (maintenanceInfoContainerEl) maintenanceInfoContainerEl.classList.add('hidden');
+                        
+                        // Attempt to restore previous state immediately using current (likely stale) data
+                        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+                        startStatusPageRealtimeUptimeUpdates();
+                        // No longer call setInitialLoadingStatusOnStatusPage() here.
+                    }
                 } else if (data.type === 'players_update_add') {
                     if (data.player && data.player.username) {
                         if (!currentServerData.players.currentPlayers) currentServerData.players.currentPlayers = {};
@@ -347,21 +424,56 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket Status Error (status.html):', error);
-            setDisconnectedStatusOnStatusPage();
+        wsStatusPage.onerror = (error) => {
+            clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on error
+            console.error('[DEBUG] WebSocket Status Error (status-page):', error);
+            setDisconnectedStatusOnStatusPage(); // Update UI to disconnected
         };
 
-        ws.onclose = (event) => {
-            console.log(`Voidix Status WebSocket disconnected (status.html). Code: ${event.code}, Reason: ${event.reason}. Attempting to reconnect in 5 seconds...`);
-            setDisconnectedStatusOnStatusPage();
-            setTimeout(connectWebSocket, window.VOIDIX_SHARED_CONFIG.websocket.reconnectInterval);
+        wsStatusPage.onclose = (event) => {
+            clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on close
+            console.log(`[DEBUG] Voidix Status WebSocket disconnected (status-page). Code: ${event.code}, Reason: ${event.reason}.`);
+            setDisconnectedStatusOnStatusPage(); // Update UI
+            
+            const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
+            const maxAttempts = SHARED_CONFIG.websocket.maxReconnectAttempts;
+            const intervalSequence = SHARED_CONFIG.websocket.reconnectIntervalSequence || [5000]; // Fallback
+
+            if (statusPageReconnectAttempts < maxAttempts) {
+                const nextInterval = intervalSequence[statusPageReconnectAttempts] !== undefined
+                                   ? intervalSequence[statusPageReconnectAttempts]
+                                   : intervalSequence[intervalSequence.length - 1];
+
+                statusPageReconnectAttempts++;
+                console.log(`[DEBUG] Status Page: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000} seconds...`);
+                setTimeout(connectStatusPageWebSocket, nextInterval);
+            } else {
+                console.log(`[DEBUG] Status Page: Max reconnect attempts (${maxAttempts}) reached. Stopping reconnection.`);
+            }
         };
     }
 
     // Sets all server status displays and uptime fields to a 'disconnected' state.
     // Clears existing server data.
     function setDisconnectedStatusOnStatusPage() {
+        if (currentServerData.isMaintenance) {
+            // If in maintenance, we might want to keep showing maintenance info
+            // or show a specific "maintenance & disconnected" message.
+            // For now, let displayMaintenanceInfoOnStatusPage handle it, which shows maintenance.
+            displayMaintenanceInfoOnStatusPage();
+            // Optionally, you could add a note about connection being lost during maintenance.
+            if (maintenanceInfoTextEl) {
+                let text = window.VOIDIX_SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix;
+                if (currentServerData.maintenanceStartTime) {
+                    text += formatMaintenanceStartTime(currentServerData.maintenanceStartTime);
+                } else {
+                    text = window.VOIDIX_SHARED_CONFIG.statusTexts.maintenance;
+                }
+                maintenanceInfoTextEl.textContent = text + " (连接已断开)";
+            }
+            return;
+        }
+
         Object.values(serverStatusListConfig).forEach(s => {
             if (s.statusEl) {
                 s.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.disconnected;
@@ -387,7 +499,103 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    connectWebSocket();
+    // Helper function to display maintenance information on the status page
+    function displayMaintenanceInfoOnStatusPage() {
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
+        if (maintenanceInfoContainerEl && maintenanceInfoTextEl) {
+            maintenanceInfoContainerEl.classList.remove('hidden');
+            let startTimeText = 'N/A';
+            if (currentServerData.maintenanceStartTime) {
+                try {
+                    startTimeText = new Date(parseInt(currentServerData.maintenanceStartTime)).toLocaleString();
+                } catch (e) { console.error("Error parsing maintenanceStartTime for status page:", e); }
+            }
+            maintenanceInfoTextEl.textContent = `${SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix}${startTimeText}`;
+        }
+
+        // Ensure these elements exist before trying to update them
+        const overallStatusTextEl = document.getElementById('overall-status-text');
+        const overallStatusDotEl = document.getElementById('overall-status-dot');
+        const totalOnlinePlayersEl = document.getElementById('total-online-players'); // Assuming this is the ID for the summary
+
+
+        // Update overall status text and dot
+        if (overallStatusTextEl) {
+            overallStatusTextEl.textContent = SHARED_CONFIG.statusTexts.maintenance;
+            overallStatusTextEl.className = `text-lg font-semibold ${SHARED_CONFIG.statusClasses.textYellow.split(' ')[0]}`;
+        }
+        if (overallStatusDotEl) {
+            overallStatusDotEl.className = `w-4 h-4 rounded-full ${SHARED_CONFIG.statusClasses.colorYellow}`;
+        }
+
+        // Update individual server cards
+        const serverCardContainer = document.getElementById('server-cards-container');
+        if (serverCardContainer) {
+            const serverCards = serverCardContainer.querySelectorAll('.status-card'); // More robust selector
+            serverCards.forEach(card => {
+                const statusTextEl = card.querySelector('.status-text');
+                const statusDotEl = card.querySelector('.status-dot');
+                const playerCountEl = card.querySelector('.player-count');
+
+                if (statusTextEl) {
+                    statusTextEl.textContent = SHARED_CONFIG.statusTexts.maintenance;
+                    statusTextEl.className = `status-text font-semibold ${SHARED_CONFIG.statusClasses.textYellow.split(' ')[0]}`;
+                }
+                if (statusDotEl) {
+                    statusDotEl.className = `status-dot w-3 h-3 rounded-full ${SHARED_CONFIG.statusClasses.colorYellow}`;
+                }
+                if (playerCountEl) {
+                    playerCountEl.textContent = '-';
+                }
+            });
+        }
+        
+        // Update player list to indicate maintenance or clear it
+        const playerListOnlineCountEl = document.getElementById('player-list-online-count');
+        const playerListContainerEl = document.getElementById('player-list-container');
+
+        if (playerListOnlineCountEl) playerListOnlineCountEl.textContent = '维护中';
+        if (playerListContainerEl) playerListContainerEl.innerHTML = '<div class="text-center text-gray-400">当前处于服务器维护状态。</div>';
+
+
+        // Update uptime displays
+        if (statusPageUptimeEl) statusPageUptimeEl.textContent = '-';
+        if (statusPageTotalUptimeEl) statusPageTotalUptimeEl.textContent = '-';
+        clearInterval(uptimeIntervalId_status);
+        
+        // Also ensure the "players online" summary is updated
+        if(totalOnlinePlayersEl) {
+            totalOnlinePlayersEl.textContent = SHARED_CONFIG.statusTexts.maintenance;
+            if(SHARED_CONFIG.statusClasses.textYellow) { // Check if textYellow exists
+                 totalOnlinePlayersEl.className = `text-2xl font-bold ${SHARED_CONFIG.statusClasses.textYellow.split(' ')[0]}`;
+            } else {
+                // Fallback or default class if textYellow is not in sharedConfig for some reason
+                totalOnlinePlayersEl.className = 'text-2xl font-bold text-yellow-400'; // Example fallback
+            }
+        }
+    }
+
+    // Helper function to format maintenance start time
+    function formatMaintenanceStartTime(timestamp) {
+        if (!timestamp) return '未知时间';
+        try {
+            const date = new Date(parseInt(timestamp));
+            if (isNaN(date.getTime())) return '无效时间戳';
+            // Format as YYYY-MM-DD HH:MM:SS
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        } catch (e) {
+            console.error("Error formatting maintenance start time:", e);
+            return '时间格式错误';
+        }
+    }
+
+    connectStatusPageWebSocket();
 
     // Accordion Logic
     // Sets up an accordion (collapsible section) for the given button, content, and icon elements.
