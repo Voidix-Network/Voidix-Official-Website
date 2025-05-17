@@ -145,22 +145,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let onlineCount = 0;
-        let isEffectivelyOnline = false; // True if any underlying physical server is reported as isOnline=true
-        let allKeysPresent = true; // True if all expected keys for this server group are in currentServerData
-
-        if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
-            console.log(`[DEBUG ${serverKey}] updateServerDisplay called. Initial currentServerData.servers:`, JSON.parse(JSON.stringify(currentServerData.servers)));
-        }
+        let isEffectivelyOnline = false;
+        let allKeysPresent = true;
 
         if (!currentServerData.servers || Object.keys(currentServerData.servers).length === 0) {
-            if (ws?.readyState !== WebSocket.OPEN) { // Still connecting or disconnected
+            if (wsStatusPage?.readyState !== WebSocket.OPEN) {
                 serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading;
                 if (serverInfo.dotEl) {
                     serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
                 }
-            }
-            if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
-                console.log(`[DEBUG ${serverKey}] No server data or WS not open. Status: ${serverInfo.statusEl.textContent}`);
             }
             return;
         }
@@ -168,24 +161,17 @@ document.addEventListener("DOMContentLoaded", () => {
         serverInfo.keys.forEach(subKey => {
             if (currentServerData.servers[subKey]) {
                 if (currentServerData.servers[subKey].isOnline) {
-                    isEffectivelyOnline = true; // The server type is considered online if at least one sub-server is online
+                    isEffectivelyOnline = true;
                     onlineCount += currentServerData.servers[subKey].online;
                 }
             } else {
                 allKeysPresent = false;
+                if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
+                    // This log is kept as it indicates a potential data issue for aggregates
+                    console.log(`[DEBUG Status WS] Aggregation warning for '${serverKey}': SubKey '${subKey}' NOT FOUND in currentServerData.servers.`);
+                }
             }
         });
-
-        if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
-            console.log(`[DEBUG ${serverKey}] Calculated: onlineCount=${onlineCount}, isEffectivelyOnline=${isEffectivelyOnline}, allKeysPresent=${allKeysPresent}`);
-            serverInfo.keys.forEach(subKey => {
-                if(currentServerData.servers[subKey]) {
-                    console.log(`[DEBUG ${serverKey}] SubKey ${subKey}: online=${currentServerData.servers[subKey].online}, isOnline=${currentServerData.servers[subKey].isOnline}`);
-                } else {
-                    console.log(`[DEBUG ${serverKey}] SubKey ${subKey}: NOT FOUND in currentServerData.servers`);
-                }
-            });
-        }
 
         if (!allKeysPresent && serverInfo.keys.length > 0) {
             serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.partialUnknown;
@@ -199,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (serverInfo.dotEl) {
                 serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOnline;
             }
-        } else { // Not effectively online (either all sub-servers are isOnline=false or keys are present but all offline)
+        } else { 
             let allKeysOffline = true;
             if (serverInfo.keys.length > 0) {
                 allKeysOffline = serverInfo.keys.every(subKey =>
@@ -207,21 +193,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
 
-            if(allKeysPresent && allKeysOffline && onlineCount === 0){ // Also check onlineCount to be sure
+            if(allKeysPresent && allKeysOffline && onlineCount === 0){
                 serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.offline;
                 serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textRed;
                 if (serverInfo.dotEl) {
                     serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOffline;
                 }
             } else if (!allKeysPresent && Object.keys(currentServerData.servers).length > 0) {
-                serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.unknown; // Some keys missing, but some data exists
+                serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.unknown; 
                 serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
                 if (serverInfo.dotEl) {
                     serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
                 }
-            } else { // Default to offline if no specific condition met but not effectively online, or if keys are present but all counts are zero
-                if (onlineCount > 0 && allKeysPresent) { // If counts are there but all marked offline, this is confusing.
-                    serverInfo.statusEl.textContent = `${onlineCount} ${window.VOIDIX_SHARED_CONFIG.statusTexts.online} (但服务器标记为离线)`; // Retain specific part of message
+            } else { 
+                if (onlineCount > 0 && allKeysPresent) { 
+                    serverInfo.statusEl.textContent = `${onlineCount} ${window.VOIDIX_SHARED_CONFIG.statusTexts.online} (但服务器标记为离线)`; 
                     serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
                 } else {
                     serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.offline;
@@ -231,9 +217,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOffline;
                 }
             }
-        }
-        if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
-            console.log(`[DEBUG ${serverKey}] Final status text: ${serverInfo.statusEl.textContent}`);
         }
     }
 
@@ -293,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (statusPageConnectionTimeoutTimer) clearTimeout(statusPageConnectionTimeoutTimer);
 
         wsStatusPage = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
-        console.log('[DEBUG] Attempting to connect to Voidix Status WebSocket (status-page)...');
+        console.log('[DEBUG] Status WS: Attempting connection...');
         
         // if (currentServerData.isMaintenance) { 
         //     displayMaintenanceInfoOnStatusPage();
@@ -305,21 +288,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         statusPageConnectionTimeoutTimer = setTimeout(() => {
             if (wsStatusPage.readyState !== WebSocket.OPEN) {
-                console.log('[DEBUG] Status Page WebSocket connection attempt timed out after 5 seconds. Closing and retrying.');
+                console.log('[DEBUG] Status WS: Connection attempt timed out. Closing and retrying.');
                 wsStatusPage.close(); // Triggers onclose for reconnect
             }
         }, 5000);
 
         wsStatusPage.onopen = () => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Connection successful
-            console.log('[DEBUG] Voidix Status WebSocket connected (status-page onopen)');
+            console.log('[DEBUG] Status WS: Connected (onopen)');
             statusPageReconnectAttempts = 0; // Reset on successful connection
         };
 
         wsStatusPage.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                console.log('WS Message (status.html):', data);
+                // Concise log for received messages
+                const commonPayloadPreview = `isMaint: ${data.isMaintenance}, status: ${data.status}`;
+                let specificPayloadPreview = '';
+                if (data.type === 'full') {
+                    specificPayloadPreview = `servers: ${data.servers ? Object.keys(data.servers).length : 'N/A'}, players: ${data.players ? data.players.online : 'N/A'}`;
+                } else if (data.type === 'server_update' && data.servers) {
+                    specificPayloadPreview = `updated_servers: ${Object.keys(data.servers).join(', ')}`;
+                } else if ((data.type === 'players_update_add' || data.type === 'players_update_remove') && data.player) {
+                    specificPayloadPreview = `player_uuid: ${data.player.uuid}`;
+                }
+                console.log(`[DEBUG] Status WS MSG: type: ${data.type}, ${commonPayloadPreview}, ${specificPayloadPreview}`);
+
 
                 if (data.type === 'full') {
                     currentServerData.servers = data.servers || {};
@@ -349,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else if (data.type === 'maintenance_status_update') {
                     // Correctly check for boolean true or string 'true' for robust handling
                     const isEnteringMaintenance = (data.status === true || data.status === 'true');
-                    // console.log for status-page can be added if needed, similar to index-page.js
+                    console.log(`[DEBUG] Status WS: Processing "maint_update". raw status: ${data.status}, isEnteringMaint: ${isEnteringMaintenance}`);
                     currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
                     
                     if (isEnteringMaintenance) {
@@ -370,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             uuid: data.player.uuid,
                             currentServer: 'unknown' // Will be updated by a subsequent server_update
                         };
-                        console.log('Player added to currentPlayers (status.html):', data.player.username);
+                        // console.log('Player added to currentPlayers (status.html):', data.player.username); // Reduced verbosity
                     }
                 } else if (data.type === 'players_update_remove') {
                     if (data.player && data.player.uuid) { // Check for UUID instead of username
@@ -391,9 +385,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                 currentServerData.servers[serverToDecrement].online = Math.max(0, currentServerData.servers[serverToDecrement].online - 1);
                             }
                             delete currentServerData.players.currentPlayers[playerUsernameToRemove];
-                            console.log('Player removed by UUID (status.html):', playerUsernameToRemove, data.player.uuid);
+                            // console.log('Player removed by UUID (status.html):', playerUsernameToRemove, data.player.uuid); // Reduced verbosity
                         } else {
-                            console.warn('Player to remove (by UUID) not found in local cache (status.html):', data.player.uuid);
+                            console.warn('[DEBUG] Status WS: Player to remove (by UUID) not found in local cache:', data.player.uuid);
                         }
                     }
                 } else if (data.type === 'server_update') {
@@ -420,19 +414,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 startStatusPageRealtimeUptimeUpdates(); // Start/Restart the real-time counter
 
             } catch (error) {
-                console.error('Error processing WebSocket message (status.html):', error);
+                console.error('[DEBUG] Status WS: Error processing message:', error, 'Raw data:', event.data);
             }
         };
 
         wsStatusPage.onerror = (error) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on error
-            console.error('[DEBUG] WebSocket Status Error (status-page):', error);
+            console.error('[DEBUG] Status WS: Error:', error);
             setDisconnectedStatusOnStatusPage(); // Update UI to disconnected
         };
 
         wsStatusPage.onclose = (event) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on close
-            console.log(`[DEBUG] Voidix Status WebSocket disconnected (status-page). Code: ${event.code}, Reason: ${event.reason}.`);
+            console.log(`[DEBUG] Status WS: Disconnected. Code: ${event.code}, Reason: "${event.reason}".`);
             setDisconnectedStatusOnStatusPage(); // Update UI
             
             const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
@@ -445,10 +439,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                    : intervalSequence[intervalSequence.length - 1];
 
                 statusPageReconnectAttempts++;
-                console.log(`[DEBUG] Status Page: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000} seconds...`);
+                console.log(`[DEBUG] Status WS: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000}s...`);
                 setTimeout(connectStatusPageWebSocket, nextInterval);
             } else {
-                console.log(`[DEBUG] Status Page: Max reconnect attempts (${maxAttempts}) reached. Stopping reconnection.`);
+                console.log(`[DEBUG] Status WS: Max reconnect attempts (${maxAttempts}) reached.`);
             }
         };
     }
@@ -507,8 +501,11 @@ document.addEventListener("DOMContentLoaded", () => {
             let startTimeText = 'N/A';
             if (currentServerData.maintenanceStartTime) {
                 try {
-                    startTimeText = new Date(parseInt(currentServerData.maintenanceStartTime)).toLocaleString();
-                } catch (e) { console.error("Error parsing maintenanceStartTime for status page:", e); }
+                    startTimeText = formatMaintenanceStartTime(currentServerData.maintenanceStartTime); // Use the refactored helper
+                } catch (e) { 
+                    console.error("[DEBUG] Status Page: Error parsing maintenanceStartTime for display:", e); 
+                    startTimeText = '时间解析错误';
+                }
             }
             maintenanceInfoTextEl.textContent = `${SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix}${startTimeText}`;
         }
@@ -590,7 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const seconds = date.getSeconds().toString().padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         } catch (e) {
-            console.error("Error formatting maintenance start time:", e);
+            console.error("[DEBUG] Status Page: Error formatting maintenance start time:", e);
             return '时间格式错误';
         }
     }
@@ -802,7 +799,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // For accordion triggers, we don't bind the tooltip mouseenter/mouseleave events
                     // to avoid conflict with the click/tap action for toggling the accordion on mobile.
                     // The accordion's own click handler (from setupAccordion) will manage its state.
-                    console.log('Skipping tooltip hover events for accordion trigger:', serverKey);
+                    // console.log('Skipping tooltip hover events for accordion trigger:', serverKey); // Reduced verbosity
                 } else {
                     // Bind tooltip events for non-accordion trigger elements
                     hoverTarget.addEventListener('mouseenter', (event) => {
@@ -820,7 +817,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     tooltip.addEventListener('mouseleave', hidePlayerTooltip);
                 }
             } else {
-                console.warn('Could not find hover target for serverKey:', serverKey, serverInfo.dotEl);
+                console.warn('[DEBUG] Status Page: Could not find tooltip hover target for serverKey:', serverKey, serverInfo.dotEl ? serverInfo.dotEl.id : 'No dotEl');
             }
         });
     }
