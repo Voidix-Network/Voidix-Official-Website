@@ -3,7 +3,7 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
-// Please copy the JavaScript code from index.html (lines approx. 835-1353) into this file. 
+// Please copy the JavaScript code from index.html (lines approx. 835-1353) into this file.
 document.addEventListener('DOMContentLoaded', () => {
     // Tabs (Java/Bedrock Connection)
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -148,9 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // WebSocket logic for Voidix Server Status
-    const RECONNECT_INTERVAL = 5000;
-    const MAX_RECONNECT_ATTEMPTS = 10;
-    const WS_URL = 'wss://server.voidix.top:10203'; // 更新 WebSocket URL
 
     let ws;
 
@@ -205,19 +202,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Sets the initial display text of various status elements to a 'loading' state.
     function setInitialLoadingStatus() {
-        if (onlinePlayersCountEl.desktop) onlinePlayersCountEl.desktop.textContent = '获取中...';
-        if (onlinePlayersCountEl.mobile) onlinePlayersCountEl.mobile.textContent = '获取中...';
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
+        if (onlinePlayersCountEl.desktop) onlinePlayersCountEl.desktop.textContent = SHARED_CONFIG.statusTexts.loading;
+        if (onlinePlayersCountEl.mobile) onlinePlayersCountEl.mobile.textContent = SHARED_CONFIG.statusTexts.loading;
 
         Object.values(statusElementsSimplified).forEach(server => {
-            if (server.badge) server.badge.textContent = '获取中...';
-            if (server.dot) server.dot.className = 'w-3 h-3 rounded-full bg-yellow-400 animate-pulse';
+            if (server.badge) server.badge.textContent = SHARED_CONFIG.statusTexts.loading;
+            if (server.dot) server.dot.className = `${SHARED_CONFIG.statusClasses.indexPage.dotBase} ${SHARED_CONFIG.statusClasses.indexPage.colorYellow} ${SHARED_CONFIG.statusClasses.indexPage.animatePulse}`;
         });
 
-        if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = '获取中...';
-        if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = '获取中...';
+        if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = SHARED_CONFIG.statusTexts.loading;
+        if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = SHARED_CONFIG.statusTexts.loading;
 
-        if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = '获取中...';
-        if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = '获取中...';
+        if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = SHARED_CONFIG.statusTexts.loading;
+        if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = SHARED_CONFIG.statusTexts.loading;
 
         // Clear any existing uptime interval and reset tracking variables
         clearInterval(uptimeIntervalId);
@@ -253,23 +251,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // Updates the status badges and dots for individual server types (minigame, survival, lobby) on the index page.
     function updateServerStatusBadges() {
         if (!serverData.servers) return;
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
 
-        // 使用简化版状态元素更新函数
+        // 使用简化版状态元素更新函数 (已使用共享配置重构)
         const updateStatusDisplay = (serverKey, elements, count, isOnline, isPartial = false) => {
-            const statusText = isPartial ? '部分未知' : (isOnline ? `${count} 在线` : '离线');
-            const dotClass = isPartial ? 'bg-yellow-400' : (isOnline ? 'bg-green-400' : 'bg-red-400');
+            const statusText = isPartial ? SHARED_CONFIG.statusTexts.partialUnknown : (isOnline ? `${count} ${SHARED_CONFIG.statusTexts.online}` : SHARED_CONFIG.statusTexts.offline);
+            const dotColorClass = isPartial ? SHARED_CONFIG.statusClasses.indexPage.colorYellow : (isOnline ? SHARED_CONFIG.statusClasses.indexPage.colorGreen : SHARED_CONFIG.statusClasses.indexPage.colorRed);
+            
+            let finalDotClass = `${SHARED_CONFIG.statusClasses.indexPage.dotBase} ${dotColorClass}`;
+            // Add pulse animation if the status is partial, or if the badge is showing "loading"
+            if (isPartial || (elements.badge && elements.badge.textContent === SHARED_CONFIG.statusTexts.loading)) {
+                finalDotClass += ` ${SHARED_CONFIG.statusClasses.indexPage.animatePulse}`;
+            }
+            // Note: If a server is online and stable, animatePulse should not be present.
+            // The setInitialLoadingStatus function and connectWebSocket's setInitialLoadingStatus call will apply pulse initially.
+            // This logic ensures pulse is primarily for loading/partial states.
 
             if (elements.badge) elements.badge.textContent = statusText;
-            if (elements.dot) elements.dot.className = `w-3 h-3 rounded-full ${dotClass} animate-pulse`;
+            if (elements.dot) elements.dot.className = finalDotClass;
         };
 
         // 小游戏服务器（汇总）
         let minigameOnlineCount = 0;
         let minigameIsEffectivelyOnline = false;
-        const minigameKeys = ["bedwars", "bedwars_solo", "bedwars_other", "knockioffa"];
-        let allMinigameKeysPresent = minigameKeys.every(key => serverData.servers[key] !== undefined);
+        let allMinigameKeysPresent = SHARED_CONFIG.minigameKeys.every(key => serverData.servers[key] !== undefined);
 
-        minigameKeys.forEach(key => {
+        SHARED_CONFIG.minigameKeys.forEach(key => {
             if (serverData.servers[key] && serverData.servers[key].isOnline) {
                 minigameOnlineCount += serverData.servers[key].online;
                 minigameIsEffectivelyOnline = true;
@@ -277,28 +284,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (Object.keys(serverData.servers).length === 0 && ws?.readyState !== WebSocket.OPEN) {
-            // 使用简化版状态元素
+            // Fallback if no server data yet and WS is not open (covered by setInitialLoadingStatus mostly)
             Object.values(statusElementsSimplified).forEach(server => {
-                if (server.badge) server.badge.textContent = '获取中...';
-                if (server.dot) server.dot.className = 'w-3 h-3 rounded-full bg-yellow-400 animate-pulse';
+                if (server.badge) server.badge.textContent = SHARED_CONFIG.statusTexts.loading;
+                if (server.dot) server.dot.className = `${SHARED_CONFIG.statusClasses.indexPage.dotBase} ${SHARED_CONFIG.statusClasses.indexPage.colorYellow} ${SHARED_CONFIG.statusClasses.indexPage.animatePulse}`;
             });
         } else {
-            updateStatusDisplay('minigame', statusElementsSimplified.minigame, minigameOnlineCount, minigameIsEffectivelyOnline, !allMinigameKeysPresent && Object.keys(serverData.servers).length > 0);
+            // Update Minigame Aggregate Status
+            updateStatusDisplay(
+                'minigame',
+                statusElementsSimplified.minigame,
+                minigameOnlineCount,
+                minigameIsEffectivelyOnline,
+                !allMinigameKeysPresent && Object.keys(serverData.servers).length > 0 // isPartial if not all keys present but some data exists
+            );
 
-            // 生存服务器
+            // Update Survival Server Status
             const survivalServer = serverData.servers.survival;
             if (survivalServer) {
                 updateStatusDisplay('survival', statusElementsSimplified.survival, survivalServer.online, survivalServer.isOnline);
-            } else if (Object.keys(serverData.servers).length > 0) {
-                updateStatusDisplay('survival', statusElementsSimplified.survival, 0, false, true); // 部分/未知
+            } else if (Object.keys(serverData.servers).length > 0 && serverData.servers.survival === undefined) {
+                // Data from other servers exists, but 'survival' key is specifically missing.
+                updateStatusDisplay('survival', statusElementsSimplified.survival, 0, false, true); // Mark as partial/unknown
+            } else if (ws?.readyState === WebSocket.OPEN && !survivalServer) {
+                 // WS is open, but no data for survival at all, treat as offline for now or loading if initial.
+                 // This case might be complex, assuming it's covered by initial loading or if server explicitly sends offline.
+                 // For safety, if no data and WS is open, and not covered by initial loading, assume unknown.
+                 // updateStatusDisplay('survival', statusElementsSimplified.survival, 0, false, true);
             }
 
-            // 大厅服务器
+
+            // Update Lobby Server Status
             const lobbyServer = serverData.servers.lobby;
             if (lobbyServer) {
                 updateStatusDisplay('lobby', statusElementsSimplified.lobby, lobbyServer.online, lobbyServer.isOnline);
-            } else if (Object.keys(serverData.servers).length > 0) {
-                updateStatusDisplay('lobby', statusElementsSimplified.lobby, 0, false, true); // 部分/未知
+            } else if (Object.keys(serverData.servers).length > 0 && serverData.servers.lobby === undefined) {
+                updateStatusDisplay('lobby', statusElementsSimplified.lobby, 0, false, true); // Mark as partial/unknown
             }
         }
     }
@@ -306,79 +327,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Updates the 'runningTime' and 'totalRunningTime' display elements.
     // Accepts current running time and total running time in seconds.
     function updateUptimeDisplay(currentRunningTime, currentTotalRunningTime) {
-        // Logic for "运行时间" (uptimeDaysEl)
-        if (currentRunningTime !== undefined && currentRunningTime !== null) {
-            let seconds = currentRunningTime;
-            // Ensure seconds is a number, attempt parsing if it's a string.
-            if (typeof seconds === 'string') {
-                const parsedSeconds = parseInt(seconds, 10);
-                seconds = isNaN(parsedSeconds) ? 0 : parsedSeconds; // Default to 0 if parsing fails
-            }
-            if (typeof seconds !== 'number') { // If still not a number (e.g. was undefined initially and not updated)
-                seconds = 0;
-            }
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
 
-            if (seconds < 0) seconds = 0; // Prevent negative display
-
-            const days = Math.floor(seconds / (3600 * 24));
-            const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            let formattedTime;
-
-            if (days >= 100) formattedTime = `${days}天`;
-            else if (days >= 1) formattedTime = `${days}天 ${hours}时`;
-            else if (hours > 0) formattedTime = `${hours}时 ${minutes}分`;
-            else if (seconds > 0 && seconds < 60) formattedTime = "<1分"; // Consistent with status page
-            else formattedTime = `${minutes}分`;
-
-            if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = formattedTime;
-            if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = formattedTime;
-        } else {
-            if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = '获取中...';
-            if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = '获取中...';
-        }
-
-        // Logic for "总运行时长" (gamemodeCountEl, which is repurposed for totalRunningTime)
-        if (currentTotalRunningTime !== undefined && currentTotalRunningTime !== null) {
-            let totalSeconds = currentTotalRunningTime;
-            // Ensure totalSeconds is a number
-            if (typeof totalSeconds === 'string') {
-                const parsedSeconds = parseInt(totalSeconds, 10);
-                totalSeconds = isNaN(parsedSeconds) ? 0 : parsedSeconds;
-            }
-            if (typeof totalSeconds !== 'number') {
-                totalSeconds = 0;
-            }
-
-            if (totalSeconds < 0) totalSeconds = 0;
-
-            let formattedTotalTime;
-            const secondsInYear = 365 * 24 * 3600;
-            const secondsInDay = 24 * 3600;
-
-            if (totalSeconds >= secondsInYear) {
-                const years = Math.floor(totalSeconds / secondsInYear);
-                const remainingSecondsAfterYears = totalSeconds % secondsInYear;
-                const days = Math.floor(remainingSecondsAfterYears / secondsInDay);
-                formattedTotalTime = `${years}年 ${days}日`;
-            } else { // Original logic for days, hours, minutes if less than a year
-                const days = Math.floor(totalSeconds / secondsInDay);
-                const hours = Math.floor((totalSeconds % secondsInDay) / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-                if (days >= 100) formattedTotalTime = `${days}天`;
-                else if (days >= 1) formattedTotalTime = `${days}天 ${hours}时`;
-                else if (hours > 0) formattedTotalTime = `${hours}时 ${minutes}分`;
-                else if (totalSeconds > 0 && totalSeconds < 60) formattedTotalTime = "<1分";
-                else formattedTotalTime = `${minutes}分`;
-            }
-
-            if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = formattedTotalTime;
-            if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = formattedTotalTime;
-        } else {
-            if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = '获取中...';
-            if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = '获取中...';
-        }
+        // Update "运行时间"
+        const formattedRunningTime = SHARED_CONFIG.formatDuration(currentRunningTime, 'default');
+        if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.innerHTML = formattedRunningTime; // Use innerHTML for <1min
+        if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.innerHTML = formattedRunningTime; // Use innerHTML for <1min
+        
+        // Update "总运行时长" (displayed in gamemodeCountEl elements)
+        const formattedTotalRunningTime = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'totalUptime');
+        if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.innerHTML = formattedTotalRunningTime; // Use innerHTML
+        if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.innerHTML = formattedTotalRunningTime; // Use innerHTML
     }
 
     // Starts or restarts the real-time uptime counter
@@ -421,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Establishes and manages the WebSocket connection for receiving real-time server status updates for the index page.
     function connectWebSocket() {
-        ws = new WebSocket(WS_URL);
+        ws = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
         console.log('Attempting to connect to Voidix WebSocket...');
         setInitialLoadingStatus();
 
@@ -492,40 +451,41 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onclose = (event) => {
             console.log(`Voidix WebSocket disconnected (index.html). Code: ${event.code}, Reason: ${event.reason}. Attempting to reconnect in 5 seconds...`);
             setDisconnectedStatus();
-            setTimeout(connectWebSocket, 5000);
+            setTimeout(connectWebSocket, window.VOIDIX_SHARED_CONFIG.websocket.reconnectInterval);
         };
     }
 
     // Sets all dynamic status elements on the index page to a 'disconnected' state and resets local data.
     function setDisconnectedStatus() {
-        if (onlinePlayersCountEl.desktop) onlinePlayersCountEl.desktop.textContent = '连接已断开';
-        if (onlinePlayersCountEl.mobile) onlinePlayersCountEl.mobile.textContent = '连接已断开';
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
+        if (onlinePlayersCountEl.desktop) onlinePlayersCountEl.desktop.textContent = SHARED_CONFIG.statusTexts.disconnected;
+        if (onlinePlayersCountEl.mobile) onlinePlayersCountEl.mobile.textContent = SHARED_CONFIG.statusTexts.disconnected;
 
         Object.values(statusElementsSimplified).forEach(server => {
-            if (server.badge) server.badge.textContent = '状态未知';
-            if (server.dot) server.dot.className = 'w-3 h-3 rounded-full bg-gray-500'; // Disconnected/Unknown color
+            if (server.badge) server.badge.textContent = SHARED_CONFIG.statusTexts.disconnected;
+            if (server.dot) server.dot.className = `${SHARED_CONFIG.statusClasses.indexPage.dotBase} ${SHARED_CONFIG.statusClasses.indexPage.colorRed}`;
         });
 
-        if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = '未知';
-        if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = '未知';
+        if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.textContent = SHARED_CONFIG.statusTexts.disconnected;
+        if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.textContent = SHARED_CONFIG.statusTexts.disconnected;
 
-        if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = '未知';
-        if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = '未知';
-
-        // 重置serverData，这样重新连接尝试时不会显示陈旧数据
-        serverData = {
-            servers: {},
-            players: { online: "0", currentPlayers: {} },
-            runningTime: undefined, // 重置运行时间
-            gamemodeCount: "3", // 默认游戏模式数量
-            totalRunningTime: undefined // 重置总运行时间
-        };
+        if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.textContent = SHARED_CONFIG.statusTexts.disconnected;
+        if (gamemodeCountEl.mobile) gamemodeCountEl.mobile.textContent = SHARED_CONFIG.statusTexts.disconnected;
 
         // Clear any existing uptime interval and reset tracking variables
         clearInterval(uptimeIntervalId);
         initialRunningTimeSeconds = null;
         initialTotalRunningTimeSeconds = null;
         lastUptimeUpdateTimestamp = null;
+
+        // Reset server data to avoid showing stale info on reconnect attempt
+        serverData = {
+            servers: {},
+            players: { online: "0", currentPlayers: {} },
+            runningTime: undefined,
+            totalRunningTime: undefined,
+            gamemodeCount: "3" // Reset to original default "3"
+        };
     }
 
     connectWebSocket();

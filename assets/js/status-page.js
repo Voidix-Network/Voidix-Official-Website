@@ -3,14 +3,11 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
-// Please copy the JavaScript code from status.html (lines approx. 430-936) into this file. 
+// Please copy the JavaScript code from status.html (lines approx. 430-936) into this file.
 // Specific script for status page to fetch server data
 document.addEventListener("DOMContentLoaded", () => {
     // Remove existing mock fetch logic
 
-    const RECONNECT_INTERVAL = 5000;
-    const MAX_RECONNECT_ATTEMPTS = 10;
-    const WS_URL = 'wss://server.voidix.top:10203';
     let ws;
 
     // Configuration mapping server keys to their respective HTML elements for status display.
@@ -23,50 +20,50 @@ document.addEventListener("DOMContentLoaded", () => {
         minigames_aggregate: {
             statusEl: document.getElementById("minigames-aggregate-status"), // Element ID in status.html
             dotEl: document.getElementById("minigames-aggregate-dot"),       // Element ID in status.html
-            keys: ["bedwars", "bedwars_solo", "bedwars_other", "lobby", "knockioffa"], // Server keys from WS data
-            name: "小游戏服务器 (minigame.voidix.top)"
+            keys: window.VOIDIX_SHARED_CONFIG.minigameKeys, // Server keys from WS data
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.minigames_aggregate
         },
         bedwars_sub_aggregate: {
             statusEl: document.getElementById("bedwars-sub-aggregate-status"),
             dotEl: null, // Set to null as the element is removed
-            keys: ["bedwars", "bedwars_solo", "bedwars_other"],
-            name: "起床战争 (总览)"
+            keys: ["bedwars", "bedwars_solo", "bedwars_other"], // This remains specific as it's a sub-aggregate
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_sub_aggregate
         },
         bedwars: {
             statusEl: document.getElementById("bedwars-status"),
             dotEl: document.getElementById("bedwars-dot"),
             keys: ["bedwars"],
-            name: "起床大厅 (bedwars)"
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars
         },
         bedwars_solo: {
             statusEl: document.getElementById("bedwars_solo-status"),
             dotEl: document.getElementById("bedwars_solo-dot"),
             keys: ["bedwars_solo"],
-            name: "起床战争 (单人)"
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_solo
         },
         bedwars_other: {
             statusEl: document.getElementById("bedwars_other-status"),
             dotEl: document.getElementById("bedwars_other-dot"),
             keys: ["bedwars_other"],
-            name: "起床战争 (其他)"
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_other
         },
         survival: {
             statusEl: document.getElementById("survival-live-status"),
             dotEl: document.getElementById("survival-dot"), // Assuming this ID will be on the survival dot
             keys: ["survival"],
-            name: "生存服务器"
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.survival
         },
         lobby: {
             statusEl: document.getElementById("lobby-live-status"),
             dotEl: document.querySelector("#server-status-list > div:last-child .status-dot"), // More robust selector needed if survival isn't last before lobby or if lobby isn't last overall. Let's give lobby dot an ID.
             keys: ["lobby"],
-            name: "大厅服务器"
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.lobby
         },
         knockioffa: {
             statusEl: document.getElementById("knockioffa-live-status"),
             dotEl: document.getElementById("knockioffa-dot"),
             keys: ["knockioffa"],
-            name: "Knockioffa"
+            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.knockioffa
         },
     };
 
@@ -106,11 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Sets the initial display text of server statuses and uptime fields to a loading state.
     function setInitialLoadingStatusOnStatusPage() {
         Object.values(serverStatusListConfig).forEach(s => {
-            if (s.statusEl) s.statusEl.textContent = '正在获取...';
-            if (s.dotEl) s.dotEl.className = 'status-dot maintenance';
+            if (s.statusEl) s.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading;
+            if (s.dotEl) s.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
         });
-        if (statusPageUptimeEl) statusPageUptimeEl.textContent = '获取中...';
-        if (statusPageTotalUptimeEl) statusPageTotalUptimeEl.textContent = '获取中...';
+        if (statusPageUptimeEl) statusPageUptimeEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading;
+        if (statusPageTotalUptimeEl) statusPageTotalUptimeEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading;
 
         // Clear any existing uptime interval and reset tracking variables for status page
         clearInterval(uptimeIntervalId_status);
@@ -136,9 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!currentServerData.servers || Object.keys(currentServerData.servers).length === 0) {
             if (ws?.readyState !== WebSocket.OPEN) { // Still connecting or disconnected
-                serverInfo.statusEl.textContent = '获取中...';
+                serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading;
                 if (serverInfo.dotEl) {
-                    serverInfo.dotEl.className = 'status-dot maintenance';
+                    serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
                 }
             }
             if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
@@ -170,16 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!allKeysPresent && serverInfo.keys.length > 0) {
-            serverInfo.statusEl.textContent = "部分状态未知";
-            serverInfo.statusEl.className = "font-mono text-yellow-400";
+            serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.partialUnknown;
+            serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
             if (serverInfo.dotEl) {
-                serverInfo.dotEl.className = "status-dot maintenance";
+                serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
             }
         } else if (isEffectivelyOnline) {
-            serverInfo.statusEl.textContent = `${onlineCount} 在线`;
-            serverInfo.statusEl.className = "font-mono text-green-400";
+            serverInfo.statusEl.textContent = `${onlineCount} ${window.VOIDIX_SHARED_CONFIG.statusTexts.online}`;
+            serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textGreen;
             if (serverInfo.dotEl) {
-                serverInfo.dotEl.className = "status-dot online";
+                serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOnline;
             }
         } else { // Not effectively online (either all sub-servers are isOnline=false or keys are present but all offline)
             let allKeysOffline = true;
@@ -190,28 +187,27 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if(allKeysPresent && allKeysOffline && onlineCount === 0){ // Also check onlineCount to be sure
-                serverInfo.statusEl.textContent = "离线";
-                serverInfo.statusEl.className = "font-mono text-red-400";
+                serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.offline;
+                serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textRed;
                 if (serverInfo.dotEl) {
-                    serverInfo.dotEl.className = "status-dot offline";
+                    serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOffline;
                 }
             } else if (!allKeysPresent && Object.keys(currentServerData.servers).length > 0) {
-                serverInfo.statusEl.textContent = "状态未知"; // Some keys missing, but some data exists
-                serverInfo.statusEl.className = "font-mono text-yellow-400";
+                serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.unknown; // Some keys missing, but some data exists
+                serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
                 if (serverInfo.dotEl) {
-                    serverInfo.dotEl.className = "status-dot maintenance";
+                    serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotMaintenance;
                 }
             } else { // Default to offline if no specific condition met but not effectively online, or if keys are present but all counts are zero
-                serverInfo.statusEl.textContent = "离线"; // `${onlineCount} 在线` might be more accurate if onlineCount > 0 but isEffectivelyOnline is false due to isOnline flags
                 if (onlineCount > 0 && allKeysPresent) { // If counts are there but all marked offline, this is confusing.
-                    serverInfo.statusEl.textContent = `${onlineCount} 在线 (但服务器标记为离线)`;
-                    serverInfo.statusEl.className = "font-mono text-yellow-400";
+                    serverInfo.statusEl.textContent = `${onlineCount} ${window.VOIDIX_SHARED_CONFIG.statusTexts.online} (但服务器标记为离线)`; // Retain specific part of message
+                    serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
                 } else {
-                    serverInfo.statusEl.textContent = "离线";
-                    serverInfo.statusEl.className = "font-mono text-red-400";
+                    serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.offline;
+                    serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textRed;
                 }
                 if (serverInfo.dotEl) {
-                    serverInfo.dotEl.className = "status-dot offline";
+                    serverInfo.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOffline;
                 }
             }
         }
@@ -224,61 +220,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Formats seconds into days/hours/minutes or years/days as appropriate.
     // Accepts current running time and total running time in seconds.
     function updateStatusPageUptimeDisplays(currentRunningTime, currentTotalRunningTime) {
-        // Logic for "运行时间" (status-page-uptime)
-        if (currentRunningTime !== undefined && currentRunningTime !== null && statusPageUptimeEl) {
-            let seconds = currentRunningTime;
-            if (typeof seconds === 'string') {
-                const parsedSeconds = parseInt(seconds, 10);
-                seconds = isNaN(parsedSeconds) ? 0 : parsedSeconds;
-            }
-            if (typeof seconds !== 'number') seconds = 0;
-            if (seconds < 0) seconds = 0;
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG; // Alias for brevity
 
-            const days = Math.floor(seconds / (3600 * 24));
-            const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            let formattedTime;
-            if (days >= 100) formattedTime = `${days}天`;
-            else if (days >= 1) formattedTime = `${days}天 ${hours}时`;
-            else if (hours > 0) formattedTime = `${hours}时 ${minutes}分`;
-            else if (seconds > 0 && seconds < 60) formattedTime = "<1分";
-            else formattedTime = `${minutes}分`;
-            statusPageUptimeEl.textContent = formattedTime;
-        } else if (statusPageUptimeEl) {
-            statusPageUptimeEl.textContent = '获取中...';
+        if (statusPageUptimeEl) {
+            statusPageUptimeEl.innerHTML = SHARED_CONFIG.formatDuration(currentRunningTime, 'default'); // Use innerHTML for <1min
         }
+        // The original 'else if' was redundant if currentRunningTime is undefined, formatDuration handles it.
+        // However, to be safe, if the element exists but formatDuration might not be called due to null/undefined,
+        // explicitly set loading. formatDuration already returns loading text for undefined/null.
 
-        // Logic for "总运行时长" (status-page-total-uptime)
-        if (currentTotalRunningTime !== undefined && currentTotalRunningTime !== null && statusPageTotalUptimeEl) {
-            let totalSeconds = currentTotalRunningTime;
-            if (typeof totalSeconds === 'string') {
-                const parsedSeconds = parseInt(totalSeconds, 10);
-                totalSeconds = isNaN(parsedSeconds) ? 0 : parsedSeconds;
-            }
-            if (typeof totalSeconds !== 'number') totalSeconds = 0;
-            if (totalSeconds < 0) totalSeconds = 0;
-
-            let formattedTotalTime;
-            const secondsInYear = 365 * 24 * 3600;
-            const secondsInDay = 24 * 3600;
-            if (totalSeconds >= secondsInYear) {
-                const years = Math.floor(totalSeconds / secondsInYear);
-                const remainingSecondsAfterYears = totalSeconds % secondsInYear;
-                const days = Math.floor(remainingSecondsAfterYears / secondsInDay);
-                formattedTotalTime = `${years}年 ${days}日`;
-            } else {
-                const days = Math.floor(totalSeconds / secondsInDay);
-                const hours = Math.floor((totalSeconds % secondsInDay) / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                if (days >= 100) formattedTotalTime = `${days}天`;
-                else if (days >= 1) formattedTotalTime = `${days}天 ${hours}时`;
-                else if (hours > 0) formattedTotalTime = `${hours}时 ${minutes}分`;
-                else if (totalSeconds > 0 && totalSeconds < 60) formattedTotalTime = "<1分";
-                else formattedTotalTime = `${minutes}分`;
-            }
-            statusPageTotalUptimeEl.textContent = formattedTotalTime;
-        } else if (statusPageTotalUptimeEl) {
-            statusPageTotalUptimeEl.textContent = '获取中...';
+        if (statusPageTotalUptimeEl) {
+            statusPageTotalUptimeEl.innerHTML = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'totalUptime'); // Use innerHTML
         }
     }
 
@@ -316,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Establishes and manages the WebSocket connection for receiving real-time server status updates.
     function connectWebSocket() {
-        ws = new WebSocket(WS_URL);
+        ws = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
         console.log('Attempting to connect to Voidix Status WebSocket...');
         setInitialLoadingStatusOnStatusPage();
 
@@ -403,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ws.onclose = (event) => {
             console.log(`Voidix Status WebSocket disconnected (status.html). Code: ${event.code}, Reason: ${event.reason}. Attempting to reconnect in 5 seconds...`);
             setDisconnectedStatusOnStatusPage();
-            setTimeout(connectWebSocket, 5000);
+            setTimeout(connectWebSocket, window.VOIDIX_SHARED_CONFIG.websocket.reconnectInterval);
         };
     }
 
@@ -412,13 +364,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function setDisconnectedStatusOnStatusPage() {
         Object.values(serverStatusListConfig).forEach(s => {
             if (s.statusEl) {
-                s.statusEl.textContent = '连接已断开';
-                s.statusEl.className = 'font-mono text-red-400';
+                s.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.disconnected;
+                s.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textRed;
             }
-            if (s.dotEl) s.dotEl.className = 'status-dot offline';
+            if (s.dotEl) s.dotEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.statusPage.dotOffline;
         });
-        if (statusPageUptimeEl) statusPageUptimeEl.textContent = '未知';
-        if (statusPageTotalUptimeEl) statusPageTotalUptimeEl.textContent = '未知';
+        if (statusPageUptimeEl) statusPageUptimeEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.unknown;
+        if (statusPageTotalUptimeEl) statusPageTotalUptimeEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.unknown;
 
         // Clear any existing uptime interval and reset tracking variables for status page
         clearInterval(uptimeIntervalId_status);

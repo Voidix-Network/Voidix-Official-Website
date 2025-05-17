@@ -117,6 +117,18 @@
         <!-- Server status list, dynamically updated by assets/js/status-page.js -->
         <div class="space-y-3 sm:space-y-4" id="server-status-list">
 
+          <!-- Lobby Server -->
+          <!-- Status dot and text updated by assets/js/status-page.js -->
+          <div class="p-3 sm:p-4 bg-[#1a2541]/90 rounded-lg">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex items-center min-w-0 mb-1 sm:mb-0">
+                <span class="status-dot online flex-shrink-0" id="lobby-dot"></span>
+                <span class="truncate text-sm sm:text-base">小游戏大厅</span>
+              </div>
+              <span class="font-mono text-green-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="lobby-live-status">正在获取...</span>
+            </div>
+          </div>
+
           <!-- Static Header: 小游戏服务器 (总览) -->
           <!-- Status dot and text (e.g., 'X 在线') updated by assets/js/status-page.js -->
           <div class="p-3 sm:p-4 bg-[#1a2541]/90 rounded-lg" id="minigames-overall-header">
@@ -133,18 +145,7 @@
           <!-- Container for minigame sub-sections (e.g., Bedwars accordion) -->
           <div id="minigames-content-container">
             <div class="pt-1 space-y-1 sm:space-y-2 pl-3 sm:pl-4">
-
-              <!-- Lobby Server -->
-              <!-- Status dot and text updated by assets/js/status-page.js -->
-              <div class="p-3 sm:p-4 bg-[#1a2541]/90 rounded-lg">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <div class="flex items-center min-w-0 mb-1 sm:mb-0">
-                    <span class="status-dot online flex-shrink-0" id="lobby-dot"></span>
-                    <span class="truncate text-sm sm:text-base">大厅服务器</span>
-                  </div>
-                  <span class="font-mono text-green-400 text-xs sm:text-sm ml-[calc(12px+8px)] sm:ml-0" id="lobby-live-status">正在获取...</span>
-                </div>
-              </div>
+              <!-- Knockioffa Server and Bedwars Accordion will follow here -->
 
               <!-- Knockioffa Server -->
               <!-- Status dot and text updated by assets/js/status-page.js -->
@@ -380,7 +381,8 @@
     </div>
   </div>
 </footer>
-<script defer src="assets/js/status-page.js"></script>
+    <script defer src="assets/js/sharedConfig.js"></script>
+    <script defer src="assets/js/status-page.js"></script>
 <script defer src="assets/js/script.js"></script>
 <script defer src="assets/js/menu.js"></script>
 <!-- General script for navbar, framer motion etc. -->
