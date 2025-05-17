@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateStatusDisplay = (serverKey, elements, count, isOnline, isPartial = false) => {
             const statusText = isPartial ? SHARED_CONFIG.statusTexts.partialUnknown : (isOnline ? `${count} ${SHARED_CONFIG.statusTexts.online}` : SHARED_CONFIG.statusTexts.offline);
             const dotColorClass = isPartial ? SHARED_CONFIG.statusClasses.indexPage.colorYellow : (isOnline ? SHARED_CONFIG.statusClasses.indexPage.colorGreen : SHARED_CONFIG.statusClasses.indexPage.colorRed);
-            
+
             let finalDotClass = `${SHARED_CONFIG.statusClasses.indexPage.dotBase} ${dotColorClass}`;
             // Add pulse animation if the status is partial, or if the badge is showing "loading"
             if (isPartial || (elements.badge && elements.badge.textContent === SHARED_CONFIG.statusTexts.loading)) {
@@ -307,10 +307,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Data from other servers exists, but 'survival' key is specifically missing.
                 updateStatusDisplay('survival', statusElementsSimplified.survival, 0, false, true); // Mark as partial/unknown
             } else if (ws?.readyState === WebSocket.OPEN && !survivalServer) {
-                 // WS is open, but no data for survival at all, treat as offline for now or loading if initial.
-                 // This case might be complex, assuming it's covered by initial loading or if server explicitly sends offline.
-                 // For safety, if no data and WS is open, and not covered by initial loading, assume unknown.
-                 // updateStatusDisplay('survival', statusElementsSimplified.survival, 0, false, true);
+                // WS is open, but no data for survival at all, treat as offline for now or loading if initial.
+                // This case might be complex, assuming it's covered by initial loading or if server explicitly sends offline.
+                // For safety, if no data and WS is open, and not covered by initial loading, assume unknown.
+                // updateStatusDisplay('survival', statusElementsSimplified.survival, 0, false, true);
             }
 
 
@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formattedRunningTime = SHARED_CONFIG.formatDuration(currentRunningTime, 'default');
         if (uptimeDaysEl.desktop) uptimeDaysEl.desktop.innerHTML = formattedRunningTime; // Use innerHTML for <1min
         if (uptimeDaysEl.mobile) uptimeDaysEl.mobile.innerHTML = formattedRunningTime; // Use innerHTML for <1min
-        
+
         // Update "总运行时长" (displayed in gamemodeCountEl elements)
         const formattedTotalRunningTime = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'totalUptime');
         if (gamemodeCountEl.desktop) gamemodeCountEl.desktop.innerHTML = formattedTotalRunningTime; // Use innerHTML

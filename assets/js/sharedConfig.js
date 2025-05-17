@@ -76,7 +76,7 @@ window.VOIDIX_SHARED_CONFIG = {
         const shared = window.VOIDIX_SHARED_CONFIG; // Alias for easier access to other shared props
 
         if (totalSeconds === undefined || totalSeconds === null) return shared.statusTexts.loading;
-        
+
         let numericSeconds = parseFloat(totalSeconds); // Allow string input
         if (isNaN(numericSeconds) || numericSeconds < 0) {
             numericSeconds = 0; // Default to 0 if invalid or negative

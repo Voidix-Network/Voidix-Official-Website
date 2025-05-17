@@ -24,174 +24,174 @@
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter'] flex flex-col min-h-screen">
-    <!-- 导航栏 -->
-    <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <a class="flex items-center" href="index.html">
-                    <span class="text-2xl font-bold gradient-text">VOIDIX</span>
-                </a>
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-baseline space-x-8">
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                       href="index.html">首页</a>
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                       href="status.html">服务器状态</a>
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                       href="chat.html">在线聊天</a>
-                    <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                       href="faq.html">常见问题</a>
-                </div>
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu-items" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
-                        <span class="sr-only">打开主菜单</span>
-                        <svg id="hamburger-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path class="line line1 transition-all duration-300 ease-in-out origin-center" d="M4 6h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                            <path class="line line2 transition-all duration-300 ease-in-out origin-center" d="M4 12h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                            <path class="line line3 transition-all duration-300 ease-in-out origin-center" d="M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu Dropdown -->
-        <div class="md:hidden max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="mobile-menu-items">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">首页</a>
-                <a href="status.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">服务器状态</a>
-                <a href="chat.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">在线聊天</a>
-                <a href="faq.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">常见问题</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 错误内容区 -->
-    <main class="flex-grow flex items-center justify-center pt-16 pb-20 px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-md w-full">
-            <div class="text-9xl font-bold gradient-text mb-6">Oops!</div>
-            <h1 class="text-3xl sm:text-4xl font-semibold text-white mb-4">发生了一些错误</h1>
-            <p class="text-gray-400 mb-8 text-lg">
-                该页面可能已被移动、删除，或者它根本不存在。
-                <br />或者服务器可能遇到了临时问题。
-            </p>
-            <a href="index.html"
-               class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition-colors duration-150 ease-in-out">
-                返回首页
+<!-- 导航栏 -->
+<nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <a class="flex items-center" href="index.html">
+                <span class="text-2xl font-bold gradient-text">VOIDIX</span>
             </a>
-            <p class="mt-12 text-sm text-gray-500">
-                如果您认为这是一个错误，请通过 <a href="bug-report.html" class="text-indigo-400 hover:underline">Bug反馈</a> 联系我们。
-            </p>
-        </div>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="bg-gray-800/50 border-t border-gray-700 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
-                <div>
-                    <h3 class="text-lg font-bold mb-6">Voidix</h3>
-                    <p class="text-gray-400 text-sm">
-                        下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar的精神。</p>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">快速链接</h3>
-                    <ul class="space-y-3">
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#about">关于我们</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#servers">服务器</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#versions">跨版本</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#team">管理团队</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">技术支持</h3>
-                    <ul class="space-y-3">
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html">常见问题</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                               href="bug-report.html">Bug反馈</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                               href="status.html">状态页</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">联系我们</h3>
-                    <ul class="space-y-3">
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                               href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr" target="_blank">QQ群: 186438621</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                               href="https://discord.gg/uXC3XrwVrk" target="_blank">Discord</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                               href="https://github.com/Voidix-Network/" target="_blank">GitHub</a>
-                        </li>
-                        <li>
-                            <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                               href="mailto:support@voidix.top">support@voidix.top</a>
-                        </li>
-                    </ul>
-                </div>
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-baseline space-x-8">
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="index.html">首页</a>
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="status.html">服务器状态</a>
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="chat.html">在线聊天</a>
+                <a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                   href="faq.html">常见问题</a>
             </div>
-            <div class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
-                <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" aria-expanded="false" aria-controls="mobile-menu-items" class="text-gray-300 hover:text-white focus:outline-none p-2 rounded-md">
+                    <span class="sr-only">打开主菜单</span>
+                    <svg id="hamburger-icon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path class="line line1 transition-all duration-300 ease-in-out origin-center" d="M4 6h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <path class="line line2 transition-all duration-300 ease-in-out origin-center" d="M4 12h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <path class="line line3 transition-all duration-300 ease-in-out origin-center" d="M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
             </div>
         </div>
-    </footer>
-    <script>
-        // 移动菜单的通用切换逻辑 (与 index.html 保持一致)
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenuItems = document.getElementById('mobile-menu-items');
-            const hamburgerIcon = document.getElementById('hamburger-icon');
-            const line1 = hamburgerIcon ? hamburgerIcon.querySelector('.line1') : null;
-            const line2 = hamburgerIcon ? hamburgerIcon.querySelector('.line2') : null;
-            const line3 = hamburgerIcon ? hamburgerIcon.querySelector('.line3') : null;
+    </div>
+    <!-- Mobile Menu Dropdown -->
+    <div class="md:hidden max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out" id="mobile-menu-items">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="index.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">首页</a>
+            <a href="status.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">服务器状态</a>
+            <a href="chat.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">在线聊天</a>
+            <a href="faq.html" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors">常见问题</a>
+        </div>
+    </div>
+</nav>
 
-            if (mobileMenuButton && mobileMenuItems && line1 && line2 && line3) {
-                mobileMenuButton.addEventListener('click', () => {
-                    const isOpen = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-                    
-                    if (isOpen) {
-                        mobileMenuItems.classList.add('max-h-0', 'opacity-0');
-                        mobileMenuItems.classList.remove('max-h-96', 'opacity-100', 'py-2'); // py-2 from previous error page, index uses max-h-96
-                        mobileMenuButton.setAttribute('aria-expanded', 'false');
-                        // Hamburger icon
-                        line1.classList.remove('translate-y-[6px]', 'rotate-45');
-                        line1.style.transform = ''; // Clear direct style if any
-                        line2.classList.remove('opacity-0');
-                        line2.style.opacity = ''; // Clear direct style
-                        line3.classList.remove('translate-y-[-6px]', '-rotate-45');
-                        line3.style.transform = ''; // Clear direct style
-                    } else {
-                        mobileMenuItems.classList.remove('max-h-0', 'opacity-0');
-                        mobileMenuItems.classList.add('max-h-96', 'opacity-100', 'py-2'); // Using max-h-96 from index, and py-2 for padding
-                        mobileMenuButton.setAttribute('aria-expanded', 'true');
-                        // X icon
-                        line1.classList.add('translate-y-[6px]', 'rotate-45');
-                        line2.classList.add('opacity-0');
-                        line3.classList.add('translate-y-[-6px]', '-rotate-45');
-                    }
-                });
-            }
-        });
-    </script>
+<!-- 错误内容区 -->
+<main class="flex-grow flex items-center justify-center pt-16 pb-20 px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-md w-full">
+        <div class="text-9xl font-bold gradient-text mb-6">Oops!</div>
+        <h1 class="text-3xl sm:text-4xl font-semibold text-white mb-4">发生了一些错误</h1>
+        <p class="text-gray-400 mb-8 text-lg">
+            该页面可能已被移动、删除，或者它根本不存在。
+            <br />或者服务器可能遇到了临时问题。
+        </p>
+        <a href="index.html"
+           class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition-colors duration-150 ease-in-out">
+            返回首页
+        </a>
+        <p class="mt-12 text-sm text-gray-500">
+            如果您认为这是一个错误，请通过 <a href="bug-report.html" class="text-indigo-400 hover:underline">Bug反馈</a> 联系我们。
+        </p>
+    </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-gray-800/50 border-t border-gray-700 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+            <div>
+                <h3 class="text-lg font-bold mb-6">Voidix</h3>
+                <p class="text-gray-400 text-sm">
+                    下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar的精神。</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">快速链接</h3>
+                <ul class="space-y-3">
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#about">关于我们</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#servers">服务器</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#versions">跨版本</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#team">管理团队</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">技术支持</h3>
+                <ul class="space-y-3">
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html">常见问题</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                           href="bug-report.html">Bug反馈</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                           href="status.html">状态页</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">联系我们</h3>
+                <ul class="space-y-3">
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                           href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr" target="_blank">QQ群: 186438621</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                           href="https://discord.gg/uXC3XrwVrk" target="_blank">Discord</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                           href="https://github.com/Voidix-Network/" target="_blank">GitHub</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
+                           href="mailto:support@voidix.top">support@voidix.top</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
+            <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>
+        </div>
+    </div>
+</footer>
+<script>
+    // 移动菜单的通用切换逻辑 (与 index.html 保持一致)
+    document.addEventListener('DOMContentLoaded', () => {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenuItems = document.getElementById('mobile-menu-items');
+        const hamburgerIcon = document.getElementById('hamburger-icon');
+        const line1 = hamburgerIcon ? hamburgerIcon.querySelector('.line1') : null;
+        const line2 = hamburgerIcon ? hamburgerIcon.querySelector('.line2') : null;
+        const line3 = hamburgerIcon ? hamburgerIcon.querySelector('.line3') : null;
+
+        if (mobileMenuButton && mobileMenuItems && line1 && line2 && line3) {
+            mobileMenuButton.addEventListener('click', () => {
+                const isOpen = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+
+                if (isOpen) {
+                    mobileMenuItems.classList.add('max-h-0', 'opacity-0');
+                    mobileMenuItems.classList.remove('max-h-96', 'opacity-100', 'py-2'); // py-2 from previous error page, index uses max-h-96
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    // Hamburger icon
+                    line1.classList.remove('translate-y-[6px]', 'rotate-45');
+                    line1.style.transform = ''; // Clear direct style if any
+                    line2.classList.remove('opacity-0');
+                    line2.style.opacity = ''; // Clear direct style
+                    line3.classList.remove('translate-y-[-6px]', '-rotate-45');
+                    line3.style.transform = ''; // Clear direct style
+                } else {
+                    mobileMenuItems.classList.remove('max-h-0', 'opacity-0');
+                    mobileMenuItems.classList.add('max-h-96', 'opacity-100', 'py-2'); // Using max-h-96 from index, and py-2 for padding
+                    mobileMenuButton.setAttribute('aria-expanded', 'true');
+                    // X icon
+                    line1.classList.add('translate-y-[6px]', 'rotate-45');
+                    line2.classList.add('opacity-0');
+                    line3.classList.add('translate-y-[-6px]', '-rotate-45');
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html> 
