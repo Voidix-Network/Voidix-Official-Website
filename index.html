@@ -174,18 +174,18 @@
                 <div class="sm:hidden grid grid-cols-3 gap-2 mt-6">
                     <div class="px-3 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c]">
                         <div class="text-xs text-gray-400 mb-1 text-center">在线玩家</div>
-                        <!-- Controlled by assets/js/index-page.js -->
-                        <div class="text-sm font-bold text-center" id="online-players-count-mobile">-1人</div>
+                        <!-- Controlled by assets/js/index_page.js -->
+                        <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="online-players-count-mobile">获取中...</div>
                     </div>
                     <div class="px-3 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c]">
                         <div class="text-xs text-gray-400 mb-1 text-center">运行时间</div>
-                        <!-- Controlled by assets/js/index-page.js -->
-                        <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="uptime-days-mobile">-1天</div>
+                        <!-- Controlled by assets/js/index_page.js -->
+                        <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="uptime-days-mobile">获取中...</div>
                     </div>
                     <div class="px-3 py-3 bg-[#1a1f2e] rounded-lg border border-[#2a365c]">
-                        <div class="text-xs text-gray-400 mb-1 text-center">总运行时长</div>
-                        <!-- Controlled by assets/js/index-page.js (displays totalRunningTime) -->
-                        <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="gamemode-count-mobile">-1个</div>
+                        <div class="text-xs text-gray-400 mb-1 text-center">总运行时间</div>
+                        <!-- Controlled by assets/js/index_page.js -->
+                        <div class="text-base font-bold flex justify-center items-center whitespace-nowrap" id="gamemode-count-mobile">获取中...</div>
                     </div>
                 </div>
             </div>
@@ -202,8 +202,18 @@
                     <h3 class="text-xl font-bold mb-5 text-center md:text-left">服务器状态</h3>
                     <!-- Server status preview, dynamically updated by assets/js/index-page.js -->
                     <div class="space-y-4">
+                        <!-- 大厅服务器 -->
+                        <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-3 mr-3 flex-shrink-1">
+                                    <div class="w-4 h-4 flex-shrink-0 rounded-full bg-green-500" id="lobby-status-dot-desktop"></div>
+                                    <span class="text-sm md:text-base font-medium text-gray-200">小游戏大厅</span>
+                                </div>
+                                <div class="text-sm md:text-base font-mono font-semibold text-blue-400 whitespace-nowrap flex-shrink-0 min-w-[70px] text-right" id="lobby-status-badge-desktop">0 在线</div>
+                            </div>
+                        </div>
+
                         <!-- 小游戏服务器 -->
-                        <!-- Status dot and badge updated by assets/js/index-page.js -->
                         <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3 mr-3 flex-shrink-1">
@@ -215,7 +225,6 @@
                         </div>
 
                         <!-- 生存服务器 -->
-                        <!-- Status dot and badge updated by assets/js/index-page.js -->
                         <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3 mr-3 flex-shrink-1">
@@ -223,18 +232,6 @@
                                     <span class="text-sm md:text-base font-medium text-gray-200">生存服务器</span>
                                 </div>
                                 <div class="text-sm md:text-base font-mono font-semibold text-blue-400 whitespace-nowrap flex-shrink-0 min-w-[70px] text-right" id="survival-status-badge-desktop">0 在线</div>
-                            </div>
-                        </div>
-
-                        <!-- 大厅服务器 -->
-                        <!-- Status dot and badge updated by assets/js/index-page.js -->
-                        <div class="px-5 py-4 bg-[#151b2d]/80 rounded-lg border border-[#2a365c]/70">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center gap-3 mr-3 flex-shrink-1">
-                                    <div class="w-4 h-4 flex-shrink-0 rounded-full bg-green-500" id="lobby-status-dot-desktop"></div>
-                                    <span class="text-sm md:text-base font-medium text-gray-200">小游戏大厅</span>
-                                </div>
-                                <div class="text-sm md:text-base font-mono font-semibold text-blue-400 whitespace-nowrap flex-shrink-0 min-w-[70px] text-right" id="lobby-status-badge-desktop">0 在线</div>
                             </div>
                         </div>
                     </div>
