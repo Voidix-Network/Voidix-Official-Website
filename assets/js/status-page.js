@@ -3,8 +3,10 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
-// Please copy the JavaScript code from status.html (lines approx. 430-936) into this file.
-// Specific script for status page to fetch server data
+/**
+ * Manages dynamic content, WebSocket communication, and UI interactions 
+ * specifically for the server status page (status.html).
+ */
 document.addEventListener("DOMContentLoaded", () => {
     // Remove existing mock fetch logic
 
@@ -22,50 +24,58 @@ document.addEventListener("DOMContentLoaded", () => {
     // - name: A descriptive name for this server entry (used for logging/debugging).
     const serverStatusListConfig = {
         minigames_aggregate: {
-            statusEl: document.getElementById("minigames-aggregate-status"), // Element ID in status.html
-            dotEl: document.getElementById("minigames-aggregate-dot"),       // Element ID in status.html
-            keys: window.VOIDIX_SHARED_CONFIG.minigameKeys, // Server keys from WS data
+            statusEl: document.getElementById("minigames-aggregate-status"),
+            dotEl: document.getElementById("minigames-aggregate-dot"),
+            displayNameEl: document.getElementById("minigames-aggregate-display-name"),
+            keys: window.VOIDIX_SHARED_CONFIG.minigameKeys,
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.minigames_aggregate
         },
         bedwars_sub_aggregate: {
             statusEl: document.getElementById("bedwars-sub-aggregate-status"),
-            dotEl: null, // Set to null as the element is removed
-            keys: ["bedwars", "bedwars_solo", "bedwars_other"], // This remains specific as it's a sub-aggregate
+            dotEl: null, 
+            displayNameEl: document.getElementById("bedwars-sub-aggregate-display-name"),
+            keys: ["bedwars", "bedwars_solo", "bedwars_other"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_sub_aggregate
         },
         bedwars: {
             statusEl: document.getElementById("bedwars-status"),
             dotEl: document.getElementById("bedwars-dot"),
+            displayNameEl: document.getElementById("bedwars-display-name"),
             keys: ["bedwars"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars
         },
         bedwars_solo: {
             statusEl: document.getElementById("bedwars_solo-status"),
             dotEl: document.getElementById("bedwars_solo-dot"),
+            displayNameEl: document.getElementById("bedwars_solo-display-name"),
             keys: ["bedwars_solo"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_solo
         },
         bedwars_other: {
             statusEl: document.getElementById("bedwars_other-status"),
             dotEl: document.getElementById("bedwars_other-dot"),
+            displayNameEl: document.getElementById("bedwars_other-display-name"),
             keys: ["bedwars_other"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_other
         },
         survival: {
             statusEl: document.getElementById("survival-live-status"),
-            dotEl: document.getElementById("survival-dot"), // Assuming this ID will be on the survival dot
+            dotEl: document.getElementById("survival-dot"),
+            displayNameEl: document.getElementById("survival-display-name"),
             keys: ["survival"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.survival
         },
         lobby: {
             statusEl: document.getElementById("lobby-live-status"),
-            dotEl: document.querySelector("#server-status-list > div:last-child .status-dot"), // More robust selector needed if survival isn't last before lobby or if lobby isn't last overall. Let's give lobby dot an ID.
+            dotEl: document.querySelector("#server-status-list > div:last-child .status-dot"),
+            displayNameEl: document.getElementById("lobby-display-name"),
             keys: ["lobby"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.lobby
         },
         knockioffa: {
             statusEl: document.getElementById("knockioffa-live-status"),
             dotEl: document.getElementById("knockioffa-dot"),
+            displayNameEl: document.getElementById("knockioffa-display-name"),
             keys: ["knockioffa"],
             name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.knockioffa
         },
@@ -108,7 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const maintenanceInfoContainerEl = document.getElementById('maintenance-info-container');
     const maintenanceInfoTextEl = document.getElementById('maintenance-info-text');
 
-    // Sets the initial display text of server statuses and uptime fields to a loading state.
+    /**
+     * Sets the initial display text of server statuses and uptime fields to a 'loading' state on the status page.
+     * Also clears and resets real-time uptime tracking variables for this page.
+     */
     function setInitialLoadingStatusOnStatusPage() {
         if (currentServerData.isMaintenance) {
             displayMaintenanceInfoOnStatusPage();
@@ -130,10 +143,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInitialLoadingStatusOnStatusPage(); // Set on page load
 
-    // Updates the display (status text and dot) for a single server entry based on currentServerData.
+    /**
+     * Updates the display (status text and dot) for a single server entry on the status page
+     * based on currentServerData. Handles maintenance, online, offline, and partial/unknown states.
+     * Includes a specific re-fetch mechanism for 'knockioffa' status element if initially not found.
+     * @param {string} serverKey - The key of the server in serverStatusListConfig.
+     */
     function updateServerDisplay(serverKey) {
         const serverInfo = serverStatusListConfig[serverKey];
-        if (!serverInfo || !serverInfo.statusEl) return;
+
+        // For knockioffa, if its statusEl reference seems lost, try to re-acquire it.
+        // This can handle cases where the initial reference might have become invalid.
+        if (serverKey === 'knockioffa' && serverInfo && !serverInfo.statusEl) {
+            serverInfo.statusEl = document.getElementById("knockioffa-live-status");
+            if (!serverInfo.statusEl) {
+                 // If still not found after re-fetch, log a more critical error, as the element might genuinely be missing from the DOM.
+                 console.error('[Status Page] Critical: Could not find statusEl for knockioffa even after re-fetch attempt.');
+            }
+        }
+
+        // If (after a potential re-fetch for knockioffa) statusEl is still missing,
+        // log a warning and return to prevent subsequent errors.
+        if (!serverInfo || !serverInfo.statusEl) {
+            // console.warn(`[Status Page] Skipping update for ${serverKey} as statusEl is missing or not found in config.`);
+            return;
+        }
 
         if (currentServerData.isMaintenance) {
             serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.maintenance;
@@ -168,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 allKeysPresent = false;
                 if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
                     // This log is kept as it indicates a potential data issue for aggregates
-                    console.log(`[DEBUG Status WS] Aggregation warning for '${serverKey}': SubKey '${subKey}' NOT FOUND in currentServerData.servers.`);
+                    // console.log(`[DEBUG Status WS] Aggregation warning for '${serverKey}': SubKey '${subKey}' NOT FOUND in currentServerData.servers.`);
                 }
             }
         });
@@ -207,8 +241,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } else { 
                 if (onlineCount > 0 && allKeysPresent) { 
-                    serverInfo.statusEl.textContent = `${onlineCount} ${window.VOIDIX_SHARED_CONFIG.statusTexts.online} (但服务器标记为离线)`; 
-                    serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textYellow;
+                    // This case implies server data reports online players, but the server itself is marked offline.
+                    // Displaying as offline is safer and more consistent with the server's reported state.
+                    serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.offline;
+                    serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textRed;
                 } else {
                     serverInfo.statusEl.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.offline;
                     serverInfo.statusEl.className = window.VOIDIX_SHARED_CONFIG.statusClasses.textRed;
@@ -220,9 +256,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Updates the '运行时间' and '总运行时长' display elements on the status page.
-    // Formats seconds into days/hours/minutes or years/days as appropriate.
-    // Accepts current running time and total running time in seconds.
+    /**
+     * Updates the 'Running Time' and 'Total Running Time' display elements on the status page.
+     * Uses formatDuration from sharedConfig for consistent time formatting.
+     * @param {number} currentRunningTime - Current server running time in seconds.
+     * @param {number} currentTotalRunningTime - Total server running time in seconds.
+     */
     function updateStatusPageUptimeDisplays(currentRunningTime, currentTotalRunningTime) {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG; // Alias for brevity
 
@@ -238,7 +277,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Starts or restarts the real-time uptime counter for the status page
+    /**
+     * Starts or restarts the real-time uptime counter specifically for the status page.
+     * Updates uptime displays every second.
+     */
     function startStatusPageRealtimeUptimeUpdates() {
         clearInterval(uptimeIntervalId_status);
 
@@ -270,13 +312,147 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
-    // Establishes and manages the WebSocket connection for receiving real-time server status updates.
+    /**
+     * Handles 'full' WebSocket messages for the status page.
+     * Updates all server data (servers, players, runningTime, totalRunningTime, maintenance status)
+     * and refreshes the UI accordingly.
+     * @param {object} data - The parsed data object from the WebSocket message.
+     */
+    function handleFullMessage(data) {
+        currentServerData.servers = data.servers || {};
+        currentServerData.players = data.players || { currentPlayers: {} };
+        currentServerData.runningTime = data.runningTime;
+        currentServerData.totalRunningTime = data.totalRunningTime;
+        
+        if (typeof data.isMaintenance === 'boolean') {
+            currentServerData.isMaintenance = data.isMaintenance;
+            currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
+        } else {
+            if (!currentServerData.isMaintenance) { 
+                currentServerData.isMaintenance = false;
+                currentServerData.maintenanceStartTime = null;
+            }
+        }
+
+        if (currentServerData.isMaintenance) {
+            displayMaintenanceInfoOnStatusPage();
+        } else {
+            if (maintenanceInfoContainerEl) maintenanceInfoContainerEl.classList.add('hidden');
+            Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+            startStatusPageRealtimeUptimeUpdates();
+        }
+    }
+
+    /**
+     * Handles 'maintenance_status_update' WebSocket messages for the status page.
+     * Updates the maintenance state and refreshes the UI.
+     * @param {object} data - The parsed data object from the WebSocket message, expecting 'status' and 'maintenanceStartTime'.
+     */
+    function handleMaintenanceUpdate(data) {
+        const isEnteringMaintenance = (data.status === true || data.status === 'true');
+        // console.log(`[DEBUG] Status WS: Processing "maint_update". raw status: ${data.status}, isEnteringMaint: ${isEnteringMaintenance}`);
+        currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
+        
+        // Update currentServerData.isMaintenance state based on the message
+        currentServerData.isMaintenance = isEnteringMaintenance;
+
+        if (isEnteringMaintenance) {
+            displayMaintenanceInfoOnStatusPage();
+        } else { 
+            if (maintenanceInfoContainerEl) maintenanceInfoContainerEl.classList.add('hidden');
+            Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+            startStatusPageRealtimeUptimeUpdates();
+        }
+    }
+
+    /**
+     * Handles 'players_update_add' WebSocket messages for the status page.
+     * Adds player to local cache; UI refresh is handled by general update calls.
+     * Note: This message type might not directly alter aggregated counts displayed but contributes to the player list tooltip.
+     * @param {object} data - The parsed data object, expecting player details.
+     */
+    function handleAddPlayerUpdate(data) {
+        if (data.player && data.player.username) {
+            if (!currentServerData.players.currentPlayers) currentServerData.players.currentPlayers = {};
+            currentServerData.players.currentPlayers[data.player.username] = {
+                uuid: data.player.uuid,
+                currentServer: 'unknown' 
+            };
+        }
+        // Player additions might not immediately change aggregated server counts shown to user,
+        // but a general UI refresh is performed to keep things consistent.
+        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+        startStatusPageRealtimeUptimeUpdates();
+    }
+
+    /**
+     * Handles 'players_update_remove' WebSocket messages for the status page.
+     * Removes player from local cache and attempts to decrement relevant server count if known.
+     * @param {object} data - The parsed data object, expecting player UUID.
+     */
+    function handleRemovePlayerUpdate(data) {
+        if (data.player && data.player.uuid) {
+            let playerUsernameToRemove = null;
+            let serverToDecrement = null;
+
+            for (const usernameInCache in currentServerData.players.currentPlayers) {
+                if (currentServerData.players.currentPlayers[usernameInCache].uuid === data.player.uuid) {
+                    playerUsernameToRemove = usernameInCache;
+                    serverToDecrement = currentServerData.players.currentPlayers[usernameInCache].currentServer;
+                    break;
+                }
+            }
+
+            if (playerUsernameToRemove) {
+                if (serverToDecrement && serverToDecrement !== 'unknown' && currentServerData.servers[serverToDecrement]) {
+                    currentServerData.servers[serverToDecrement].online = Math.max(0, currentServerData.servers[serverToDecrement].online - 1);
+                }
+                delete currentServerData.players.currentPlayers[playerUsernameToRemove];
+            } else {
+                // console.warn('[DEBUG] Status WS: Player to remove (by UUID) not found in local cache:', data.player.uuid);
+            }
+        }
+        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+        startStatusPageRealtimeUptimeUpdates();
+    }
+
+    /**
+     * Handles 'server_update' WebSocket messages for the status page.
+     * Typically updates player count on a specific server or a player's current server.
+     * @param {object} data - The parsed data object, can contain player info and/or server online counts.
+     */
+    function handleServerUpdate(data) {
+        if (data.player && data.player.username) { // This part seems to update player's current server
+            if (!currentServerData.players.currentPlayers) currentServerData.players.currentPlayers = {};
+            currentServerData.players.currentPlayers[data.player.username] = {
+                uuid: data.player.uuid,
+                currentServer: data.player.newServer
+            };
+        }
+        if (data.servers) { // This part updates server online counts
+            for (const serverName in data.servers) {
+                if (currentServerData.servers[serverName]) {
+                    currentServerData.servers[serverName].online = data.servers[serverName];
+                } else {
+                    // If server was not in currentServerData, initialize it. Assume isOnline if we get an update.
+                    currentServerData.servers[serverName] = { online: data.servers[serverName], isOnline: true };
+                }
+            }
+        }
+        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
+        startStatusPageRealtimeUptimeUpdates();
+    }
+
+    /**
+     * Establishes and manages the WebSocket connection for the status page.
+     * Includes connection timeout, message handling, error handling, and a reconnection strategy.
+     */
     function connectStatusPageWebSocket() {
         // Clear any existing timeout timer
         if (statusPageConnectionTimeoutTimer) clearTimeout(statusPageConnectionTimeoutTimer);
 
         wsStatusPage = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
-        console.log('[DEBUG] Status WS: Attempting connection...');
+        // console.log('[DEBUG] Status WS: Attempting connection...');
         
         // if (currentServerData.isMaintenance) { 
         //     displayMaintenanceInfoOnStatusPage();
@@ -288,139 +464,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
         statusPageConnectionTimeoutTimer = setTimeout(() => {
             if (wsStatusPage.readyState !== WebSocket.OPEN) {
-                console.log('[DEBUG] Status WS: Connection attempt timed out. Closing and retrying.');
+                // console.log('[DEBUG] Status WS: Connection attempt timed out. Closing and retrying.');
                 wsStatusPage.close(); // Triggers onclose for reconnect
             }
         }, 5000);
 
         wsStatusPage.onopen = () => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Connection successful
-            console.log('[DEBUG] Status WS: Connected (onopen)');
+            // console.log('[DEBUG] Status WS: Connected (onopen)');
             statusPageReconnectAttempts = 0; // Reset on successful connection
         };
 
         wsStatusPage.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                // Concise log for received messages
-                const commonPayloadPreview = `isMaint: ${data.isMaintenance}, status: ${data.status}`;
-                let specificPayloadPreview = '';
-                if (data.type === 'full') {
-                    specificPayloadPreview = `servers: ${data.servers ? Object.keys(data.servers).length : 'N/A'}, players: ${data.players ? data.players.online : 'N/A'}`;
-                } else if (data.type === 'server_update' && data.servers) {
-                    specificPayloadPreview = `updated_servers: ${Object.keys(data.servers).join(', ')}`;
-                } else if ((data.type === 'players_update_add' || data.type === 'players_update_remove') && data.player) {
-                    specificPayloadPreview = `player_uuid: ${data.player.uuid}`;
+                
+                // Minimal logging for received message type, avoiding full payload logging in production.
+                // console.log(`Status WS MSG: type: ${data.type}`);
+
+                switch (data.type) {
+                    case 'full':
+                        handleFullMessage(data);
+                        break;
+                    case 'maintenance_status_update':
+                        handleMaintenanceUpdate(data);
+                        break;
+                    case 'players_update_add':
+                        handleAddPlayerUpdate(data);
+                        break;
+                    case 'players_update_remove':
+                        handleRemovePlayerUpdate(data);
+                        break;
+                    case 'server_update':
+                        handleServerUpdate(data);
+                        break;
+                    default:
+                        // console.warn(`[DEBUG] Status WS: Received unhandled message type: ${data.type}`);
                 }
-                console.log(`[DEBUG] Status WS MSG: type: ${data.type}, ${commonPayloadPreview}, ${specificPayloadPreview}`);
-
-
-                if (data.type === 'full') {
-                    currentServerData.servers = data.servers || {};
-                    currentServerData.players = data.players || { currentPlayers: {} };
-                    currentServerData.runningTime = data.runningTime;
-                    currentServerData.totalRunningTime = data.totalRunningTime;
-                    // Handle isMaintenance and maintenanceStartTime from full message
-                    if (typeof data.isMaintenance === 'boolean') {
-                        currentServerData.isMaintenance = data.isMaintenance;
-                        currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
-                    } else {
-                         // If not present in full message, assume not in maintenance unless previously set
-                        // This handles the case where backend stops sending it when maintenance is false
-                        if (!currentServerData.isMaintenance) { // only reset if not already in maintenance
-                            currentServerData.isMaintenance = false;
-                            currentServerData.maintenanceStartTime = null;
-                        }
-                    }
-
-                    if (currentServerData.isMaintenance) {
-                        displayMaintenanceInfoOnStatusPage();
-                    } else {
-                        if (maintenanceInfoContainerEl) maintenanceInfoContainerEl.classList.add('hidden');
-                        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
-                        startStatusPageRealtimeUptimeUpdates();
-                    }
-                } else if (data.type === 'maintenance_status_update') {
-                    // Correctly check for boolean true or string 'true' for robust handling
-                    const isEnteringMaintenance = (data.status === true || data.status === 'true');
-                    console.log(`[DEBUG] Status WS: Processing "maint_update". raw status: ${data.status}, isEnteringMaint: ${isEnteringMaintenance}`);
-                    currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
-                    
-                    if (isEnteringMaintenance) {
-                        displayMaintenanceInfoOnStatusPage(); // Update UI based on new maintenance state
-                    } else { // Exiting maintenance
-                        // Hide maintenance-specific info
-                        if (maintenanceInfoContainerEl) maintenanceInfoContainerEl.classList.add('hidden');
-                        
-                        // Attempt to restore previous state immediately using current (likely stale) data
-                        Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
-                        startStatusPageRealtimeUptimeUpdates();
-                        // No longer call setInitialLoadingStatusOnStatusPage() here.
-                    }
-                } else if (data.type === 'players_update_add') {
-                    if (data.player && data.player.username) {
-                        if (!currentServerData.players.currentPlayers) currentServerData.players.currentPlayers = {};
-                        currentServerData.players.currentPlayers[data.player.username] = {
-                            uuid: data.player.uuid,
-                            currentServer: 'unknown' // Will be updated by a subsequent server_update
-                        };
-                        // console.log('Player added to currentPlayers (status.html):', data.player.username); // Reduced verbosity
-                    }
-                } else if (data.type === 'players_update_remove') {
-                    if (data.player && data.player.uuid) { // Check for UUID instead of username
-                        let playerUsernameToRemove = null;
-                        let serverToDecrement = null;
-
-                        // Find the player by UUID
-                        for (const usernameInCache in currentServerData.players.currentPlayers) {
-                            if (currentServerData.players.currentPlayers[usernameInCache].uuid === data.player.uuid) {
-                                playerUsernameToRemove = usernameInCache;
-                                serverToDecrement = currentServerData.players.currentPlayers[usernameInCache].currentServer;
-                                break;
-                            }
-                        }
-
-                        if (playerUsernameToRemove) {
-                            if (serverToDecrement && serverToDecrement !== 'unknown' && currentServerData.servers[serverToDecrement]) {
-                                currentServerData.servers[serverToDecrement].online = Math.max(0, currentServerData.servers[serverToDecrement].online - 1);
-                            }
-                            delete currentServerData.players.currentPlayers[playerUsernameToRemove];
-                            // console.log('Player removed by UUID (status.html):', playerUsernameToRemove, data.player.uuid); // Reduced verbosity
-                        } else {
-                            console.warn('[DEBUG] Status WS: Player to remove (by UUID) not found in local cache:', data.player.uuid);
-                        }
-                    }
-                } else if (data.type === 'server_update') {
-                    if (data.player && data.player.username) {
-                        if (!currentServerData.players.currentPlayers) currentServerData.players.currentPlayers = {};
-                        currentServerData.players.currentPlayers[data.player.username] = {
-                            uuid: data.player.uuid,
-                            currentServer: data.player.newServer
-                        };
-                    }
-                    if (data.servers) {
-                        for (const serverName in data.servers) {
-                            if (currentServerData.servers[serverName]) {
-                                currentServerData.servers[serverName].online = data.servers[serverName];
-                            } else {
-                                currentServerData.servers[serverName] = { online: data.servers[serverName], isOnline: true };
-                            }
-                        }
-                    }
-                }
-                // players_update_add does not directly affect server counts here, server_update does for specific server.
-
-                Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
-                startStatusPageRealtimeUptimeUpdates(); // Start/Restart the real-time counter
-
             } catch (error) {
-                console.error('[DEBUG] Status WS: Error processing message:', error, 'Raw data:', event.data);
+                console.error('[Status Page] Error processing WebSocket message:', error, 'Raw data:', event.data);
             }
         };
 
         wsStatusPage.onerror = (error) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on error
-            console.error('[DEBUG] Status WS: Error:', error);
+            console.error('[Status Page] WebSocket Error:', error);
             // Call setDisconnectedStatusOnStatusPage directly on error, as no reconnection attempt is initiated by onerror itself.
             // onclose will likely follow and handle reconnection if applicable, or confirm disconnected state.
             setDisconnectedStatusOnStatusPage(); 
@@ -428,7 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         wsStatusPage.onclose = (event) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on close
-            console.log(`[DEBUG] Status WS: Disconnected. Code: ${event.code}, Reason: "${event.reason}".`);
+            // console.log(`[DEBUG] Status WS: Disconnected. Code: ${event.code}, Reason: "${event.reason}".`);
             // setDisconnectedStatusOnStatusPage(); // Old logic: Update UI (Replaced by conditional logic below)
             
             const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
@@ -442,19 +530,22 @@ document.addEventListener("DOMContentLoaded", () => {
                                    : intervalSequence[intervalSequence.length - 1];
 
                 statusPageReconnectAttempts++;
-                console.log(`[DEBUG] Status WS: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000}s...`);
+                // console.log(`[DEBUG] Status WS: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000}s...`);
                 setTimeout(connectStatusPageWebSocket, nextInterval);
             } else {
-                console.log(`[DEBUG] Status WS: Max reconnect attempts (${maxAttempts}) reached. Displaying disconnected status.`);
+                // console.log(`[DEBUG] Status WS: Max reconnect attempts (${maxAttempts}) reached. Displaying disconnected status.`);
                 setDisconnectedStatusOnStatusPage(); // Show permanent "Disconnected"
             }
         };
     }
 
-    // Sets UI to a "Reconnecting..." state
+    /**
+     * Sets UI elements on the status page to a "Reconnecting..." state.
+     * Handles maintenance mode appropriately.
+     */
     function setReconnectingStatusOnStatusPage() {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
-        const reconnectingText = SHARED_CONFIG.statusTexts.reconnecting || '重连中...';
+        const reconnectingText = SHARED_CONFIG.statusTexts.reconnecting || 'Reconnecting...'; // Fallback just in case
         const yellowTextClass = SHARED_CONFIG.statusClasses.textYellow; // e.g., 'text-yellow-400'
         // For individual server dots (w-3 h-3)
         const yellowDotClass = SHARED_CONFIG.statusClasses.statusPage.dotMaintenance; // Already yellow, includes flex-shrink-0 mr-2
@@ -514,15 +605,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // Do NOT reset currentServerData here.
     }
 
-    // Sets all server status displays and uptime fields to a 'disconnected' state.
-    // Clears existing server data.
+    /**
+     * Sets all server status displays and uptime fields on the status page to a 'disconnected' state.
+     * Clears existing server data to prevent showing stale information.
+     * Handles maintenance mode display if active during disconnection.
+     */
     function setDisconnectedStatusOnStatusPage() {
         if (currentServerData.isMaintenance) {
-            // If in maintenance, we might want to keep showing maintenance info
-            // or show a specific "maintenance & disconnected" message.
-            // For now, let displayMaintenanceInfoOnStatusPage handle it, which shows maintenance.
+            // If in maintenance, keep showing maintenance info.
+            // displayMaintenanceInfoOnStatusPage already handles this.
             displayMaintenanceInfoOnStatusPage();
-            // Optionally, you could add a note about connection being lost during maintenance.
+            // Optionally, add a note about connection being lost during maintenance.
             if (maintenanceInfoTextEl) {
                 let text = window.VOIDIX_SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix;
                 if (currentServerData.maintenanceStartTime) {
@@ -530,7 +623,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     text = window.VOIDIX_SHARED_CONFIG.statusTexts.maintenance;
                 }
-                maintenanceInfoTextEl.textContent = text + " (连接已断开)";
+                // Ensure the disconnected text is from shared config if possible
+                const disconnectedText = window.VOIDIX_SHARED_CONFIG.statusTexts.disconnected || 'Disconnected';
+                maintenanceInfoTextEl.textContent = `${text} (${disconnectedText})`;
             }
             return;
         }
@@ -560,33 +655,43 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // Helper function to display maintenance information on the status page
+    /**
+     * Displays maintenance information on the status page, including start time if available.
+     * Updates various UI elements (overall status, server cards, player list, uptime) to reflect maintenance mode.
+     * Clears the uptime interval.
+     */
     function displayMaintenanceInfoOnStatusPage() {
         const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
         if (maintenanceInfoContainerEl && maintenanceInfoTextEl) {
             maintenanceInfoContainerEl.classList.remove('hidden');
-            let startTimeText = 'N/A';
+            let startTimeText = 'N/A'; // Default if no start time
             if (currentServerData.maintenanceStartTime) {
                 try {
-                    startTimeText = formatMaintenanceStartTime(currentServerData.maintenanceStartTime); // Use the refactored helper
+                    startTimeText = formatMaintenanceStartTime(currentServerData.maintenanceStartTime);
                 } catch (e) { 
-                    console.error("[DEBUG] Status Page: Error parsing maintenanceStartTime for display:", e); 
-                    startTimeText = '时间解析错误';
+                    startTimeText = 'Invalid time format'; // English fallback
                 }
             }
-            // Append "(连接已断开)" only if not already there from a previous call or reconnecting text
+            
             let baseText = `${SHARED_CONFIG.statusTexts.maintenanceStartTimePrefix}${startTimeText}`;
-            const disconnectedSuffix = ` (${SHARED_CONFIG.statusTexts.disconnected})`;
-            const reconnectingSuffixPattern = new RegExp(` \\(${SHARED_CONFIG.statusTexts.reconnecting}\\)$`);
+            const disconnectedText = SHARED_CONFIG.statusTexts.disconnected || 'Disconnected';
+            const disconnectedSuffix = ` (${disconnectedText})`;
+            const reconnectingText = SHARED_CONFIG.statusTexts.reconnecting || 'Reconnecting...';
+            const reconnectingSuffixPattern = new RegExp(` \\(${reconnectingText.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\)$`); // Escape regex special chars
 
-            // Remove reconnecting suffix if present before adding disconnected suffix
-            if (maintenanceInfoTextEl.textContent.match(reconnectingSuffixPattern)) {
-                maintenanceInfoTextEl.textContent = maintenanceInfoTextEl.textContent.replace(reconnectingSuffixPattern, '');
+            // Current text in the element
+            let currentText = maintenanceInfoTextEl.textContent;
+
+            // Remove reconnecting suffix if present
+            if (currentText.match(reconnectingSuffixPattern)) {
+                currentText = currentText.replace(reconnectingSuffixPattern, '');
             }
-            // Ensure base text is set before potentially appending disconnected suffix
+            
+            // Set the base maintenance message (start time or general maintenance text)
             maintenanceInfoTextEl.textContent = baseText;
 
-            if (!maintenanceInfoTextEl.textContent.endsWith(disconnectedSuffix)) {
+            // Add disconnected suffix if WebSocket is not open and the suffix isn't already there
+            if (wsStatusPage?.readyState !== WebSocket.OPEN && !baseText.endsWith(disconnectedSuffix)) {
                  maintenanceInfoTextEl.textContent += disconnectedSuffix;
             }
         }
@@ -632,8 +737,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const playerListOnlineCountEl = document.getElementById('player-list-online-count');
         const playerListContainerEl = document.getElementById('player-list-container');
 
-        if (playerListOnlineCountEl) playerListOnlineCountEl.textContent = '维护中';
-        if (playerListContainerEl) playerListContainerEl.innerHTML = '<div class="text-center text-gray-400">当前处于服务器维护状态。</div>';
+        if (playerListOnlineCountEl) playerListOnlineCountEl.textContent = SHARED_CONFIG.statusTexts.maintenance;
+        if (playerListContainerEl) playerListContainerEl.innerHTML = `<div class="text-center text-gray-400">Server is currently under maintenance.</div>`;
 
 
         // Update uptime displays
@@ -653,12 +758,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Helper function to format maintenance start time
+    /**
+     * Helper function to format a Unix timestamp (in milliseconds) into a YYYY-MM-DD HH:MM:SS string.
+     * @param {string|number} timestamp - The Unix timestamp.
+     * @returns {string} Formatted date-time string, or an error/placeholder string if formatting fails.
+     */
     function formatMaintenanceStartTime(timestamp) {
-        if (!timestamp) return '未知时间';
+        if (!timestamp) return 'Unknown time'; // English fallback
         try {
             const date = new Date(parseInt(timestamp));
-            if (isNaN(date.getTime())) return '无效时间戳';
+            if (isNaN(date.getTime())) return 'Invalid timestamp'; // English fallback
             // Format as YYYY-MM-DD HH:MM:SS
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -668,15 +777,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const seconds = date.getSeconds().toString().padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         } catch (e) {
-            console.error("[DEBUG] Status Page: Error formatting maintenance start time:", e);
-            return '时间格式错误';
+            // console.error("[DEBUG] Status Page: Error formatting maintenance start time:", e);
+            return 'Time formatting error'; // English fallback
         }
     }
 
     connectStatusPageWebSocket();
 
-    // Accordion Logic
-    // Sets up an accordion (collapsible section) for the given button, content, and icon elements.
+    /**
+     * Sets up an accordion (collapsible section) for the given button, content, and icon elements.
+     * Manages the expansion/collapse animation and icon rotation.
+     * Includes logic to prevent event propagation if an accordion is nested.
+     * @param {string} buttonId - The ID of the accordion trigger button.
+     * @param {string} contentId - The ID of the accordion content element.
+     * @param {string} iconClass - The class of the SVG icon within the button to rotate.
+     */
     function setupAccordion(buttonId, contentId, iconClass) {
         const button = document.getElementById(buttonId);
         const content = document.getElementById(contentId);
@@ -735,8 +850,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const PLAYER_LIST_SCROLL_SPEED = 1;    // Pixels per interval for auto-scroll
     const PLAYER_LIST_SCROLL_INTERVAL = 30; // Milliseconds per interval for auto-scroll
 
-    // Shows a tooltip displaying a list of players for the specified serverKey.
-    // Positions the tooltip relative to the event's target element.
+    /**
+     * Shows a tooltip displaying a list of players for the specified serverKey.
+     * Positions the tooltip relative to the event's target element.
+     * Handles cases where player data might still be loading or no players are on the server.
+     * @param {Event} event - The mouse event that triggered the tooltip.
+     * @param {string} serverKey - The key of the server for which to show players.
+     */
     function showPlayerTooltip(event, serverKey) {
         clearTimeout(hideTooltipTimeout);
         clearInterval(playerListScrollIntervalId); // Stop any existing scroll animation
@@ -748,7 +868,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!serverInfo || !currentServerData || !currentServerData.players || !currentServerData.players.currentPlayers) {
             tooltipList.classList.add('hidden');
             tooltipEmptyMsg.classList.remove('hidden');
-            tooltipEmptyMsg.textContent = '玩家数据加载中...';
+            tooltipEmptyMsg.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading || 'Player data loading...'; // Use shared config or fallback
             // Attempt to position even with loading message
             positionTooltip(event.currentTarget);
             return;
@@ -780,7 +900,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             tooltipList.classList.add('hidden');
             tooltipEmptyMsg.classList.remove('hidden');
-            tooltipEmptyMsg.textContent = '此服务器当前没有玩家在线。';
+            tooltipEmptyMsg.textContent = 'No players currently online on this server.'; // English fallback
         }
 
         positionTooltip(targetElement);
@@ -792,8 +912,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Calculates and sets the position of the player tooltip relative to a target HTML element.
-    // Ensures the tooltip does not go off-screen.
+    /**
+     * Calculates and sets the position of the player tooltip relative to a target HTML element.
+     * Ensures the tooltip does not go off-screen by adjusting its left/top position if needed.
+     * @param {HTMLElement} targetElement - The element to position the tooltip relative to.
+     */
     function positionTooltip(targetElement) {
         if (!tooltip || !targetElement) return;
         const rect = targetElement.getBoundingClientRect();
@@ -824,7 +947,10 @@ document.addEventListener("DOMContentLoaded", () => {
         tooltip.style.top = `${top}px`;
     }
 
-    // Hides the player tooltip after a short delay.
+    /**
+     * Hides the player tooltip after a short delay.
+     * Clears any active auto-scroll interval for the player list.
+     */
     function hidePlayerTooltip() {
         clearInterval(playerListScrollIntervalId); // Stop scrolling when hiding tooltip
         if (tooltipList) tooltipList.scrollTop = 0; // Reset scroll position
@@ -837,7 +963,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 250);
     }
 
-    // Starts auto-scrolling for the player list in the tooltip
+    /**
+     * Starts an auto-scrolling animation for the player list within the tooltip if its content overflows.
+     * @param {HTMLElement} listElement - The player list HTML element (UL).
+     */
     function startPlayerListAutoScroll(listElement) {
         playerListScrollIntervalId = setInterval(() => {
             if (listElement.scrollTop < (listElement.scrollHeight - listElement.clientHeight)) {
@@ -850,8 +979,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, PLAYER_LIST_SCROLL_INTERVAL);
     }
 
-    // Sets up mouseenter/mouseleave event listeners for server entries to show/hide the player tooltip.
-    // Skips binding for elements اللي هي triggers for accordions to prevent conflicts on mobile.
+    /**
+     * Sets up mouseenter/mouseleave event listeners for server entries to show/hide the player tooltip.
+     * Skips binding for elements that are accordion triggers to prevent event conflicts.
+     * Finds appropriate hover targets for different server entry structures.
+     */
     function setupTooltipEvents() {
         Object.keys(serverStatusListConfig).forEach(serverKey => {
             const serverInfo = serverStatusListConfig[serverKey];
@@ -865,6 +997,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 isAccordionTrigger = true; // This is an accordion trigger
             } else if (serverInfo.dotEl) {
                 hoverTarget = serverInfo.dotEl.closest('.p-3.sm\\:p-4.rounded-lg');
+                // Fallback for specific server keys if the initial closest target isn't found (e.g. different HTML structure)
                 if (!hoverTarget && (serverKey === 'survival' || serverKey === 'lobby')) {
                     const directChildren = Array.from(document.getElementById('server-status-list').children);
                     directChildren.forEach(child => {
@@ -880,7 +1013,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     // For accordion triggers, we don't bind the tooltip mouseenter/mouseleave events
                     // to avoid conflict with the click/tap action for toggling the accordion on mobile.
                     // The accordion's own click handler (from setupAccordion) will manage its state.
-                    // console.log('Skipping tooltip hover events for accordion trigger:', serverKey); // Reduced verbosity
                 } else {
                     // Bind tooltip events for non-accordion trigger elements
                     hoverTarget.addEventListener('mouseenter', (event) => {
@@ -898,10 +1030,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     tooltip.addEventListener('mouseleave', hidePlayerTooltip);
                 }
             } else {
-                console.warn('[DEBUG] Status Page: Could not find tooltip hover target for serverKey:', serverKey, serverInfo.dotEl ? serverInfo.dotEl.id : 'No dotEl');
+                // console.warn('[DEBUG] Status Page: Could not find tooltip hover target for serverKey:', serverKey, serverInfo.dotEl ? serverInfo.dotEl.id : 'No dotEl');
             }
         });
     }
     setupTooltipEvents();
+
+    /**
+     * Initializes the display names of servers on the status page using names from VOIDIX_SHARED_CONFIG.
+     * Logs a warning if a display name element is configured but no corresponding name is found in the shared config.
+     */
+    function initializeServerDisplayNames() {
+        // console.log('[DEBUG] Initializing server display names from sharedConfig...');
+        Object.values(serverStatusListConfig).forEach(serverInfo => {
+            if (serverInfo.displayNameEl && serverInfo.name) {
+                serverInfo.displayNameEl.textContent = serverInfo.name;
+            } else if (serverInfo.displayNameEl && !serverInfo.name) {
+                // console.warn(`[DEBUG] Server entry for displayNameEl ID: ${serverInfo.displayNameEl.id} is missing 'name' in serverStatusListConfig or VOIDIX_SHARED_CONFIG.serverDisplayNames.`);
+            }
+        });
+    }
+    initializeServerDisplayNames(); // Call the new function
 
 });

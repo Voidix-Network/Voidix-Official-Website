@@ -9,6 +9,10 @@
 window.VOIDIX_SHARED_CONFIG = {
     // Existing shared items
     minigameKeys: ["bedwars", "bedwars_solo", "bedwars_other", "knockioffa"],
+    /**
+     * Display names for servers and server aggregates, used in the UI.
+     * Currently contains Chinese (Simplified) strings.
+     */
     serverDisplayNames: {
         minigames_aggregate: "小游戏服务器 (总览)",
         bedwars_sub_aggregate: "起床战争 (总览)",
@@ -17,39 +21,43 @@ window.VOIDIX_SHARED_CONFIG = {
         bedwars_other: "起床战争 (其他)",
         survival: "生存服务器",
         lobby: "小游戏大厅",
-        knockioffa: "Knockioffa"
+        knockioffa: "击退战场 (knockioffa)"
     },
 
     // New shared items:
     websocket: {
         url: 'wss://server.voidix.top:10203',
-        // reconnectInterval: 5000, // Replaced by reconnectIntervalSequence
+        // maxReconnectAttempts and reconnectIntervalSequence control the WebSocket reconnection strategy.
         maxReconnectAttempts: 10,
-        // Sequence of retry intervals in milliseconds. Matches maxReconnectAttempts length.
-        // e.g., 5s, 5s, 5s, 15s, 15s, 15s, 30s, 30s, 30s, 30s
-        reconnectIntervalSequence: [5000, 5000, 5000, 15000, 15000, 15000, 30000, 30000, 30000, 30000] 
+        // Sequence of retry intervals in milliseconds. The length should ideally match maxReconnectAttempts.
+        // Example: 5s, 5s, 5s, 15s, 15s, 15s, 30s, 30s, 30s, 30s
+        reconnectIntervalSequence: [5000, 5000, 5000, 15000, 15000, 15000, 30000, 30000, 30000, 30000]
     },
 
     timeConstants: {
         SECONDS_IN_MINUTE: 60,
         SECONDS_IN_HOUR: 3600,
         SECONDS_IN_DAY: 24 * 3600,
-        SECONDS_IN_YEAR: 365 * 24 * 3600, // Simplified year, no leap years accounted for
+        SECONDS_IN_YEAR: 365 * 24 * 3600, // Simplified year, does not account for leap years.
     },
 
+    /**
+     * Standardized status texts for UI display.
+     * Currently contains Chinese (Simplified) strings and some HTML entities where appropriate.
+     */
     statusTexts: {
         loading: '获取中...',
-        online: '在线', // General online status, count might be prepended by consuming code
+        online: '在线', // General online status; count might be prepended by consuming code.
         offline: '离线',
         disconnected: '连接已断开',
         unknown: '状态未知',
-        partialUnknown: '部分状态未知', // Used in status-page for aggregates
-        lessThanAMinute: '<1分', // HTML entity for <
-        errorConnecting: '连接错误', // Generic connection error
+        partialUnknown: '部分状态未知', // Used on status-page.html for aggregated server statuses.
+        lessThanAMinute: '<1分', // Used for durations less than one minute.
+        errorConnecting: '连接错误', // Generic connection error text.
         maintenance: '维护中',
         maintenanceStartTimePrefix: '维护开始于: ',
         connectionFailedPermanently: '连接失败，请检查网络或稍后重试。',
-        reconnecting: '重连中...' // Added for reconnecting state
+        reconnecting: '重连中...' // Indicates that a WebSocket reconnection attempt is in progress.
     },
 
     statusClasses: {
@@ -90,33 +98,34 @@ window.VOIDIX_SHARED_CONFIG = {
 
         let numericSeconds = parseFloat(totalSeconds); // Allow string input
         if (isNaN(numericSeconds) || numericSeconds < 0) {
-            numericSeconds = 0; // Default to 0 if invalid or negative
+            numericSeconds = 0; // Default to 0 if input is invalid or negative.
         }
 
         const days = Math.floor(numericSeconds / shared.timeConstants.SECONDS_IN_DAY);
         const hours = Math.floor((numericSeconds % shared.timeConstants.SECONDS_IN_DAY) / shared.timeConstants.SECONDS_IN_HOUR);
         const minutes = Math.floor((numericSeconds % shared.timeConstants.SECONDS_IN_HOUR) / shared.timeConstants.SECONDS_IN_MINUTE);
 
-        if (type === 'totalUptime') { // For "总运行时长" on index page
+        if (type === 'totalUptime') { // Formatting for "Total Running Time" (e.g., on index page)
             if (numericSeconds >= shared.timeConstants.SECONDS_IN_YEAR) {
                 const years = Math.floor(numericSeconds / shared.timeConstants.SECONDS_IN_YEAR);
                 const remainingSecondsAfterYears = numericSeconds % shared.timeConstants.SECONDS_IN_YEAR;
                 const daysInYearContext = Math.floor(remainingSecondsAfterYears / shared.timeConstants.SECONDS_IN_DAY);
-                return `${years}年 ${daysInYearContext}天`;
+                return `${years}年 ${daysInYearContext}天`; // e.g., "1年 120天"
             }
             // Fallback for totalUptime if less than a year
-            if (days > 0) return `${days}天 ${hours}时`;
-            if (hours > 0) return `${hours}时 ${minutes}分`;
-            if (numericSeconds > 0 && numericSeconds < shared.timeConstants.SECONDS_IN_MINUTE) return shared.statusTexts.lessThanAMinute;
-            return `${minutes}分`; // Should rarely hit this for totalUptime unless very short
+            if (days > 0) return `${days}天 ${hours}时`;       // e.g., "10天 5时"
+            if (hours > 0) return `${hours}时 ${minutes}分`;   // e.g., "5时 30分"
+            // If less than an hour but more than a minute, or exactly 0 and was initially 0.
+            if (numericSeconds > 0 && numericSeconds < shared.timeConstants.SECONDS_IN_MINUTE) return shared.statusTexts.lessThanAMinute; // e.g., "<1分"
+            return `${minutes}分`; // e.g., "30分" or "0分" if less than a minute (and not 0 initially and caught by lessThanAMinute)
         }
 
-        // Default formatting (for individual server uptimes)
-        if (days >= 100) return `${days}天`; // Just days if very long
-        if (days > 0) return `${days}天 ${hours}时`;
-        if (hours > 0) return `${hours}时 ${minutes}分`;
-        if (numericSeconds > 0 && numericSeconds < shared.timeConstants.SECONDS_IN_MINUTE) return shared.statusTexts.lessThanAMinute;
-        if (numericSeconds === 0 && (totalSeconds === 0 || totalSeconds === "0")) return '0分'; // Explicitly show 0分 for 0 seconds
-        return `${minutes}分`;
+        // Default formatting (typically for individual server uptimes on status page)
+        if (days >= 100) return `${days}天`; // If very long, just show days, e.g., "120天"
+        if (days > 0) return `${days}天 ${hours}时`;   // e.g., "10天 5时"
+        if (hours > 0) return `${hours}时 ${minutes}分`; // e.g., "5时 30分"
+        if (numericSeconds > 0 && numericSeconds < shared.timeConstants.SECONDS_IN_MINUTE) return shared.statusTexts.lessThanAMinute; // e.g., "<1分"
+        if (numericSeconds === 0 && (totalSeconds === 0 || totalSeconds === "0")) return '0分'; // Explicitly show "0分" for 0 seconds duration.
+        return `${minutes}分`; // e.g., "30分"
     }
 };

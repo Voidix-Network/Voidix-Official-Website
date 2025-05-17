@@ -3,8 +3,13 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
-// General script for navbar, framer motion etc.
+// General script for navbar, framer motion, tabs, accordions, and smooth scrolling.
 
+/**
+ * Initializes Framer Motion animations for elements with .motion-element class.
+ * It reads animation properties from data attributes (data-initial, data-animate, etc.).
+ * Ensures Framer Motion (window.motion) is loaded before attempting to use it.
+ */
 const initializeFramerMotion = () => {
   if (typeof window.motion === 'undefined') {
     console.warn('Framer Motion global (window.motion) not found when expected. Animations might not work. Ensure Framer Motion script loads before this script.');
@@ -46,12 +51,16 @@ const initializeFramerMotion = () => {
   });
 };
 
+/**
+ * Sets up tab functionality for elements with .tab-btn class and data-tab-target attribute.
+ * Handles switching active tabs and displaying corresponding content.
+ */
 const setupTabs = () => {
   document.querySelectorAll('.tab-btn[data-tab-target]').forEach(btn => {
     btn.addEventListener('click', () => {
       const tabButtonsContainer = btn.parentElement;
       const mainContainer = tabButtonsContainer.parentElement;
-      const contentContainer = mainContainer.querySelector('.p-8'); // Adjust selector if structure varies
+      const contentContainer = mainContainer.querySelector('.p-8');
       const targetContentId = btn.dataset.tabTarget;
 
       if (!tabButtonsContainer || !contentContainer) {
@@ -79,6 +88,10 @@ const setupTabs = () => {
   });
 };
 
+/**
+ * Sets up accordion functionality for elements with .accordion-btn class.
+ * Toggles visibility of the next sibling element (the content) and rotates an icon.
+ */
 const setupAccordions = () => {
   document.querySelectorAll('.accordion-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -96,6 +109,11 @@ const setupAccordions = () => {
   });
 };
 
+/**
+ * Sets up smooth scrolling for anchor links (a[href^="#"]).
+ * Scrolls to the target element with an offset for fixed navigation bars.
+ * Updates URL hash if browser supports history.pushState.
+ */
 const setupSmoothScroll = () => {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -105,7 +123,7 @@ const setupSmoothScroll = () => {
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         window.scrollTo({
-          top: targetElement.offsetTop - 100, // Adjust for navbar
+          top: targetElement.offsetTop - 100,
           behavior: 'smooth'
         });
         if (history.pushState) {
@@ -118,38 +136,13 @@ const setupSmoothScroll = () => {
   });
 };
 
-// This function seems to be for placeholder/mock status updates.
-// It should eventually be removed if WebSocket provides all status data reliably.
-const updateServerStatusPlaceholder = () => {
-  const serverElements = [
-    { id: 'minigame-status-badge', baseText: ' 在线' },
-    { id: 'survival-status-badge', baseText: ' 在线' },
-    { id: 'lobby-status-badge', baseText: ' 在线' }
-  ];
-  serverElements.forEach(server => {
-    const element = document.getElementById(server.id);
-    if (element && element.textContent.includes('获取中')) { // Only update if still in loading state
-      // For placeholder, just set a random number
-      element.textContent = Math.floor(Math.random() * 30) + server.baseText;
-    }
-  });
-  const onlinePlayersEl = document.getElementById('online-players-count');
-  if (onlinePlayersEl && onlinePlayersEl.textContent.includes('获取中')) {
-    onlinePlayersEl.textContent = Math.floor(Math.random() * 50) + '人';
-  }
-  const uptimeEl = document.getElementById('uptime-days');
-  if (uptimeEl && uptimeEl.textContent.includes('获取中')) {
-    uptimeEl.textContent = Math.floor(Math.random() * 10) + '天';
-  }
-  const gamemodeEl = document.getElementById('gamemode-count');
-  if (gamemodeEl && gamemodeEl.textContent.includes('获取中')) {
-    gamemodeEl.textContent = Math.floor(Math.random() * 3) + '个';
-  }
-};
-
-
+/**
+ * Handles page-specific initializations, currently:
+ * 1. Auto-scrolls to a section if its ID is in the URL hash.
+ * 2. If the target of a hash is within an accordion, it attempts to open that accordion.
+ * 3. Initializes accordions 상태 that should be open or closed by default based on '.active' class.
+ */
 const initializePageSpecificScripts = () => {
-  // Auto-scroll to hash if present and init accordions for hash targets
   const hash = window.location.hash;
   if (hash && hash !== '#') {
     const targetElement = document.querySelector(hash);
@@ -170,7 +163,6 @@ const initializePageSpecificScripts = () => {
     }
   }
 
-  // Initialize accordions that should be open by default
   document.querySelectorAll('.accordion-btn.active').forEach(btn => {
     const content = btn.nextElementSibling;
     if (content && content.classList.contains('accordion-content')) {
@@ -179,7 +171,6 @@ const initializePageSpecificScripts = () => {
       if (icon) icon.classList.add('rotate-180');
     }
   });
-  // Ensure accordions not marked active are closed
   document.querySelectorAll('.accordion-btn:not(.active)').forEach(btn => {
     const content = btn.nextElementSibling;
     if (content && content.classList.contains('accordion-content')) {
@@ -190,22 +181,15 @@ const initializePageSpecificScripts = () => {
   });
 };
 
-
-// Main execution logic
+/**
+ * Main function to orchestrate the initialization of various UI scripts.
+ */
 const runScripts = () => {
-  initializeFramerMotion(); // Initialize animations
-  setupTabs();              // Set up tab functionality
-  setupAccordions();        // Set up accordion functionality
-  setupSmoothScroll();      // Set up smooth scrolling for anchor links
-
-  // The updateServerStatusPlaceholder and its interval were likely for mock data.
-  // Since index-page.js now handles real data via WebSocket, these might conflict or be redundant.
-  // If index.html elements (like 'minigame-status-badge') are solely updated by index-page.js,
-  // this placeholder logic can be removed. For now, it's renamed and its interval is removed.
-  // updateServerStatusPlaceholder(); // Call once if needed for initial placeholder fill before WS connect
-  // setInterval(updateServerStatusPlaceholder, 30000); // This interval should likely be removed
-
-  initializePageSpecificScripts(); // Handles hash scrolling and default accordion states
+  initializeFramerMotion();
+  setupTabs();
+  setupAccordions();
+  setupSmoothScroll();
+  initializePageSpecificScripts();
 };
 
 // Ensures scripts run after DOM is fully loaded

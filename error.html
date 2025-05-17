@@ -155,43 +155,6 @@
         </div>
     </div>
 </footer>
-<script>
-    // 移动菜单的通用切换逻辑 (与 index.html 保持一致)
-    document.addEventListener('DOMContentLoaded', () => {
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenuItems = document.getElementById('mobile-menu-items');
-        const hamburgerIcon = document.getElementById('hamburger-icon');
-        const line1 = hamburgerIcon ? hamburgerIcon.querySelector('.line1') : null;
-        const line2 = hamburgerIcon ? hamburgerIcon.querySelector('.line2') : null;
-        const line3 = hamburgerIcon ? hamburgerIcon.querySelector('.line3') : null;
-
-        if (mobileMenuButton && mobileMenuItems && line1 && line2 && line3) {
-            mobileMenuButton.addEventListener('click', () => {
-                const isOpen = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-
-                if (isOpen) {
-                    mobileMenuItems.classList.add('max-h-0', 'opacity-0');
-                    mobileMenuItems.classList.remove('max-h-96', 'opacity-100', 'py-2'); // py-2 from previous error page, index uses max-h-96
-                    mobileMenuButton.setAttribute('aria-expanded', 'false');
-                    // Hamburger icon
-                    line1.classList.remove('translate-y-[6px]', 'rotate-45');
-                    line1.style.transform = ''; // Clear direct style if any
-                    line2.classList.remove('opacity-0');
-                    line2.style.opacity = ''; // Clear direct style
-                    line3.classList.remove('translate-y-[-6px]', '-rotate-45');
-                    line3.style.transform = ''; // Clear direct style
-                } else {
-                    mobileMenuItems.classList.remove('max-h-0', 'opacity-0');
-                    mobileMenuItems.classList.add('max-h-96', 'opacity-100', 'py-2'); // Using max-h-96 from index, and py-2 for padding
-                    mobileMenuButton.setAttribute('aria-expanded', 'true');
-                    // X icon
-                    line1.classList.add('translate-y-[6px]', 'rotate-45');
-                    line2.classList.add('opacity-0');
-                    line3.classList.add('translate-y-[-6px]', '-rotate-45');
-                }
-            });
-        }
-    });
-</script>
+<script defer src="assets/js/menu.js"></script>
 </body>
 </html> 
