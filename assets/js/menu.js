@@ -4,12 +4,17 @@
   or the LICENSE_CODE file.
 */
 // assets/js/menu.js
+
+/**
+ * Handles interactive elements for the site navigation menu,
+ * including the mobile hamburger menu toggle and smooth scrolling for anchor links.
+ */
 document.addEventListener('DOMContentLoaded', () => {
-    // Hamburger Menu
+    // Hamburger Menu Logic
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenuItems = document.getElementById('mobile-menu-items');
     const hamburgerIcon = document.getElementById('hamburger-icon');
-    let line1, line2, line3;
+    let line1, line2, line3; // Lines of the hamburger icon for animation
 
     if (hamburgerIcon) {
         line1 = hamburgerIcon.querySelector('.line1');
@@ -38,12 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 平滑滚动锚点链接
+    // Smooth Scroll for Anchor Links & Mobile Menu Closure
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const hrefAttribute = this.getAttribute('href');
+            // Ensure it's a valid anchor link (not just "#" or empty)
             if (hrefAttribute && hrefAttribute.length > 1) {
-                const targetId = hrefAttribute.substring(1);
+                const targetId = hrefAttribute.substring(1); // Remove #
                 const targetElement = document.getElementById(targetId);
 
                 if (targetElement) {
@@ -53,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         block: 'start'
                     });
 
-                    // 点击链接后关闭移动菜单
+                    // Close mobile menu if it's open after clicking an anchor link
                     if (mobileMenuItems && !mobileMenuItems.classList.contains('max-h-0')) {
                         mobileMenuItems.classList.add('max-h-0', 'opacity-0');
                         mobileMenuItems.classList.remove('max-h-96');
