@@ -54,5 +54,3 @@
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
 }
-
-/* Styles for SVG elements used as status dots (e.g., triangle for Bedwars aggregate) */
