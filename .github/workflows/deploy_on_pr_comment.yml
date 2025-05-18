@@ -1,0 +1,353 @@
+name: Advanced PR Deployment Controller
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target: # 使用 pull_request_target 以安全地处理标签和获取 PR 详情
+    types: [closed]
+
+permissions:
+  contents: read
+  issues: write       # 用于评论
+  pull-requests: write # 用于添加/移除标签
+
+jobs:
+  # Job 1: 处理 'deploy' 评论
+  handle_deploy_comment:
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, 'deploy')
+    runs-on: [self-hosted, website]
+    outputs:
+      should_deploy_immediately: ${{ steps.check_pr_status.outputs.deploy_now }}
+      pr_number_for_immediate_deploy: ${{ steps.check_pr_status.outputs.pr_number }}
+      commenter_login: ${{ steps.check_permissions.outputs.commenter }}
+      # comment_id_for_immediate_deploy: ${{ steps.check_pr_status.outputs.comment_id }} # Potentially pass comment_id
+
+    steps:
+      - name: Check Commenter Permissions
+        id: check_permissions
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const authorizedAssociations = ['OWNER', 'MEMBER'];
+            const authorAssociation = context.payload.comment.author_association;
+            const commenter = context.payload.comment.user.login;
+            core.setOutput('commenter', commenter);
+
+            if (!authorizedAssociations.includes(authorAssociation)) {
+              // 对于权限错误，总是发送新评论
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `❌ @${commenter}, 您没有足够的权限 (需要 OWNER 或 MEMBER) 来触发部署。您当前的关联是：${authorAssociation}。`
+              });
+              core.setFailed(`评论者 @${commenter} (${authorAssociation}) 无权操作。`);
+              return;
+            }
+            console.log(`授权评论者: @${commenter} (${authorAssociation})`);
+
+      - name: Get PR Details & Decide Action
+        id: check_pr_status
+        if: steps.check_permissions.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string # Ensure outputs are strings
+          script: |
+            const prNumber = context.issue.number;
+            core.setOutput('pr_number', prNumber.toString());
+            const commenter = '${{ steps.check_permissions.outputs.commenter }}';
+            const marker = `<!-- GHA-DEPLOY-STATUS-PR#${prNumber} -->`;
+            const workflowRunUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
+              
+              let finalBody = newBody;
+              if (workflowLinkText) {
+                finalBody += `\n[${workflowLinkText}](${workflowRunUrl})`;
+              }
+              finalBody += `\n\n${marker}`; // Ensure marker persists
+
+              if (existingComment) {
+                console.log(`Found existing comment ${existingComment.id} to update for PR #${issueNumber}.`);
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                  body: finalBody,
+                });
+                return existingComment.id.toString();
+              } else {
+                console.log(`No existing comment found with marker for PR #${issueNumber}. Creating new one.`);
+                const { data: newComment } = await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body: finalBody,
+                });
+                return newComment.id.toString();
+              }
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            if (pr.base.ref !== 'master') {
+              // 对于非 master 目标，总是发送新评论
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `ℹ️ @${commenter}, 部署命令仅适用于目标为 \`master\` 分支的 PR。此 PR (#${prNumber}) 的目标是 \`${pr.base.ref}\`。`
+              });
+              core.setFailed('PR 未以 master 为目标。');
+              return;
+            }
+
+            let comment_id_output = '';
+            if (pr.merged && pr.state === 'closed') {
+              const body = `✅ @${commenter}, PR #${prNumber} 已合并到 master。将立即开始部署 master 分支...`;
+              comment_id_output = await findAndUpdateOrCreateComment(github, context, prNumber, marker, body, '查看 Workflow 初始状态');
+              core.setOutput('deploy_now', 'true');
+            } else if (pr.state === 'open') {
+              await github.rest.issues.addLabels({ // Add label first
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['deploy-when-merged']
+              });
+              const body = `⏳ @${commenter}, 已收到部署 PR #${prNumber} 的命令。系统将在 PR 合并到 master 后自动部署。标签 'deploy-when-merged' 已添加。`;
+              comment_id_output = await findAndUpdateOrCreateComment(github, context, prNumber, marker, body, '查看 Workflow 状态');
+              core.setOutput('deploy_now', 'false');
+            } else { // PR 已关闭但未合并
+              // 对于已关闭但未合并的情况，总是发送新评论
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `ℹ️ @${commenter}, PR #${prNumber} 已关闭但未合并到 master。无法部署。`
+              });
+              core.setFailed('PR 已关闭且未合并。');
+              return;
+            }
+            // core.setOutput('comment_id', comment_id_output); // Output comment_id if needed by other steps directly
+
+  # Job 2: 如果 'deploy' 评论在已合并的 PR 上，则立即部署 master
+  deploy_master_immediately:
+    needs: handle_deploy_comment
+    if: success() && needs.handle_deploy_comment.outputs.should_deploy_immediately == 'true'
+    runs-on: [self-hosted, website]
+    steps:
+      - name: Update Deployment Status (Immediate - In Progress)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = parseInt('${{ needs.handle_deploy_comment.outputs.pr_number_for_immediate_deploy }}');
+            const commenter = '${{ needs.handle_deploy_comment.outputs.commenter_login }}';
+            const marker = `<!-- GHA-DEPLOY-STATUS-PR#${prNumber} -->`;
+            const workflowRunUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            async function findAndUpdateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
+              
+              let finalBody = newBody;
+              if (workflowLinkText) {
+                finalBody += `\n[${workflowLinkText}](${workflowRunUrl})`;
+              }
+              finalBody += `\n\n${marker}`; 
+
+              if (existingComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                  body: finalBody,
+                });
+              } else { // Should ideally not happen if handle_deploy_comment created it
+                console.warn(`Could not find comment to update for PR #${issueNumber} with marker. This might indicate an issue or a new comment will be created by a later step if it uses findOrCreate.`);
+                // Optionally, create a new one here if absolutely necessary, but success/failure steps will do findOrCreate
+              }
+            }
+            const body = `🚀 @${commenter}，正在立即部署 master 分支 (因 PR #${prNumber} 已合并)...`;
+            await findAndUpdateComment(github, context, prNumber, marker, body, '查看 Workflow 运行情况');
+      
+      - name: Deploy Master Branch (Immediate)
+        shell: bash
+        env:
+          PR_NUMBER: ${{ needs.handle_deploy_comment.outputs.pr_number_for_immediate_deploy }}
+        run: |
+          sudo echo "PR #${PR_NUMBER} (已合并) 触发立即部署 master 分支..."
+          # ... (rest of your deployment script) ...
+          sudo echo "导航到 /var/www/voidix..."
+          cd /var/www/voidix
+          if [ $? -ne 0 ]; then sudo echo "错误：无法进入目录 /var/www/voidix。"; exit 1; fi
+          
+          sudo echo "从 origin 拉取 master 分支的最新更改 (使用 sudo)..."
+          sudo git fetch origin master
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git fetch origin master 失败。"; exit 1; fi
+          
+          sudo echo "检出并将本地 master 分支重置为 origin/master (使用 sudo)..."
+          sudo git checkout -B master origin/master
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git checkout -B master origin/master 失败。"; exit 1; fi
+          sudo echo "成功将 /var/www/voidix 更新到 master 分支的最新提交。"
+          
+          sudo echo "重新加载 Nginx..."
+          sudo systemctl reload nginx
+          if [ $? -ne 0 ]; then sudo echo "错误：重新加载 Nginx 失败。请检查 sudo 权限。"; exit 1; fi
+          sudo echo "Nginx 已成功重新加载。Master 分支已部署完毕。"
+
+      - name: Update Deployment Status (Immediate - Result)
+        if: always() # Run whether deploy step succeeded or failed
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = parseInt('${{ needs.handle_deploy_comment.outputs.pr_number_for_immediate_deploy }}');
+            const commenter = '${{ needs.handle_deploy_comment.outputs.commenter_login }}';
+            const marker = `<!-- GHA-DEPLOY-STATUS-PR#${prNumber} -->`;
+            const jobStatus = '${{ job.status }}';
+            const workflowRunUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            let body = '';
+
+            if (jobStatus === 'success') {
+              body = `🎉 @${commenter}，立即部署成功！master 分支已更新 (因 PR #${prNumber} 合并)。`;
+            } else {
+              body = `🔥 @${commenter}，立即部署失败！在更新 master 分支时发生错误 (因 PR #${prNumber} 合并)。`;
+            }
+
+            async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
+              // (Re-define or ensure it's available - for brevity, assuming it's defined as in previous steps)
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+              const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
+              let finalBody = newBody;
+              if (workflowLinkText) { finalBody += `\n[${workflowLinkText}](${workflowRunUrl})`; }
+              finalBody += `\n\n${marker}`;
+              if (existingComment) {
+                await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existingComment.id, body: finalBody });
+              } else {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body: finalBody });
+              }
+            }
+            await findAndUpdateOrCreateComment(github, context, prNumber, marker, body, '查看 Workflow 运行日志');
+
+  # Job 3: 如果带有 'deploy-when-merged' 标签的 PR 合并到 master，则部署 master
+  deploy_on_merge_if_labelled:
+    if: github.event_name == 'pull_request_target' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master' && contains(join(github.event.pull_request.labels.*.name, ','), 'deploy-when-merged')
+    runs-on: [self-hosted, website]
+    steps:
+      - name: Update Deployment Status (Merge - In Progress)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = ${{ github.event.pull_request.number }};
+            const marker = `<!-- GHA-DEPLOY-STATUS-PR#${prNumber} -->`;
+            const workflowRunUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `🚀 PR #${prNumber} 已合并到 master 且带有 'deploy-when-merged' 标签。开始部署 master 分支...`;
+
+            async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
+              // (Re-define or ensure it's available)
+              const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber });
+              const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
+              let finalBody = newBody;
+              if (workflowLinkText) { finalBody += `\n[${workflowLinkText}](${workflowRunUrl})`; }
+              finalBody += `\n\n${marker}`;
+              if (existingComment) {
+                await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existingComment.id, body: finalBody });
+              } else {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body: finalBody });
+              }
+            }
+            await findAndUpdateOrCreateComment(github, context, prNumber, marker, body, '查看 Workflow 运行情况');
+
+      - name: Deploy Master Branch (On Merge with Label)
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          sudo echo "PR #${PR_NUMBER} (合并且带标签) 触发部署 master 分支..."
+          # ... (rest of your deployment script) ...
+          sudo echo "导航到 /var/www/voidix..."
+          cd /var/www/voidix
+          if [ $? -ne 0 ]; then sudo echo "错误：无法进入目录 /var/www/voidix。"; exit 1; fi
+
+          sudo echo "从 origin 拉取 master 分支的最新更改 (使用 sudo)..."
+          sudo git fetch origin master
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git fetch origin master 失败。"; exit 1; fi
+
+          sudo echo "检出并将本地 master 分支重置为 origin/master (使用 sudo)..."
+          sudo git checkout -B master origin/master
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git checkout -B master origin/master 失败。"; exit 1; fi
+          sudo echo "成功将 /var/www/voidix 更新到 master 分支的最新提交。"
+
+          sudo echo "重新加载 Nginx..."
+          sudo systemctl reload nginx
+          if [ $? -ne 0 ]; then sudo echo "错误：重新加载 Nginx 失败。请检查 sudo 权限。"; exit 1; fi
+          sudo echo "Nginx 已成功重新加载。Master 分支已部署完毕。"
+
+      - name: Update Deployment Status (Merge - Result) and Remove Label
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = ${{ github.event.pull_request.number }};
+            const marker = `<!-- GHA-DEPLOY-STATUS-PR#${prNumber} -->`;
+            const jobStatus = '${{ job.status }}';
+            const workflowRunUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            let body = '';
+            let labelRemovedText = "";
+
+            if (jobStatus === 'success') {
+              body = `🎉 部署成功！PR #${prNumber} 合并到 master 的更改已部署。`;
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  name: 'deploy-when-merged'
+                });
+                labelRemovedText = "\n标签 'deploy-when-merged' 已移除。";
+              } catch (error) {
+                console.error(`移除标签 'deploy-when-merged' 失败: ${error.message}`);
+                labelRemovedText = "\n尝试移除标签 'deploy-when-merged' 失败，请手动检查。";
+              }
+            } else {
+              body = `🔥 部署失败！在部署 PR #${prNumber} 合并到 master 的更改时发生错误。标签 'deploy-when-merged' 可能仍然存在。`;
+            }
+            body += labelRemovedText;
+
+            async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
+              // (Re-define or ensure it's available)
+              const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber });
+              const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
+              let finalBody = newBody;
+              if (workflowLinkText) { finalBody += `\n[${workflowLinkText}](${workflowRunUrl})`; }
+              finalBody += `\n\n${marker}`;
+              if (existingComment) {
+                await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existingComment.id, body: finalBody });
+              } else {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body: finalBody });
+              }
+            }
+            await findAndUpdateOrCreateComment(github, context, prNumber, marker, body, '查看 Workflow 运行日志'); 
