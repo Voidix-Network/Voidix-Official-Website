@@ -57,7 +57,12 @@ window.VOIDIX_SHARED_CONFIG = {
         maintenance: '维护中',
         maintenanceStartTimePrefix: '维护开始于: ',
         connectionFailedPermanently: '连接失败，请检查网络或稍后重试。',
-        reconnecting: '重连中...' // Indicates that a WebSocket reconnection attempt is in progress.
+        reconnecting: '重连中...', // Indicates that a WebSocket reconnection attempt is in progress.
+        playerDataLoading: '玩家数据加载中...',
+        noPlayersOnline: '该服务器当前没有玩家在线。',
+        unknownTime: '未知时间',
+        invalidTimestamp: '无效的时间戳',
+        timeFormatError: '时间格式错误'
     },
 
     statusClasses: {
