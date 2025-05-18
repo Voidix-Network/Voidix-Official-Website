@@ -140,7 +140,7 @@ jobs:
               core.setFailed('PR 已关闭且未合并。');
               return;
             }
-            # core.setOutput('comment_id', comment_id_output); # Output comment_id if needed by other steps directly
+            // core.setOutput('comment_id', comment_id_output); // Output comment_id if needed by other steps directly
 
   # Job 2: 如果 'deploy' 评论在已合并的 PR 上，则立即部署 master
   deploy_master_immediately:
@@ -179,9 +179,9 @@ jobs:
                   comment_id: existingComment.id,
                   body: finalBody,
                 });
-              } else { # Should ideally not happen if handle_deploy_comment created it
+              } else { // Should ideally not happen if handle_deploy_comment created it
                 console.warn(`Could not find comment to update for PR #${issueNumber} with marker. This might indicate an issue or a new comment will be created by a later step if it uses findOrCreate.`);
-                # Optionally, create a new one here if absolutely necessary, but success/failure steps will do findOrCreate
+                // Optionally, create a new one here if absolutely necessary, but success/failure steps will do findOrCreate
               }
             }
             const body = `🚀 @${commenter}，正在立即部署 master 分支 (因 PR #${prNumber} 已合并)...`;
@@ -192,25 +192,25 @@ jobs:
         env:
           PR_NUMBER: ${{ needs.handle_deploy_comment.outputs.pr_number_for_immediate_deploy }}
         run: |
-          echo "PR #${PR_NUMBER} (已合并) 触发立即部署 master 分支..."
+          sudo echo "PR #${PR_NUMBER} (已合并) 触发立即部署 master 分支..."
           # ... (rest of your deployment script) ...
-          echo "导航到 /var/www/voidix..."
+          sudo echo "导航到 /var/www/voidix..."
           cd /var/www/voidix
-          if [ $? -ne 0 ]; then echo "错误：无法进入目录 /var/www/voidix。"; exit 1; fi
+          if [ $? -ne 0 ]; then sudo echo "错误：无法进入目录 /var/www/voidix。"; exit 1; fi
           
-          echo "从 origin 拉取 master 分支的最新更改 (使用 sudo)..."
+          sudo echo "从 origin 拉取 master 分支的最新更改 (使用 sudo)..."
           sudo git fetch origin master
-          if [ $? -ne 0 ]; then echo "错误：sudo git fetch origin master 失败。"; exit 1; fi
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git fetch origin master 失败。"; exit 1; fi
           
-          echo "检出并将本地 master 分支重置为 origin/master (使用 sudo)..."
+          sudo echo "检出并将本地 master 分支重置为 origin/master (使用 sudo)..."
           sudo git checkout -B master origin/master
-          if [ $? -ne 0 ]; then echo "错误：sudo git checkout -B master origin/master 失败。"; exit 1; fi
-          echo "成功将 /var/www/voidix 更新到 master 分支的最新提交。"
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git checkout -B master origin/master 失败。"; exit 1; fi
+          sudo echo "成功将 /var/www/voidix 更新到 master 分支的最新提交。"
           
-          echo "重新加载 Nginx..."
+          sudo echo "重新加载 Nginx..."
           sudo systemctl reload nginx
-          if [ $? -ne 0 ]; then echo "错误：重新加载 Nginx 失败。请检查 sudo 权限。"; exit 1; fi
-          echo "Nginx 已成功重新加载。Master 分支已部署完毕。"
+          if [ $? -ne 0 ]; then sudo echo "错误：重新加载 Nginx 失败。请检查 sudo 权限。"; exit 1; fi
+          sudo echo "Nginx 已成功重新加载。Master 分支已部署完毕。"
 
       - name: Update Deployment Status (Immediate - Result)
         if: always() # Run whether deploy step succeeded or failed
@@ -232,7 +232,7 @@ jobs:
             }
 
             async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
-              # (Re-define or ensure it's available - for brevity, assuming it's defined as in previous steps)
+              // (Re-define or ensure it's available - for brevity, assuming it's defined as in previous steps)
               const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -266,7 +266,7 @@ jobs:
             const body = `🚀 PR #${prNumber} 已合并到 master 且带有 'deploy-when-merged' 标签。开始部署 master 分支...`;
 
             async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
-              # (Re-define or ensure it's available)
+              // (Re-define or ensure it's available)
               const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber });
               const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
               let finalBody = newBody;
@@ -285,25 +285,25 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          echo "PR #${PR_NUMBER} (合并且带标签) 触发部署 master 分支..."
+          sudo echo "PR #${PR_NUMBER} (合并且带标签) 触发部署 master 分支..."
           # ... (rest of your deployment script) ...
-          echo "导航到 /var/www/voidix..."
+          sudo echo "导航到 /var/www/voidix..."
           cd /var/www/voidix
-          if [ $? -ne 0 ]; then echo "错误：无法进入目录 /var/www/voidix。"; exit 1; fi
+          if [ $? -ne 0 ]; then sudo echo "错误：无法进入目录 /var/www/voidix。"; exit 1; fi
 
-          echo "从 origin 拉取 master 分支的最新更改 (使用 sudo)..."
+          sudo echo "从 origin 拉取 master 分支的最新更改 (使用 sudo)..."
           sudo git fetch origin master
-          if [ $? -ne 0 ]; then echo "错误：sudo git fetch origin master 失败。"; exit 1; fi
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git fetch origin master 失败。"; exit 1; fi
 
-          echo "检出并将本地 master 分支重置为 origin/master (使用 sudo)..."
+          sudo echo "检出并将本地 master 分支重置为 origin/master (使用 sudo)..."
           sudo git checkout -B master origin/master
-          if [ $? -ne 0 ]; then echo "错误：sudo git checkout -B master origin/master 失败。"; exit 1; fi
-          echo "成功将 /var/www/voidix 更新到 master 分支的最新提交。"
+          if [ $? -ne 0 ]; then sudo echo "错误：sudo git checkout -B master origin/master 失败。"; exit 1; fi
+          sudo echo "成功将 /var/www/voidix 更新到 master 分支的最新提交。"
 
-          echo "重新加载 Nginx..."
+          sudo echo "重新加载 Nginx..."
           sudo systemctl reload nginx
-          if [ $? -ne 0 ]; then echo "错误：重新加载 Nginx 失败。请检查 sudo 权限。"; exit 1; fi
-          echo "Nginx 已成功重新加载。Master 分支已部署完毕。"
+          if [ $? -ne 0 ]; then sudo echo "错误：重新加载 Nginx 失败。请检查 sudo 权限。"; exit 1; fi
+          sudo echo "Nginx 已成功重新加载。Master 分支已部署完毕。"
 
       - name: Update Deployment Status (Merge - Result) and Remove Label
         if: always()
@@ -338,7 +338,7 @@ jobs:
             body += labelRemovedText;
 
             async function findAndUpdateOrCreateComment(github, context, issueNumber, marker, newBody, workflowLinkText) {
-              # (Re-define or ensure it's available)
+              // (Re-define or ensure it's available)
               const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber });
               const existingComment = comments.find(comment => comment.body && comment.body.includes(marker));
               let finalBody = newBody;
