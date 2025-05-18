@@ -764,10 +764,10 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns {string} Formatted date-time string, or an error/placeholder string if formatting fails.
      */
     function formatMaintenanceStartTime(timestamp) {
-        if (!timestamp) return 'Unknown time'; // English fallback
+        if (!timestamp) return window.VOIDIX_SHARED_CONFIG.statusTexts.unknownTime;
         try {
             const date = new Date(parseInt(timestamp));
-            if (isNaN(date.getTime())) return 'Invalid timestamp'; // English fallback
+            if (isNaN(date.getTime())) return window.VOIDIX_SHARED_CONFIG.statusTexts.invalidTimestamp;
             // Format as YYYY-MM-DD HH:MM:SS
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -778,7 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         } catch (e) {
             // console.error("[DEBUG] Status Page: Error formatting maintenance start time:", e);
-            return 'Time formatting error'; // English fallback
+            return window.VOIDIX_SHARED_CONFIG.statusTexts.timeFormatError;
         }
     }
 
@@ -868,7 +868,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!serverInfo || !currentServerData || !currentServerData.players || !currentServerData.players.currentPlayers) {
             tooltipList.classList.add('hidden');
             tooltipEmptyMsg.classList.remove('hidden');
-            tooltipEmptyMsg.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.loading || 'Player data loading...'; // Use shared config or fallback
+            tooltipEmptyMsg.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.playerDataLoading;
             // Attempt to position even with loading message
             positionTooltip(event.currentTarget);
             return;
@@ -900,7 +900,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             tooltipList.classList.add('hidden');
             tooltipEmptyMsg.classList.remove('hidden');
-            tooltipEmptyMsg.textContent = 'No players currently online on this server.'; // English fallback
+            tooltipEmptyMsg.textContent = window.VOIDIX_SHARED_CONFIG.statusTexts.noPlayersOnline;
         }
 
         positionTooltip(targetElement);
