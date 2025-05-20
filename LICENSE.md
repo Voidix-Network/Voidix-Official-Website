@@ -56,6 +56,22 @@ CC BY-SA 4.0 许可证的摘要可在此处找到：[https://creativecommons.org
     *   网站：[https://fonts.google.com/specimen/Inter](https://fonts.google.com/specimen/Inter)
     *   许可证文本：可在 [https://scripts.sil.org/OFL](https://scripts.sil.org/OFL) 找到并包含在字体文件中。
 
+6.  **Google Fonts (JetBrains Mono)**
+    *   许可证：SIL Open Font License, Version 1.1 (OFL-1.1)
+    *   版权：Copyright (c) 2020 The JetBrains Mono Project Authors ([https://github.com/JetBrains/JetBrainsMono](https://github.com/JetBrains/JetBrainsMono))
+    *   网站：[https://fonts.google.com/specimen/JetBrains+Mono](https://fonts.google.com/specimen/JetBrains+Mono)
+    *   许可证文本：可在 [https://scripts.sil.org/OFL](https://scripts.sil.org/OFL) 找到并包含在字体文件中。
+
+7.  **CDN 服务**
+    *   **unpkg.com**
+        *   服务条款：[https://unpkg.com/terms](https://unpkg.com/terms)
+        *   隐私政策：[https://unpkg.com/privacy](https://unpkg.com/privacy)
+    *   **Google Fonts CDN**
+        *   服务条款：[https://fonts.google.com/attribution](https://fonts.google.com/attribution)
+        *   隐私政策：[https://policies.google.com/privacy](https://policies.google.com/privacy)
+
+注意：本项目通过 CDN 引入第三方库，这些库的原始许可证仍然适用。CDN 服务仅作为内容分发网络，不改变原始库的许可条款。
+
 在使用或分发本项目或其部分内容时，请确保遵守各项相应许可证的条款。
 
 ---
@@ -135,6 +151,20 @@ This project utilizes the following third-party libraries and assets. Their orig
     *   Copyright: Copyright (c) 2016 The Inter Project Authors ([https://github.com/rsms/inter](https://github.com/rsms/inter))
     *   Website: [https://fonts.google.com/specimen/Inter](https://fonts.google.com/specimen/Inter)
     *   License Text: Can be found at [https://scripts.sil.org/OFL](https://scripts.sil.org/OFL) and included with the font files.
+
+6.  **Google Fonts (JetBrains Mono)**
+    *   License: SIL Open Font License, Version 1.1 (OFL-1.1)
+    *   Copyright: Copyright (c) 2020 The JetBrains Mono Project Authors ([https://github.com/JetBrains/JetBrainsMono](https://github.com/JetBrains/JetBrainsMono))
+    *   Website: [https://fonts.google.com/specimen/JetBrains+Mono](https://fonts.google.com/specimen/JetBrains+Mono)
+    *   License Text: Can be found at [https://scripts.sil.org/OFL](https://scripts.sil.org/OFL) and included with the font files.
+
+7.  **CDN 服务**
+    *   **unpkg.com**
+        *   服务条款：[https://unpkg.com/terms](https://unpkg.com/terms)
+        *   隐私政策：[https://unpkg.com/privacy](https://unpkg.com/privacy)
+    *   **Google Fonts CDN**
+        *   服务条款：[https://fonts.google.com/attribution](https://fonts.google.com/attribution)
+        *   隐私政策：[https://policies.google.com/privacy](https://policies.google.com/privacy)
 
 Please ensure you comply with the terms of each respective license when using or distributing this project or parts thereof.
 

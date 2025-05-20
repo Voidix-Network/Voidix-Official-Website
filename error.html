@@ -86,7 +86,7 @@
 </main>
 
 <!-- 页脚 -->
-<footer class="bg-gray-800/50 border-t border-gray-700 mt-auto">
+<footer class="bg-gray-800/50 border-t border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
             <div>
@@ -98,16 +98,16 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">快速链接</h3>
                 <ul class="space-y-3">
                     <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#about">关于我们</a>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#about">关于我们</a>
                     </li>
                     <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#servers">服务器</a>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#servers">服务器</a>
                     </li>
                     <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#versions">跨版本</a>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#versions">跨版本</a>
                     </li>
                     <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="index.html#team">管理团队</a>
+                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#team">管理团队</a>
                     </li>
                 </ul>
             </div>
@@ -149,9 +149,20 @@
                 </ul>
             </div>
         </div>
-        <div class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
-            <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
-            <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>
+        <div class="mt-12 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center text-center">
+            <div class="mb-4 md:mb-0 md:text-left">
+                <p class="text-gray-500 text-xs md:text-sm">
+                    &copy; 2025 Voidix Minecraft Server. 保留所有权利.
+                </p>
+                <p class="text-gray-500 text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                    本服务器为非商业公益项目，与Mojang无官方关联。
+                </p>
+            </div>
+            <div class="md:text-right">
+                <p class="text-gray-500 text-xs md:text-sm">
+                    源代码采用 <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="text-blue-400 hover:text-blue-300">AGPLv3</a> | 内容采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" class="text-blue-400 hover:text-blue-300">CC BY-SA 4.0</a>. <a href="LICENSE.md" class="text-blue-400 hover:text-blue-300">查看完整许可证信息</a>.
+                </p>
+            </div>
         </div>
     </div>
 </footer>
