@@ -8,7 +8,28 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>服务器状态 | Voidix</title>
+  <title>服务器状态 | Voidix - 实时监控Minecraft服务器运行状态</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。确保您的游戏体验始终顺畅。" />
+  <meta name="keywords" content="Minecraft服务器状态,服务器监控,在线玩家,服务器延迟,Voidix状态,MC服务器状态" />
+  <meta name="author" content="Voidix Team" />
+  <meta name="robots" content="index, follow" />
+    <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.voidix.top/status.html" />
+  <meta property="og:title" content="服务器状态 | Voidix" />
+  <meta property="og:description" content="查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。" />
+  <meta property="og:image" content="https://www.voidix.top/assets/images/status-og-image.png" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://www.voidix.top/status.html" />
+  <meta property="twitter:title" content="服务器状态 | Voidix" />
+  <meta property="twitter:description" content="查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。" />
+    <!-- Additional SEO -->
+  <link rel="canonical" href="https://voidix.top/status.html" />
+  <meta name="theme-color" content="#151f38" />
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React and ReactDOM -->
@@ -19,13 +40,47 @@
   <!-- 字体 -->
   <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
-          rel="stylesheet" />
-  <!-- Custom CSS -->
+          rel="stylesheet" />  <!-- Custom CSS -->
   <link href="assets/css/style.css" rel="stylesheet" />
   <link href="assets/css/status-page.css" rel="stylesheet" />
+  <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
+  
+  <!-- Status Page Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "服务器状态",
+    "description": "查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。",    "url": "https://voidix.top/status.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Voidix",
+      "url": "https://voidix.top"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://voidix.top/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "服务器状态"
+        }
+      ]
+    }
+  }
+  </script>
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter']">
+<!-- 跳转到主内容的链接 -->
+<a href="#main-content" class="skip-to-content">跳转到主内容</a>
+
 <!-- 导航栏 -->
 <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,8 +142,15 @@
   </div>
 </nav>
 <!-- 主内容区 for Status Page -->
-<main class="pt-20 sm:pt-24 pb-12 sm:pb-16">
+<main class="pt-20 sm:pt-24 pb-12 sm:pb-16" id="main-content">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- 面包屑导航 -->
+    <nav class="breadcrumb" aria-label="面包屑导航">
+      <a href="index.html">首页</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current" aria-current="page">服务器状态</span>
+    </nav>
+    
     <div
             class="bg-[#1a1f2e]/50 border border-[#2a365c] rounded-2xl p-4 sm:p-6 md:p-8 backdrop-blur-sm shadow-xl">
       <h1 class="text-3xl font-bold mb-8 gradient-text">服务器状态</h1>

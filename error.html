@@ -1,18 +1,32 @@
+<!--
+  This textual content is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+  To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+  or see the LICENSE_CONTENT file.
+-->
 <!doctype html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Voidix | 出错了</title>
+    <title>页面出错 | Voidix - 错误页面</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="抱歉，您访问的页面出现了错误。请返回Voidix主页或联系我们的技术支持团队。" />
+    <meta name="keywords" content="错误页面,404错误,页面未找到,Voidix错误,技术支持" />
+    <meta name="author" content="Voidix Team" />
+    <meta name="robots" content="noindex, nofollow" />
+    
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#151f38" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 字体 -->
     <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
-            rel="stylesheet" />
-    <!-- Custom CSS -->
+            rel="stylesheet" />    <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet" />
+    <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
     <style>
         .gradient-text {
             background: linear-gradient(90deg, #4f46e5, #9333ea);
@@ -24,6 +38,9 @@
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter'] flex flex-col min-h-screen">
+<!-- 跳转到主内容的链接 -->
+<a href="#main-content" class="skip-to-content">跳转到主内容</a>
+
 <!-- 导航栏 -->
 <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,7 +84,7 @@
 </nav>
 
 <!-- 错误内容区 -->
-<main class="flex-grow flex items-center justify-center pt-16 pb-20 px-4 sm:px-6 lg:px-8">
+<main class="flex-grow flex items-center justify-center pt-16 pb-20 px-4 sm:px-6 lg:px-8" id="main-content">
     <div class="text-center max-w-md w-full">
         <div class="text-9xl font-bold gradient-text mb-6">Oops!</div>
         <h1 class="text-3xl sm:text-4xl font-semibold text-white mb-4">发生了一些错误</h1>
