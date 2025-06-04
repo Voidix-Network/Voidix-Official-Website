@@ -131,7 +131,6 @@ deploy_nginx_config() {
     # 方法2：直接测试配置文件语法（作为额外验证）
     log_info "验证配置文件语法..."
     # 创建临时配置文件用于测试独立语法检查支持
-    TEMP_CONF_FILE="/tmp/nginx_temp_$$.conf"
     echo "events {} http { server { listen 80; } }" | sudo tee "$TEMP_CONF_FILE" > /dev/null
     
     if sudo nginx -t -c "$TEMP_CONF_FILE" 2>/dev/null; then
