@@ -78,16 +78,17 @@
       "isPartOf": {
         "@type": "Organization",
         "name": "Voidix"
-      }    }
-    </script>    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+      }
+    }
+    </script>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <!-- Tailwind CSS - 生产环境使用本地文件 -->
-    <link href="/assets/css/vendor/tailwind.min.css" rel="stylesheet" />
-    <!-- React and ReactDOM - 使用本地文件 -->
-    <script src="/assets/js/vendor/react.js"></script>
-    <script src="/assets/js/vendor/react-dom.js"></script>
-    <!-- Framer Motion - 使用本地文件 -->
-    <script src="/assets/js/vendor/framer-motion.js" id="framer-motion-script"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>    <!-- Framer Motion - 添加defer属性确保完全加载 -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js" id="framer-motion-script"></script>
     <!-- 字体 -->
     <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" />    <!-- Custom CSS -->
@@ -1158,29 +1159,34 @@ function ensureFramerMotionLoaded() {
     if (typeof window.motion !== 'undefined') {
       resolve();
     } else {
-      // 检查脚本加载情况
-      const checkInterval = setInterval(() => {
-        if (typeof window.motion !== 'undefined') {
-          clearInterval(checkInterval);
+      // 检查是否已加载framer-motion脚本
+      const script = document.getElementById('framer-motion-script');
+      if (script) {
+        script.onload = () => {
           resolve();
-        }
-      }, 100);
-      
-      // 设置超时，防止无限等待
-      setTimeout(() => {
-        clearInterval(checkInterval);
-        console.error('Framer Motion加载超时');
-        resolve(); // 即使超时也继续执行后续代码
-      }, 5000);
+        };
+      } else {
+        // 如果没有找到脚本，则加载它
+        const newScript = document.createElement('script');
+        newScript.id = 'framer-motion-script';
+        newScript.src = 'https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js';
+        newScript.onload = () => {
+          resolve();
+        };
+        document.head.appendChild(newScript);
+      }
     }
   });
 }
 
-// 等待脚本加载
-window.addEventListener('DOMContentLoaded', () => {
-  ensureFramerMotionLoaded().then(() => {
-    console.log('Framer Motion已加载，初始化页面');
-  });
+// 等待所有脚本加载完成后再初始化
+window.addEventListener('load', async () => {
+  try {
+    await ensureFramerMotionLoaded();
+    console.log('所有依赖脚本已加载完成');
+  } catch(e) {
+    console.error('加载脚本时出错:', e);
+  }
 });
 </script>
 
