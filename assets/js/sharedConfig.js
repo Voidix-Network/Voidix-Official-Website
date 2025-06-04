@@ -20,10 +20,84 @@ window.VOIDIX_SHARED_CONFIG = {
         bedwars_solo: "起床战争 (单人)",
         bedwars_other: "起床战争 (其他)",
         survival: "生存服务器",
-        lobby1: "小游戏大厅",
         anticheat_test: "反作弊测试",
         login: "登录服务器",
+        lobby1: "小游戏大厅",
         knockioffa: "击退战场 (knockioffa)"
+    },
+
+    /**
+     * Server configuration mapping for dynamic setup
+     * Maps server keys to their UI element IDs and display configurations
+     */
+    serverConfig: {
+        // Special aggregates and complex servers (not dynamically configurable for now)
+        minigames_aggregate: {
+            keys: ["bedwars", "bedwars_solo", "bedwars_other", "knockioffa"],
+            isAggregate: true
+        },
+        bedwars_sub_aggregate: {
+            keys: ["bedwars", "bedwars_solo", "bedwars_other"],
+            isAggregate: true
+        },
+        
+        // Individual servers with standard configurations
+        bedwars: {
+            statusPageElements: {
+                statusEl: "bedwars-status",
+                dotEl: "bedwars-dot",
+                displayNameEl: "bedwars-display-name"
+            },
+            keys: ["bedwars"]
+        },
+        bedwars_solo: {
+            statusPageElements: {
+                statusEl: "bedwars_solo-status",
+                dotEl: "bedwars_solo-dot",
+                displayNameEl: "bedwars_solo-display-name"
+            },
+            keys: ["bedwars_solo"]
+        },
+        bedwars_other: {
+            statusPageElements: {
+                statusEl: "bedwars_other-status",
+                dotEl: "bedwars_other-dot",
+                displayNameEl: "bedwars_other-display-name"
+            },
+            keys: ["bedwars_other"]
+        },
+        survival: {
+            statusPageElements: {
+                statusEl: "survival-live-status",
+                dotEl: "survival-dot",
+                displayNameEl: "survival-display-name"
+            },
+            indexPageElements: {
+                badge: "survival-status-badge-desktop",
+                dot: "survival-status-dot-desktop"
+            },
+            keys: ["survival"]
+        },
+        lobby1: {
+            statusPageElements: {
+                statusEl: "lobby-live-status",
+                dotEl: "lobby-dot",
+                displayNameEl: "lobby-display-name"
+            },
+            indexPageElements: {
+                badge: "lobby-status-badge-desktop",
+                dot: "lobby-status-dot-desktop"
+            },
+            keys: ["lobby1"]
+        },
+        knockioffa: {
+            statusPageElements: {
+                statusEl: "knockioffa-live-status",
+                dotEl: "knockioffa-dot",
+                displayNameEl: "knockioffa-display-name"
+            },
+            keys: ["knockioffa"]
+        }
     },
 
     // New shared items:
@@ -92,6 +166,76 @@ window.VOIDIX_SHARED_CONFIG = {
         textMonoGreen: 'font-mono text-green-400',
         textMonoRed: 'font-mono text-red-400',
         textMonoYellow: 'font-mono text-yellow-400'
+    },
+
+    /**
+     * Builds server status list configuration dynamically from serverConfig
+     * @returns {Object} Configuration object for server status elements
+     */
+    buildServerStatusConfig: function() {
+        const config = {};
+        const shared = window.VOIDIX_SHARED_CONFIG;
+        
+        // Handle special aggregates first
+        config.minigames_aggregate = {
+            statusEl: document.getElementById("minigames-aggregate-status"),
+            dotEl: document.getElementById("minigames-aggregate-dot"),
+            displayNameEl: document.getElementById("minigames-aggregate-display-name"),
+            keys: shared.minigameKeys,
+            name: shared.serverDisplayNames.minigames_aggregate
+        };
+        
+        config.bedwars_sub_aggregate = {
+            statusEl: document.getElementById("bedwars-sub-aggregate-status"),
+            dotEl: null,
+            displayNameEl: document.getElementById("bedwars-sub-aggregate-display-name"),
+            keys: ["bedwars", "bedwars_solo", "bedwars_other"],
+            name: shared.serverDisplayNames.bedwars_sub_aggregate
+        };
+        
+        // Build individual server configs dynamically
+        Object.keys(shared.serverConfig).forEach(serverKey => {
+            const serverConf = shared.serverConfig[serverKey];
+            if (serverConf.statusPageElements && !serverConf.isAggregate) {
+                config[serverKey] = {
+                    statusEl: document.getElementById(serverConf.statusPageElements.statusEl),
+                    dotEl: document.getElementById(serverConf.statusPageElements.dotEl),
+                    displayNameEl: document.getElementById(serverConf.statusPageElements.displayNameEl),
+                    keys: serverConf.keys || [serverKey],
+                    name: shared.serverDisplayNames[serverKey]
+                };
+            }
+        });
+        
+        return config;
+    },
+
+    /**
+     * Builds index page status elements configuration dynamically
+     * @returns {Object} Configuration object for index page status elements
+     */
+    buildIndexStatusConfig: function() {
+        const config = {};
+        const shared = window.VOIDIX_SHARED_CONFIG;
+        
+        // Build configurations for servers that have index page elements
+        Object.keys(shared.serverConfig).forEach(serverKey => {
+            const serverConf = shared.serverConfig[serverKey];
+            if (serverConf.indexPageElements) {
+                config[serverKey] = {
+                    badge: document.getElementById(serverConf.indexPageElements.badge),
+                    dot: document.getElementById(serverConf.indexPageElements.dot)
+                };
+            }
+        });
+        
+        // Add minigames aggregate for index page (using 'minigame' key as used in index page)
+        config.minigame = {
+            badge: document.getElementById('minigame-status-badge-desktop'),
+            dot: document.getElementById('minigame-status-dot-desktop')
+        };
+        
+        return config;
     },
 
     /**

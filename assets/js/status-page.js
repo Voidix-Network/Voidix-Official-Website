@@ -22,66 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // - keys: An array of server identifiers from the WebSocket 'full' message payload
     //         that this display entry represents (can be a single server or an aggregate).
     // - name: A descriptive name for this server entry (used for logging/debugging).
-    const serverStatusListConfig = {
-        minigames_aggregate: {
-            statusEl: document.getElementById("minigames-aggregate-status"),
-            dotEl: document.getElementById("minigames-aggregate-dot"),
-            displayNameEl: document.getElementById("minigames-aggregate-display-name"),
-            keys: window.VOIDIX_SHARED_CONFIG.minigameKeys,
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.minigames_aggregate
-        },
-        bedwars_sub_aggregate: {
-            statusEl: document.getElementById("bedwars-sub-aggregate-status"),
-            dotEl: null, 
-            displayNameEl: document.getElementById("bedwars-sub-aggregate-display-name"),
-            keys: ["bedwars", "bedwars_solo", "bedwars_other"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_sub_aggregate
-        },
-        bedwars: {
-            statusEl: document.getElementById("bedwars-status"),
-            dotEl: document.getElementById("bedwars-dot"),
-            displayNameEl: document.getElementById("bedwars-display-name"),
-            keys: ["bedwars"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars
-        },
-        bedwars_solo: {
-            statusEl: document.getElementById("bedwars_solo-status"),
-            dotEl: document.getElementById("bedwars_solo-dot"),
-            displayNameEl: document.getElementById("bedwars_solo-display-name"),
-            keys: ["bedwars_solo"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_solo
-        },
-        bedwars_other: {
-            statusEl: document.getElementById("bedwars_other-status"),
-            dotEl: document.getElementById("bedwars_other-dot"),
-            displayNameEl: document.getElementById("bedwars_other-display-name"),
-            keys: ["bedwars_other"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.bedwars_other
-        },
-        survival: {
-            statusEl: document.getElementById("survival-live-status"),
-            dotEl: document.getElementById("survival-dot"),
-            displayNameEl: document.getElementById("survival-display-name"),
-            keys: ["survival"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.survival
-        },
-        lobby: {
-            statusEl: document.getElementById("lobby-live-status"),
-            dotEl: document.querySelector("#server-status-list > div:last-child .status-dot"),
-            displayNameEl: document.getElementById("lobby-display-name"),
-            keys: ["lobby"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.lobby
-        },
-        knockioffa: {
-            statusEl: document.getElementById("knockioffa-live-status"),
-            dotEl: document.getElementById("knockioffa-dot"),
-            displayNameEl: document.getElementById("knockioffa-display-name"),
-            keys: ["knockioffa"],
-            name: window.VOIDIX_SHARED_CONFIG.serverDisplayNames.knockioffa
-        },
-    };
+    // Build server configuration dynamically from sharedConfig
+    const serverStatusListConfig = window.VOIDIX_SHARED_CONFIG.buildServerStatusConfig();
 
-    // Ensure survival and lobby dots have IDs for robust selection
+    // Ensure survival and lobby1 dots have IDs for robust selection
     const survivalDot = document.querySelector("#server-status-list div:nth-child(5) .status-dot"); // Example, adjust if HTML order changes
     if (survivalDot && !survivalDot.id) survivalDot.id = "survival-dot";
 
@@ -92,10 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (serverStatusListConfig.survival.dotEl.id !== "survival-dot" && document.getElementById("survival-dot")) {
         serverStatusListConfig.survival.dotEl = document.getElementById("survival-dot");
     }
-    if (serverStatusListConfig.lobby.dotEl.id !== "lobby-dot" && document.getElementById("lobby-dot")) { // Check if querySelector was used initially
-        const actualLobbyDot = document.querySelector("#server-status-list > div:nth-last-child(1) .status-dot"); // Assuming lobby is last
+    if (serverStatusListConfig.lobby1.dotEl.id !== "lobby-dot" && document.getElementById("lobby-dot")) { // Check if querySelector was used initially
+        const actualLobbyDot = document.querySelector("#server-status-list > div:nth-last-child(1) .status-dot"); // Assuming lobby1 is last
         if(actualLobbyDot && !actualLobbyDot.id) actualLobbyDot.id = "lobby-dot";
-        serverStatusListConfig.lobby.dotEl = document.getElementById("lobby-dot") || actualLobbyDot;
+        serverStatusListConfig.lobby1.dotEl = document.getElementById("lobby-dot") || actualLobbyDot;
     }
 
     let currentServerData = {
@@ -998,7 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (serverInfo.dotEl) {
                 hoverTarget = serverInfo.dotEl.closest('.p-3.sm\\:p-4.rounded-lg');
                 // Fallback for specific server keys if the initial closest target isn't found (e.g. different HTML structure)
-                if (!hoverTarget && (serverKey === 'survival' || serverKey === 'lobby')) {
+                if (!hoverTarget && (serverKey === 'survival' || serverKey === 'lobby1')) {
                     const directChildren = Array.from(document.getElementById('server-status-list').children);
                     directChildren.forEach(child => {
                         if (child.querySelector(`#${serverInfo.dotEl.id}`)) {

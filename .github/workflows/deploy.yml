@@ -82,7 +82,7 @@ jobs:
               issue_number: context.issue.number,
               body: `✅ **部署成功完成！**
               
-              🌐 网站地址: https://voidix.top
+              🌐 网站地址: https://voidix.net
               📝 提交: ${context.sha.substring(0, 7)}
               ⏰ 部署时间: ${new Date().toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'})}`
             });
@@ -106,7 +106,7 @@ jobs:
         if: always()
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ 部署成功完成: https://voidix.top"
+            echo "✅ 部署成功完成: https://voidix.net"
           else
             echo "❌ 部署失败，请检查日志"
           fi

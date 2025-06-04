@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # 站点地图
-Sitemap: https://www.voidix.top/sitemap.xml
+Sitemap: https://www.voidix.net/sitemap.xml
 
 # 抓取延迟（可选）
 Crawl-delay: 1

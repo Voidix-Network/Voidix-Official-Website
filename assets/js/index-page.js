@@ -155,20 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let connectionTimeoutTimer = null; // Timer for connection timeout
 
     // Object mapping server types to their corresponding HTML badge and status dot elements on the index page.
-    const statusElementsSimplified = {
-        minigame: {
-            badge: document.getElementById('minigame-status-badge-desktop'), // Badge for minigame server status (aggregate)
-            dot: document.getElementById('minigame-status-dot-desktop')      // Status dot for minigame server (aggregate)
-        },
-        survival: {
-            badge: document.getElementById('survival-status-badge-desktop'), // Badge for survival server status
-            dot: document.getElementById('survival-status-dot-desktop')      // Status dot for survival server
-        },
-        lobby: {
-            badge: document.getElementById('lobby-status-badge-desktop'),    // Badge for lobby server status
-            dot: document.getElementById('lobby-status-dot-desktop')       // Status dot for lobby server
-        }
-    };
+    // Build status elements configuration dynamically from sharedConfig
+    const statusElementsSimplified = window.VOIDIX_SHARED_CONFIG.buildIndexStatusConfig();
 
     // HTML elements for displaying total online players count (desktop and mobile versions).
     const onlinePlayersCountEl = {
@@ -316,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Updates the status badges and dots for individual server types (minigame, survival, lobby) on the index page.
+     * Updates the status badges and dots for individual server types (minigame, survival, lobby1) on the index page.
      * Handles normal, maintenance, and partial/unknown states.
      */
     function updateServerStatusBadges() {
@@ -391,11 +379,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             // Update Lobby Server Status
-            const lobbyServer = serverData.servers.lobby;
+            const lobbyServer = serverData.servers.lobby1;
             if (lobbyServer) {
-                updateStatusDisplay('lobby', statusElementsSimplified.lobby, lobbyServer.online, lobbyServer.isOnline);
-            } else if (Object.keys(serverData.servers).length > 0 && serverData.servers.lobby === undefined) {
-                updateStatusDisplay('lobby', statusElementsSimplified.lobby, 0, false, true); // Mark as partial/unknown
+                updateStatusDisplay('lobby1', statusElementsSimplified.lobby1, lobbyServer.online, lobbyServer.isOnline);
+            } else if (Object.keys(serverData.servers).length > 0 && serverData.servers.lobby1 === undefined) {
+                updateStatusDisplay('lobby1', statusElementsSimplified.lobby1, 0, false, true); // Mark as partial/unknown
             }
         }
     }

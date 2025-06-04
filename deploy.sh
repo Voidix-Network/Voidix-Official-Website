@@ -362,7 +362,7 @@ main() {
     log_info "=== 🎉 部署成功完成！ ==="
     log_info "网站已部署到: $WEBSITE_DIR"
     log_info "备份位置: $BACKUP_DIR"
-    log_info "访问您的网站: https://voidix.top"
+    log_info "访问您的网站: https://voidix.net"
     
     # 显示CDN服务信息
     if [ -f "$CDN_CONF_DEST" ]; then
