@@ -6,63 +6,90 @@
 // General script for navbar, framer motion, tabs, accordions, and smooth scrolling.
 
 /**
- * Initializes Framer Motion animations for elements with .motion-element class.
- * It reads animation properties from data attributes (data-initial, data-animate, etc.).
- * Ensures Framer Motion (window.motion) is loaded before attempting to use it.
+ * 简单的全局状态管理，用于跟踪动画库加载状态
  */
-const initializeFramerMotion = () => {
-  // 等待Framer Motion加载完成
-  const waitForFramerMotion = (callback, maxAttempts = 10, interval = 200) => {
-    let attempts = 0;
-    const check = () => {
-      attempts++;
-      if (typeof window.motion !== 'undefined') {
-        callback();
-      } else if (attempts < maxAttempts) {
-        console.log(`Waiting for Framer Motion to load (attempt ${attempts}/${maxAttempts})...`);
-        setTimeout(check, interval);
-      } else {
-        console.warn('Framer Motion global (window.motion) not found after multiple attempts. Animations might not work.');
-      }
-    };
-    check();
-  };
-
-  waitForFramerMotion(() => {
-    const { animate: fmAnimate, inView: fmInView, set: fmSet } = window.motion;
-
-    const motionElements = document.querySelectorAll('.motion-element');
-    motionElements.forEach(el => {
+window.VoidixApp = window.VoidixApp || {
+  isFramerMotionLoaded: false,
+  pendingAnimations: [],
+  
+  // 标记Framer Motion已加载
+  setFramerMotionLoaded: function() {
+    this.isFramerMotionLoaded = true;
+    this.processPendingAnimations();
+  },
+  
+  // 添加一个等待执行的动画元素和配置
+  addPendingAnimation: function(element, config) {
+    this.pendingAnimations.push({element, config});
+    
+    // 如果动画库已加载，立即处理
+    if (this.isFramerMotionLoaded) {
+      this.processPendingAnimations();
+    }
+  },
+  
+  // 处理所有等待的动画
+  processPendingAnimations: function() {
+    if (!this.isFramerMotionLoaded || !window.motion) return;
+    
+    const { animate, inView, set } = window.motion;
+    
+    // 处理所有待处理的动画
+    while (this.pendingAnimations.length > 0) {
+      const { element, config } = this.pendingAnimations.shift();
       try {
-        const initialProps = el.dataset.initial ? JSON.parse(el.dataset.initial) : null;
-        const animateProps = el.dataset.animate ? JSON.parse(el.dataset.animate) : null;
-        const transitionProps = el.dataset.transition
-            ? JSON.parse(el.dataset.transition)
-            : {};
-        const whileInViewProps = el.dataset.whileinview
-            ? JSON.parse(el.dataset.whileinview)
-            : null;
-        const viewportProps = el.dataset.viewport
-            ? JSON.parse(el.dataset.viewport)
-            : { once: true };
-
+        const { initialProps, animateProps, transitionProps, whileInViewProps, viewportProps } = config;
+        
         if (initialProps) {
-          fmSet(el, initialProps);
+          set(element, initialProps);
         }
-
+        
         if (whileInViewProps) {
-          fmInView(
-              el,
-              () => { fmAnimate(el, whileInViewProps, transitionProps); },
-              viewportProps
+          inView(
+            element,
+            () => { animate(element, whileInViewProps, transitionProps); },
+            viewportProps
           );
         } else if (animateProps) {
-          fmAnimate(el, animateProps, transitionProps);
+          animate(element, animateProps, transitionProps);
         }
       } catch (e) {
-        console.error('Error parsing Framer Motion attributes for element:', el, e);
+        console.error('Error applying animation to element:', element, e);
       }
-    });
+    }
+  }
+};
+
+/**
+ * 当Framer Motion脚本加载完成时执行此函数
+ */
+window.onFramerMotionLoaded = function() {
+  console.log('Framer Motion库已成功加载');
+  window.VoidixApp.setFramerMotionLoaded();
+};
+
+/**
+ * 初始化动画元素，即使Framer Motion尚未加载也可以安全调用
+ */
+const initializeFramerMotion = () => {
+  const motionElements = document.querySelectorAll('.motion-element');
+  
+  motionElements.forEach(el => {
+    try {
+      // 解析动画配置
+      const config = {
+        initialProps: el.dataset.initial ? JSON.parse(el.dataset.initial) : null,
+        animateProps: el.dataset.animate ? JSON.parse(el.dataset.animate) : null,
+        transitionProps: el.dataset.transition ? JSON.parse(el.dataset.transition) : {},
+        whileInViewProps: el.dataset.whileinview ? JSON.parse(el.dataset.whileinview) : null,
+        viewportProps: el.dataset.viewport ? JSON.parse(el.dataset.viewport) : { once: true }
+      };
+      
+      // 添加到待处理队列
+      window.VoidixApp.addPendingAnimation(el, config);
+    } catch (e) {
+      console.error('Error parsing animation attributes for element:', el, e);
+    }
   });
 };
 

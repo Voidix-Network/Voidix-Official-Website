@@ -168,38 +168,137 @@ GET https://www.voidix.top/favicon.ico 404
 3. 定期更新第三方库和依赖
 4. 考虑使用本地托管的脚本，而非依赖CDN，以提高可靠性
 
-**原因**：在server块中使用了`limit_conn`，但在http上下文中没有定义对应的`limit_conn_zone`
-**解决方案**：
-1. 注释掉server块中的limit_conn和limit_req指令
-2. 在主nginx.conf的http块中添加正确的zone定义
-```nginx
-# 在主nginx.conf中添加
-http {
-    limit_conn_zone $binary_remote_addr zone=conn_limit_per_ip:10m;
-    limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=10r/s;
-    # ... 其他配置 ...
-}
+## 最新问题修复 (2025-06-04)
 
-# 然后在站点配置中使用
-server {    # ... 其他配置 ...
-    limit_conn conn_limit_per_ip 20;
-    limit_req zone=req_limit_per_ip burst=20 nodelay;
-}
-```
+### 问题8：Cross-Origin Embedder Policy (COEP) 阻止跨域资源加载
 
-### 问题5：服务器名称冲突警告
 **错误信息**：
 ```
-[warn] conflicting server name "voidix.top" on 0.0.0.0:80, ignored
+ed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep
 ```
 
-**原因**：多个配置文件（或同一文件的多个server块）为同一个IP:端口组合定义了相同的server_name
+**原因**：COEP设置为`require-corp`模式，阻止了没有正确CORS标头的跨域资源加载
 **解决方案**：
-1. 这通常只是警告，不会阻止nginx启动
-2. 如果需要解决，可以检查所有nginx配置并确保每个IP:端口组合的server_name是唯一的
-3. 如果是多个配置文件定义了相同的server_name，可以删除或禁用不需要的配置
+1. 更改COEP头为更宽松的设置
+```nginx
+# 修改COEP策略以允许加载未指定CORP的资源
+add_header Cross-Origin-Embedder-Policy "unsafe-none" always;
+```
 
-**注意**：当使用`include sites-enabled/*`方式加载多个配置文件时，容易出现此类冲突
+2. 将第三方脚本本地托管，避免跨域问题
+```html
+<!-- 使用本地托管的脚本替代CDN -->
+<script src="/assets/js/vendor/react.js"></script>
+<script src="/assets/js/vendor/react-dom.js"></script>
+<script src="/assets/js/vendor/framer-motion.js" id="framer-motion-script"></script>
+```
+
+### 问题9：Framer Motion加载和动画初始化问题
+
+**错误信息**：
+```
+Waiting for Framer Motion to load (attempt 1/10)...
+Waiting for Framer Motion to load (attempt 2/10)...
+```
+
+**原因**：Framer Motion脚本加载不可靠，且缺乏适当的初始化和错误恢复机制
+**解决方案**：
+1. 创建全局应用状态管理机制
+```javascript
+window.VoidixApp = window.VoidixApp || {
+  isFramerMotionLoaded: false,
+  pendingAnimations: [],
+  
+  // 标记Framer Motion已加载
+  setFramerMotionLoaded: function() {
+    this.isFramerMotionLoaded = true;
+    this.processPendingAnimations();
+  },
+  
+  // 添加一个等待执行的动画元素和配置
+  addPendingAnimation: function(element, config) {
+    this.pendingAnimations.push({element, config});
+    
+    // 如果动画库已加载，立即处理
+    if (this.isFramerMotionLoaded) {
+      this.processPendingAnimations();
+    }
+  },
+  
+  // 处理所有等待的动画
+  processPendingAnimations: function() {
+    // 实现详见script.js
+  }
+};
+```
+
+2. 优化动画初始化流程，增加错误处理和回退机制
+
+### 问题10：Tailwind CSS CDN警告和生产环境依赖问题
+
+**错误信息**：
+```
+cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI
+```
+
+**原因**：使用Tailwind CDN在生产环境中不推荐，存在性能和可靠性问题
+**解决方案**：
+1. 下载并本地托管Tailwind CSS
+```html
+<!-- Tailwind CSS - 使用本地文件 -->
+<link href="/assets/css/vendor/tailwind.min.css" rel="stylesheet" />
+```
+
+2. 更新所有HTML文件以使用本地Tailwind CSS
+3. 更新CSP策略，移除对CDN的依赖
+```nginx
+# 所有资源现在都从本地加载，只保留字体CDN
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' wss://server.voidix.top:10203;" always;
+```
+
+## 部署后测试改进建议
+
+实施上述修复后，建议额外进行以下测试：
+
+1. **跨浏览器测试**：在Chrome、Firefox、Safari和Edge中测试动画加载
+2. **弱网络测试**：使用Chrome DevTools的网络节流功能测试在慢速连接下的性能
+3. **CSP验证**：使用浏览器开发工具的"安全"面板验证新的CSP策略是否正确应用
+4. **资源加载验证**：确保所有JS和CSS资源成功从本地加载，而非从CDN获取
+5. **错误恢复测试**：模拟Framer Motion加载失败场景，测试错误恢复机制是否生效
+
+## 未来优化方向
+
+1. **构建流程改进**：实现Tailwind CSS的正确构建流程，而不是使用预构建版本
+2. **代码分割**：实现JavaScript代码分割，减少初始加载时间
+3. **预加载关键资源**：为关键JS/CSS资源添加预加载指令
+4. **进一步CSP强化**：用nonce或hash替换'unsafe-inline'，提高安全性
+5. **资源压缩**：确保所有静态资源都经过最佳压缩
+
+## 📝 维护建议
+
+1. 考虑使用更安全的CSP配置，减少使用'unsafe-inline'
+2. 为脚本添加完整性验证（SRI，子资源完整性）
+3. 定期更新第三方库和依赖
+4. 考虑使用本地托管的脚本，而非依赖CDN，以提高可靠性
+
+## 📋 部署前检查清单
+
+### 环境检查
+- [ ] Nginx服务正在运行
+- [ ] SSL证书文件存在且权限正确
+- [ ] 备份目录可写
+- [ ] sites-enabled目录存在
+
+### 配置检查
+- [ ] nginx-production.conf语法正确
+- [ ] 域名配置匹配实际域名
+- [ ] 网站根目录路径正确
+- [ ] 日志目录可写
+
+### 权限检查
+- [ ] 部署用户有sudo权限
+- [ ] 网站文件所有权正确
+- [ ] Nginx配置目录可写
 
 ## 🔧 Nginx配置相关问题
 
@@ -229,25 +328,6 @@ nginx: [emerg] cannot load certificate "/etc/nginx/ssl/voidix/fullchain.cer"
 ### v1.1 → v1.2  
 - 修复Nginx配置测试方法
 - 改用临时文件测试避免context错误
-
-## 📋 部署前检查清单
-
-### 环境检查
-- [ ] Nginx服务正在运行
-- [ ] SSL证书文件存在且权限正确
-- [ ] 备份目录可写
-- [ ] sites-enabled目录存在
-
-### 配置检查
-- [ ] nginx-production.conf语法正确
-- [ ] 域名配置匹配实际域名
-- [ ] 网站根目录路径正确
-- [ ] 日志目录可写
-
-### 权限检查
-- [ ] 部署用户有sudo权限
-- [ ] 网站文件所有权正确
-- [ ] Nginx配置目录可写
 
 ## 🔍 调试命令
 
