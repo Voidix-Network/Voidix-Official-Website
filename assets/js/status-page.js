@@ -13,8 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let ws;
     let wsStatusPage;
     let statusPageReconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 3;
+    const RECONNECT_TIMEOUTS = [3000, 5000, 10000]; // 3s, 5s, 10s for attempts 1, 2, 3
     let forceShowStatusPageMaintenance = false; // Flag for maintenance precedence
     let statusPageConnectionTimeoutTimer = null; // Timer for status page connection timeout
+    let statusPageReconnectTimer = null; // Timer for delayed reconnection
 
     // Configuration mapping server keys to their respective HTML elements for status display.
     // - statusEl: The HTML element (usually a <span>) to display the server's online count/status text.
@@ -462,16 +465,22 @@ document.addEventListener("DOMContentLoaded", () => {
         // Initial status is typically loading, handled by setInitialLoadingStatusOnStatusPage unless connection is instant
         // or an immediate error/close occurs triggering setDisconnectedStatusOnStatusPage.
 
+        // Use dynamic timeout based on reconnection attempt
+        const currentTimeout = statusPageReconnectAttempts < RECONNECT_TIMEOUTS.length
+            ? RECONNECT_TIMEOUTS[statusPageReconnectAttempts]
+            : RECONNECT_TIMEOUTS[RECONNECT_TIMEOUTS.length - 1];
+            
         statusPageConnectionTimeoutTimer = setTimeout(() => {
             if (wsStatusPage.readyState !== WebSocket.OPEN) {
-                // console.log('[DEBUG] Status WS: Connection attempt timed out. Closing and retrying.');
+                // Connection timed out, trigger reconnection
                 wsStatusPage.close(); // Triggers onclose for reconnect
             }
-        }, 5000);
+        }, currentTimeout);
 
         wsStatusPage.onopen = () => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Connection successful
-            // console.log('[DEBUG] Status WS: Connected (onopen)');
+            clearTimeout(statusPageReconnectTimer); // Clear any pending reconnection
+            // WebSocket connected successfully
             statusPageReconnectAttempts = 0; // Reset on successful connection
         };
 
