@@ -83,12 +83,12 @@ deploy_website() {
     
     # 确保目标目录存在
     sudo mkdir -p "$WEBSITE_DIR"
-    
-    # 复制文件，排除不需要的文件和目录
+      # 复制文件，排除不需要的文件和目录
     sudo rsync -av \
         --exclude='.git/' \
         --exclude='.github/' \
         --exclude='memory-bank/' \
+        --exclude='docs/' \
         --exclude='*.conf' \
         --exclude='*.md' \
         --exclude='deploy.sh' \
@@ -107,9 +107,8 @@ deploy_website() {
 # 部署Nginx配置
 deploy_nginx_config() {
     log_info "部署Nginx配置..."
-    
-    if [ ! -f "$NGINX_CONF_SOURCE" ]; then
-        log_error "找不到nginx.conf文件"
+      if [ ! -f "$NGINX_CONF_SOURCE" ]; then
+        log_error "找不到nginx-production.conf文件"
         exit 1
     fi
     
@@ -220,13 +219,13 @@ cleanup_old_backups() {
 # 主执行流程
 main() {
     log_info "=== Voidix 官方网站自动部署开始 ==="
-    
-    check_permissions
+      check_permissions
     create_backup
     deploy_website
     deploy_nginx_config
     reload_nginx
     verify_deployment
+    cleanup_old_backups
     
     log_info "=== 🎉 部署成功完成！ ==="
     log_info "网站已部署到: $WEBSITE_DIR"
