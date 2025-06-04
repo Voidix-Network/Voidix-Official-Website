@@ -74,7 +74,7 @@
 
 各个搜索引擎输入：
 ```
-site:www.voidix.top
+site:www.voidix.net
 ```
 
 记录收录页面数量，比较变化。
@@ -91,7 +91,7 @@ site:www.voidix.top
    - 登录后台
    - 选择"数据引入" > "链接提交"
    - 选择"sitemap"
-   - 输入：https://www.voidix.top/sitemap.xml
+   - 输入：https://www.voidix.net/sitemap.xml
 
 3. **其他平台类似操作**
 
