@@ -23,6 +23,8 @@ jobs:
       # comment_id_for_immediate_deploy: ${{ steps.check_pr_status.outputs.comment_id }} # Potentially pass comment_id
 
     steps:
+      - name: Announce PR Number
+        run: echo "This workflow run is processing based on an event from PR number ${{ github.event.issue.number || github.event.pull_request.number }}."
       - name: Check Commenter Permissions
         id: check_permissions
         uses: actions/github-script@v7
