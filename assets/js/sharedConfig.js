@@ -20,7 +20,9 @@ window.VOIDIX_SHARED_CONFIG = {
         bedwars_solo: "起床战争 (单人)",
         bedwars_other: "起床战争 (其他)",
         survival: "生存服务器",
-        lobby: "小游戏大厅",
+        lobby1: "小游戏大厅",
+        anticheat_test: "反作弊测试",
+        login: "登录服务器",
         knockioffa: "击退战场 (knockioffa)"
     },
 
