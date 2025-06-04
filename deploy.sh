@@ -25,9 +25,9 @@ NC='\033[0m' # No Color
 # 清理函数
 cleanup() {
     log_info "执行清理操作..."
-    # 清理所有临时文件
-    sudo rm -f "$TEMP_CONF_FILE" 2>/dev/null || true
-    sudo rm -f "${NGINX_CONF_DEST}.test" 2>/dev/null || true
+    # 清理所有临时文件 - 优先尝试不使用sudo，失败时再使用sudo
+    rm -f "$TEMP_CONF_FILE" 2>/dev/null || sudo rm -f "$TEMP_CONF_FILE" 2>/dev/null || true
+    rm -f "${NGINX_CONF_DEST}.test" 2>/dev/null || sudo rm -f "${NGINX_CONF_DEST}.test" 2>/dev/null || true
     log_info "清理完成"
 }
 
@@ -126,27 +126,9 @@ deploy_nginx_config() {
     fi
     
     # 清理测试文件
-    sudo rm -f "$NGINX_CONF_DEST.test"
+    rm -f "$NGINX_CONF_DEST.test" 2>/dev/null || sudo rm -f "$NGINX_CONF_DEST.test" 2>/dev/null
     
-    # 方法2：直接测试配置文件语法（作为额外验证）
-    log_info "验证配置文件语法..."
-    # 创建临时配置文件用于测试独立语法检查支持
-    echo "events {} http { server { listen 80; } }" | sudo tee "$TEMP_CONF_FILE" > /dev/null
-    
-    if sudo nginx -t -c "$TEMP_CONF_FILE" 2>/dev/null; then
-        # nginx支持独立语法检查，测试我们的配置文件
-        log_info "执行独立配置文件语法检查..."
-        if ! sudo nginx -t -c "$PWD/$NGINX_CONF_SOURCE" 2>/dev/null; then
-            log_info "独立语法检查发现警告，但完整配置测试已通过"
-        else
-            log_info "独立语法检查通过"
-        fi
-    else
-        log_info "nginx不支持独立语法检查，跳过额外验证"
-    fi
-    
-    # 清理临时配置文件
-    sudo rm -f "$TEMP_CONF_FILE"
+    log_info "配置文件验证完成，准备部署..."
     
     # 部署配置文件
     sudo cp "$NGINX_CONF_SOURCE" "$NGINX_CONF_DEST"
