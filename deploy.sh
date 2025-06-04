@@ -10,8 +10,13 @@ echo "🚀 开始部署 Voidix 官方网站..."
 WEBSITE_DIR="/www/voidix"
 NGINX_CONF_SOURCE="nginx-production.conf"
 NGINX_CONF_DEST="/etc/nginx/sites-enabled/voidix.conf"
+CDN_CONF_SOURCE="nginx-cdn-proxy.conf"
+CDN_CONF_DEST="/etc/nginx/sites-enabled/cdn-proxy.conf"
+LEGACY_JSDELIVER_CONF_PATH="/etc/nginx/sites-enabled/jsdelivr-proxy.conf"
 BACKUP_ROOT="/var/backups/voidix"
 BACKUP_DIR="$BACKUP_ROOT/$(date +%Y%m%d_%H%M%S)"
+CACHE_DIR="/var/cache/nginx/cdn"
+CACHE_TEMP_DIR="/var/cache/nginx/temp"
 
 # 临时文件变量
 TEMP_CONF_FILE="/tmp/nginx_temp_$$.conf"
@@ -75,6 +80,11 @@ create_backup() {
         sudo cp "$NGINX_CONF_DEST" "$BACKUP_DIR/nginx.conf.bak"
         log_info "Nginx配置已备份到: $BACKUP_DIR/nginx.conf.bak"
     fi
+    
+    if [ -f "$CDN_CONF_DEST" ]; then
+        sudo cp "$CDN_CONF_DEST" "$BACKUP_DIR/cdn-proxy.conf.bak"
+        log_info "CDN代理配置已备份到: $BACKUP_DIR/cdn-proxy.conf.bak"
+    fi
 }
 
 # 部署网站文件
@@ -102,6 +112,103 @@ deploy_website() {
     sudo find "$WEBSITE_DIR" -type f -exec chmod 644 {} \;
     
     log_info "网站文件部署完成"
+}
+
+# 设置CDN缓存目录
+setup_cdn_cache() {
+    log_info "设置CDN缓存目录..."
+    
+    # 创建缓存目录
+    sudo mkdir -p "$CACHE_DIR"
+    sudo mkdir -p "$CACHE_TEMP_DIR"
+    
+    # 设置正确的权限和所有者
+    sudo chown -R nginx:nginx "$CACHE_DIR" "$CACHE_TEMP_DIR" 2>/dev/null || sudo chown -R www-data:www-data "$CACHE_DIR" "$CACHE_TEMP_DIR"
+    sudo chmod -R 755 "$CACHE_DIR" "$CACHE_TEMP_DIR"
+    
+    log_info "CDN缓存目录设置完成"
+    log_info "缓存目录: $CACHE_DIR"
+    log_info "临时目录: $CACHE_TEMP_DIR"
+}
+
+# 检查nginx.conf中的缓存配置
+check_nginx_cache_config() {
+    log_info "检查nginx主配置文件中的CDN缓存设置..."
+    
+    local nginx_conf="/etc/nginx/nginx.conf"
+    
+    # 检查CDN缓存配置 - 支持多行配置格式
+    if ! sudo grep -qE "^[[:space:]]*proxy_cache_path[[:space:]]+.*" "$nginx_conf" || ! sudo grep -qE "keys_zone=cdn_cache" "$nginx_conf"; then
+        log_warn "检测到nginx.conf中缺少CDN缓存配置"
+        log_warn "需要在nginx.conf的http块中添加以下配置："
+        log_warn ""
+        log_warn "    proxy_cache_path /var/cache/nginx/cdn"
+        log_warn "                     levels=1:2"
+        log_warn "                     keys_zone=cdn_cache:100m"
+        log_warn "                     max_size=10g"
+        log_warn "                     inactive=7d"
+        log_warn "                     use_temp_path=off;"
+        log_warn ""
+        log_warn "    proxy_temp_path /var/cache/nginx/temp;"
+        log_warn ""
+        log_warn "请手动添加后重新运行部署脚本"
+        return 1
+    fi
+    
+    # 检查proxy_temp_path配置
+    if ! sudo grep -qE "^[[:space:]]*proxy_temp_path[[:space:]]+[^;]*;" "$nginx_conf"; then
+        log_warn "检测到nginx.conf中缺少proxy_temp_path配置"
+        log_warn "需要在nginx.conf的http块中添加以下配置："
+        log_warn ""
+        log_warn "    proxy_temp_path /var/cache/nginx/temp;"
+        log_warn ""
+        log_warn "请手动添加后重新运行部署脚本"
+        return 1
+    fi
+    
+    log_info "nginx主配置文件中的CDN缓存配置检查通过"
+    return 0
+}
+
+# 部署CDN反代配置
+deploy_cdn_config() {
+    log_info "部署CDN反向代理配置..."
+    
+    if [ ! -f "$CDN_CONF_SOURCE" ]; then
+        log_warn "找不到 $CDN_CONF_SOURCE 文件，跳过CDN代理配置"
+        return 0
+    fi
+    
+    # 检查nginx主配置中的缓存设置
+    if ! check_nginx_cache_config; then
+        log_error "nginx主配置检查失败，CDN代理配置已跳过"
+        return 1
+    fi
+    
+    # 测试CDN代理配置语法
+    log_info "测试CDN代理配置语法..."
+    sudo cp "$CDN_CONF_SOURCE" "$CDN_CONF_DEST.test"
+    
+    if ! sudo nginx -t; then
+        log_error "CDN代理配置测试失败"
+        sudo rm -f "$CDN_CONF_DEST.test"
+        return 1
+    fi
+    
+    # 清理测试文件
+    sudo rm -f "$CDN_CONF_DEST.test"
+    
+    # 删除旧的jsdelivr配置（如果存在）
+    if [ -f "$LEGACY_JSDELIVER_CONF_PATH" ]; then
+        log_info "删除旧的jsdelivr代理配置..."
+        sudo rm -f "$LEGACY_JSDELIVER_CONF_PATH"
+    fi
+    
+    # 部署新的CDN代理配置文件
+    sudo cp "$CDN_CONF_SOURCE" "$CDN_CONF_DEST"
+    log_info "CDN反向代理配置部署完成"
+    
+    return 0
 }
 
 # 部署Nginx配置
@@ -168,6 +275,10 @@ restore_backup() {
             sudo cp "$BACKUP_DIR/nginx.conf.bak" "$NGINX_CONF_DEST"
         fi
         
+        if [ -f "$BACKUP_DIR/cdn-proxy.conf.bak" ]; then
+            sudo cp "$BACKUP_DIR/cdn-proxy.conf.bak" "$CDN_CONF_DEST"
+        fi
+        
         sudo nginx -t && sudo systemctl reload nginx
         log_warn "备份已恢复"
     fi
@@ -197,6 +308,17 @@ verify_deployment() {
         else
             log_warn "网站HTTP测试返回状态码: $response_code"
         fi
+        
+        # 测试CDN反代服务（如果配置存在）
+        if [ -f "$CDN_CONF_DEST" ]; then
+            log_info "测试CDN反代服务..."
+            local cdn_response=$(curl -s -o /dev/null -w "%{http_code}" -k -H "Host: cdn.voidix.net" https://localhost/health || echo "000")
+            if [ "$cdn_response" = "200" ]; then
+                log_info "CDN反代服务测试通过 (状态码: $cdn_response)"
+            else
+                log_warn "CDN反代服务测试返回状态码: $cdn_response"
+            fi
+        fi
     fi
     
     log_info "部署验证完成"
@@ -219,10 +341,12 @@ cleanup_old_backups() {
 # 主执行流程
 main() {
     log_info "=== Voidix 官方网站自动部署开始 ==="
-      check_permissions
+    check_permissions
     create_backup
     deploy_website
+    setup_cdn_cache
     deploy_nginx_config
+    deploy_cdn_config
     reload_nginx
     verify_deployment
     cleanup_old_backups
@@ -231,6 +355,13 @@ main() {
     log_info "网站已部署到: $WEBSITE_DIR"
     log_info "备份位置: $BACKUP_DIR"
     log_info "访问您的网站: https://voidix.top"
+    
+    # 显示CDN服务信息
+    if [ -f "$CDN_CONF_DEST" ]; then
+        log_info "CDN反代服务: https://cdn.voidix.net"
+        log_info "健康检查: https://cdn.voidix.net/health"
+        log_info "支持的CDN: UNPKG, jsDelivr, CDNJS, Tailwind CSS, Google Fonts"
+    fi
 }
 
 # 如果直接运行此脚本

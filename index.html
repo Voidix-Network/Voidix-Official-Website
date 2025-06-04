@@ -18,8 +18,7 @@
     </script>
     
     <meta charset="utf-8" />    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <!-- 完全移除 CSP 限制，使用更宽松的策略 -->
-    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; object-src *; img-src * data: blob:; media-src *; frame-src *; font-src *; connect-src *;">
+    <!-- CSP策略由nginx配置控制，移除HTML中的CSP避免冲突 -->
     <title>Voidix | 公平至上的Minecraft体验 - 跨版本兼容的我的世界服务器</title>
     
     <!-- SEO Meta Tags -->
@@ -92,16 +91,16 @@
       }    }
     </script>    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script src="https://cdn.voidix.net/tailwindcss@3.3.2/"></script>
     <!-- React and ReactDOM CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://cdn.voidix.net/unpkg/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://cdn.voidix.net/unpkg/react-dom@18/umd/react-dom.development.js"></script>
     <!-- 使用轻量级的动画库替代 Framer Motion -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.js"></script>
+    <link href="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- 字体 -->
     <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" />    <!-- Custom CSS -->
+            href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" />    <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet" />
     <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
     
