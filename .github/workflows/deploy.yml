@@ -4,6 +4,8 @@ on:
   issue_comment:
     types: [created]
   workflow_dispatch:  # 添加手动触发选项
+  push:
+    branches: [ master ]  # 添加推送到master分支时自动部署
 
 permissions:
   contents: read
@@ -13,15 +15,14 @@ permissions:
 jobs:
   deploy:
     name: 通过评论触发部署
-    if: (github.event_name == 'issue_comment' && github.event.comment.body == 'deploy') || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'issue_comment' && github.event.comment.body == 'deploy') || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
     runs-on: [self-hosted, website]
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
-      - name: 检查评论者权限
+            - name: 检查评论者权限
         if: github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         id: permission
