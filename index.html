@@ -93,8 +93,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
     <!-- React and ReactDOM CDN -->
-    <script crossorigin src="https://cdn.voidix.net/react@18.3.1/umd/react.development.js"></script>
-    <script crossorigin src="https://cdn.voidix.net/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://cdn.voidix.net/react@18.3.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.voidix.net/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
     <!-- 使用轻量级的动画库替代 Framer Motion -->
     <script src="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.js"></script>
     <link href="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -218,9 +218,8 @@
                 <div class="flex items-center gap-2 mb-2">
                     <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
                     <span class="text-sm font-medium text-gray-300">MINIGAME</span>
-                </div>
-                <div class="font-mono text-lg font-bold">minigame.voidix.net</div>
-                <div class="mt-2 text-xs text-gray-500">兼容 1.7.2-最新版</div>
+                </div>                <div class="font-mono text-lg font-bold">minigame.voidix.net</div>
+                <div class="mt-2 text-xs text-gray-300">兼容 1.7.2-最新版</div>
             </div>
             <div class="bg-[#1a1f2e]/50 border border-gray-700 rounded-xl p-6 backdrop-blur-sm max-w-xs w-full">
                 <div class="flex items-center gap-2 mb-2">
@@ -228,7 +227,7 @@
                     <span class="text-sm font-medium text-gray-300">SURVIVAL</span>
                 </div>
                 <div class="font-mono text-lg font-bold">survival.voidix.net</div>
-                <div class="mt-2 text-xs text-gray-500">兼容 1.7.2-最新版</div>
+                <div class="mt-2 text-xs text-gray-300">兼容 1.7.2-最新版</div>
             </div>
         </div>
         <div class="motion-element mt-8 flex justify-center"
@@ -755,11 +754,10 @@
             <!-- NekoEpisode 卡片 - 主紫色 -->
             <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
                  data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5}'
-                 data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
-                <div
+                 data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>                <div
                         class="relative h-64 bg-gradient-to-br from-violet-900/40 to-purple-900/40 flex items-center justify-center">
                     <div
-                            class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?abstract,purple')] bg-cover bg-center opacity-20">
+                            class="absolute inset-0 bg-gradient-to-br from-violet-900/60 to-purple-900/40 opacity-20">
                     </div>
                     <div class="relative text-6xl font-bold text-violet-400/50">Neko</div>
                 </div>
@@ -816,11 +814,10 @@
             <!-- CYsonHab 卡片 - 蓝紫色 -->
             <div class="motion-element card-hover group bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-sm"
                  data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.1}'
-                 data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
-                <div
+                 data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>                <div
                         class="relative h-64 bg-gradient-to-br from-indigo-900/40 to-blue-900/40 flex items-center justify-center">
                     <div
-                            class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?tech,blue')] bg-cover bg-center opacity-20">
+                            class="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-cyan-900/40 opacity-20">
                     </div>
                     <div class="relative text-6xl font-bold text-indigo-400/50">cyh</div>
                 </div>
@@ -879,10 +876,9 @@
                  data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.2}'
                  data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
                 <div
-                        class="relative h-64 bg-gradient-to-br from-purple-900/40 to-fuchsia-900/40 flex items-center justify-center">
-                    <div
-                            class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?nature,pink')] bg-cover bg-center opacity-20">
-                    </div>
+                        class="relative h-64 bg-gradient-to-br from-purple-900/40 to-fuchsia-900/40 flex items-center justify-center">                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-pink-900/60 to-rose-900/40">
+                        </div>
                     <div class="relative text-6xl font-bold text-fuchsia-400/50">Hao_zi</div>
                 </div>
                 <div class="p-6">
@@ -931,10 +927,9 @@
                  data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.3}'
                  data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
                 <div
-                        class="relative h-64 bg-gradient-to-br from-blue-900/40 to-indigo-900/40 flex items-center justify-center">
-                    <div
-                            class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?code,dark')] bg-cover bg-center opacity-20">
-                    </div>
+                        class="relative h-64 bg-gradient-to-br from-blue-900/40 to-indigo-900/40 flex items-center justify-center">                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-gray-900/60 to-slate-900/40">
+                        </div>
                     <div class="relative text-6xl font-bold text-blue-400/50">XXJ</div>
                 </div>
                 <div class="p-6">
@@ -983,10 +978,9 @@
                  data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.4}'
                  data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
                 <div
-                        class="relative h-64 bg-gradient-to-br from-purple-900/40 to-blue-900/40 flex items-center justify-center">
-                    <div
-                            class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?design,art')] bg-cover bg-center opacity-20">
-                    </div>
+                        class="relative h-64 bg-gradient-to-br from-purple-900/40 to-blue-900/40 flex items-center justify-center">                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-green-900/60 to-emerald-900/40">
+                        </div>
                     <div class="relative text-6xl font-bold text-blue-400/50">ASKLL</div>
                 </div>
                 <div class="p-6">
@@ -1035,10 +1029,9 @@
                  data-initial='{"opacity": 0, "y": 20}' data-transition='{"duration": 0.5, "delay": 0.5}'
                  data-viewport='{"once": true}' data-whileinview='{"opacity": 1, "y": 0}'>
                 <div
-                        class="relative h-64 bg-gradient-to-br from-slate-900/40 to-blue-900/40 flex items-center justify-center">
-                    <div
-                            class="absolute inset-0 bg-[url('https://source.unsplash.com/random/400x400/?community,people')] bg-cover bg-center opacity-20">
-                    </div>
+                        class="relative h-64 bg-gradient-to-br from-slate-900/40 to-blue-900/40 flex items-center justify-center">                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-orange-900/60 to-amber-900/40">
+                        </div>
                     <div class="relative text-6xl font-bold text-slate-400/50">Player</div>
                 </div>
                 <div class="p-6">
@@ -1154,10 +1147,9 @@
                     </li>
                 </ul>
             </div>
-        </div>
-        <div class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
-            <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
-            <p class="text-gray-500 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p>        </div>
+        </div>        <div class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-300 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
+            <p class="text-gray-300 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p></div>
     </div>
 </footer>
 <!-- 简化的页面初始化脚本 -->
