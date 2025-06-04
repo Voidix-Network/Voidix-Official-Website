@@ -71,18 +71,43 @@ proxy_cache_path /var/cache/nginx/cdn levels=1:2 keys_zone=cdn_cache:100m max_si
 
 ## 部署步骤
 
-### 1. 准备工作
+### 1. 配置 Nginx 主配置文件
+**重要**: 必须先在 `/etc/nginx/nginx.conf` 的 `http {}` 块中添加缓存配置：
+
+```bash
+# 编辑 nginx 主配置文件
+sudo vim /etc/nginx/nginx.conf
+```
+
+在 `http {}` 块中添加以下配置：
+```nginx
+# CDN 缓存路径配置
+proxy_cache_path /var/cache/nginx/cdn
+                 levels=1:2
+                 keys_zone=cdn_cache:100m
+                 max_size=10g
+                 inactive=7d
+                 use_temp_path=off;
+
+# 代理临时路径配置
+proxy_temp_path /var/cache/nginx/temp;
+```
+
+> 📁 **参考文件**: 项目中的 [`nginx-http-cache-config.conf`](../nginx-http-cache-config.conf) 包含了完整的配置模板
+
+### 2. 准备工作
 ```bash
 # 创建缓存目录
 sudo mkdir -p /var/cache/nginx/cdn
-sudo chown nginx:nginx /var/cache/nginx/cdn
+sudo mkdir -p /var/cache/nginx/temp
+sudo chown -R nginx:nginx /var/cache/nginx/cdn /var/cache/nginx/temp
 
 # 检查证书文件存在
 ls -la /etc/ssl/certs/voidix.net*
 ls -la /etc/ssl/private/voidix.net*
 ```
 
-### 2. 部署配置
+### 3. 部署配置
 ```bash
 # 复制配置文件到 Nginx 配置目录
 sudo cp nginx-cdn-proxy.conf /etc/nginx/sites-available/
