@@ -6,16 +6,14 @@
 
 ### 🛠 运维文档
 - [网站维护手册](maintenance.md) - 日常维护操作指南
-- [部署与运维指南](deployment-operations.md) - 完整的部署流程和故障排除
-- [Git工作流指南](git-workflow.md) - PR合并和冲突解决完整流程
+  - [CDN反代配置](cdn-proxy-setup.md) - 全方位CDN反向代理部署指南
+  - [SSL双证书配置](ssl-dual-cert-setup.md) - RSA和ECC双证书配置
 
 ### 🔍 SEO优化
 - [SEO完整指南](seo-guide.md) - 全搜索引擎优化策略
-- [SEO日常任务](seo-tasks.md) - 每天要做的SEO工作
 
 ### 📊 项目管理
 - [项目结构说明](project-structure.md) - 整个项目的文件组织
-- [更新日志](changelog.md) - 重要更新和变更记录
 
 ## 🚀 快速开始
 
