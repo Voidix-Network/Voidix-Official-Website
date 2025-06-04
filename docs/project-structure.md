@@ -12,6 +12,7 @@ Voidix-Official-Website/
 │   ├── README.md             # 文档导航首页
 │   ├── seo-guide.md          # SEO完整指南
 │   ├── seo-tasks.md          # SEO日常任务清单
+│   ├── ssl-dual-cert-setup.md # RSA+ECC双证书配置指南
 │   ├── maintenance.md        # 网站维护手册
 │   └── project-structure.md  # 项目结构说明（当前文件）
 ├── index.html                # 🏠 网站首页
@@ -127,6 +128,7 @@ Voidix-Official-Website/
 - **README.md** - 文档导航，新手必读
 - **seo-guide.md** - 全面的SEO优化指南
 - **seo-tasks.md** - SEO日常工作清单
+- **ssl-dual-cert-setup.md** - RSA+ECC双证书配置指南
 - **maintenance.md** - 网站维护操作手册
 - **project-structure.md** - 项目结构说明（本文档）
 
