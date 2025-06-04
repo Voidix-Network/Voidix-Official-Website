@@ -179,6 +179,14 @@ deploy_cdn_config() {
         return 0
     fi
     
+    # 清理旧的CDN配置文件以避免upstream重复定义
+    log_info "清理旧的CDN配置文件..."
+    sudo rm -f /etc/nginx/sites-enabled/*cdn*
+    sudo rm -f /etc/nginx/sites-enabled/*jsdelivr*
+    sudo rm -f /etc/nginx/sites-enabled/*proxy*
+    sudo rm -f /etc/nginx/sites-enabled/nginx-jsdelivr-proxy.conf
+    sudo rm -f "$CDN_CONF_DEST.test"
+    
     # 检查nginx主配置中的缓存设置
     if ! check_nginx_cache_config; then
         log_error "nginx主配置检查失败，CDN代理配置已跳过"
