@@ -22,8 +22,9 @@ Voidix-Official-Website/
 ├── error.html                # ⚠️ 错误页面
 ├── sitemap.xml               # 🗺️ 网站地图（SEO用）
 ├── robots.txt                # 🤖 搜索引擎爬取规则
-├── nginx-production.conf     # ⚙️ 服务器配置文件
-├── deploy.sh                 # 🚀 部署脚本
+├── nginx-production.conf     # ⚙️ 主站服务器配置文件
+├── nginx-cdn-proxy.conf      # 🌐 CDN反向代理配置文件
+├── deploy.sh                 # 🚀 自动部署脚本
 ├── LICENSE.md                # 📄 开源许可证说明
 ├── LICENSE_CODE              # 📄 代码许可证（AGPL v3）
 ├── LICENSE_CONTENT           # 📄 内容许可证（CC BY-SA 4.0）
@@ -115,10 +116,16 @@ Voidix-Official-Website/
 - 内容：允许抓取的页面和禁止抓取的目录
 - 重要：影响SEO效果
 
-**nginx-production.conf - 服务器配置**
-- 作用：生产环境的nginx配置
+**nginx-production.conf - 主站服务器配置**
+- 作用：生产环境的主站nginx配置
 - 包含：HTTPS重定向、缓存策略、安全设置
-- 注意：修改需要重启nginx服务
+- 注意：修改需要重载nginx服务
+
+**nginx-cdn-proxy.conf - CDN反向代理配置**
+- 作用：全方位CDN反向代理系统配置
+- 支持：UNPKG、jsDelivr、CDNJS、Tailwind CSS、Google Fonts
+- 特性：智能缓存、防盗链、CSP安全、Gzip压缩
+- 域名：cdn.voidix.net
 
 ## 文档系统
 
