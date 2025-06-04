@@ -10,13 +10,29 @@ echo "🚀 开始部署 Voidix 官方网站..."
 WEBSITE_DIR="/www/voidix"
 NGINX_CONF_SOURCE="nginx-production.conf"
 NGINX_CONF_DEST="/etc/nginx/sites-enabled/voidix.conf"
-BACKUP_DIR="/var/backups/voidix/$(date +%Y%m%d_%H%M%S)"
+BACKUP_ROOT="/var/backups/voidix"
+BACKUP_DIR="$BACKUP_ROOT/$(date +%Y%m%d_%H%M%S)"
+
+# 临时文件变量
+TEMP_CONF_FILE="/tmp/nginx_temp_$$.conf"
 
 # 颜色输出
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+
+# 清理函数
+cleanup() {
+    log_info "执行清理操作..."
+    # 清理所有临时文件
+    sudo rm -f "$TEMP_CONF_FILE" 2>/dev/null || true
+    sudo rm -f "${NGINX_CONF_DEST}.test" 2>/dev/null || true
+    log_info "清理完成"
+}
+
+# 设置陷阱，确保脚本退出时清理临时文件
+trap cleanup EXIT
 
 log_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -44,8 +60,13 @@ check_permissions() {
 create_backup() {
     log_info "创建当前部署的备份..."
     
+    # 确保备份根目录存在
+    sudo mkdir -p "$BACKUP_ROOT"
+    
+    # 创建时间戳备份目录
+    sudo mkdir -p "$BACKUP_DIR"
+    
     if [ -d "$WEBSITE_DIR" ]; then
-        sudo mkdir -p "$BACKUP_DIR"
         sudo cp -r "$WEBSITE_DIR" "$BACKUP_DIR/website"
         log_info "网站文件已备份到: $BACKUP_DIR/website"
     fi
@@ -94,12 +115,39 @@ deploy_nginx_config() {
     
     # 测试nginx配置语法
     log_info "测试Nginx配置语法..."
-    sudo nginx -t -c "$PWD/$NGINX_CONF_SOURCE"
+    # 方法1：复制到正确位置测试完整配置
+    sudo cp "$NGINX_CONF_SOURCE" "$NGINX_CONF_DEST.test"
+    sudo nginx -t
     
     if [ $? -ne 0 ]; then
-        log_error "Nginx配置语法检查失败"
+        log_error "Nginx完整配置测试失败"
+        sudo rm -f "$NGINX_CONF_DEST.test"
         exit 1
     fi
+    
+    # 清理测试文件
+    sudo rm -f "$NGINX_CONF_DEST.test"
+    
+    # 方法2：直接测试配置文件语法（作为额外验证）
+    log_info "验证配置文件语法..."
+    # 创建临时配置文件用于测试独立语法检查支持
+    TEMP_CONF_FILE="/tmp/nginx_temp_$$.conf"
+    echo "events {} http { server { listen 80; } }" | sudo tee "$TEMP_CONF_FILE" > /dev/null
+    
+    if sudo nginx -t -c "$TEMP_CONF_FILE" 2>/dev/null; then
+        # nginx支持独立语法检查，测试我们的配置文件
+        log_info "执行独立配置文件语法检查..."
+        if ! sudo nginx -t -c "$PWD/$NGINX_CONF_SOURCE" 2>/dev/null; then
+            log_info "独立语法检查发现警告，但完整配置测试已通过"
+        else
+            log_info "独立语法检查通过"
+        fi
+    else
+        log_info "nginx不支持独立语法检查，跳过额外验证"
+    fi
+    
+    # 清理临时配置文件
+    sudo rm -f "$TEMP_CONF_FILE"
     
     # 部署配置文件
     sudo cp "$NGINX_CONF_SOURCE" "$NGINX_CONF_DEST"
@@ -178,9 +226,9 @@ verify_deployment() {
 cleanup_old_backups() {
     log_info "清理旧备份..."
     
-    if [ -d "/var/backups/voidix" ]; then
+    if [ -d "$BACKUP_ROOT" ]; then
         # 保留最近的5个备份
-        sudo find /var/backups/voidix -maxdepth 1 -type d -name "20*" | \
+        sudo find "$BACKUP_ROOT" -maxdepth 1 -type d -name "20*" | \
             sudo sort -r | \
             sudo tail -n +6 | \
             sudo xargs -r rm -rf
