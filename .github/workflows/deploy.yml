@@ -1,73 +1,76 @@
-name: Advanced PR Deployment Controller
+name: Website Deployment
 
 on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: '强制部署'
+        required: false
+        default: false
+        type: boolean
   issue_comment:
     types: [created]
-  workflow_dispatch:  # 添加手动触发选项
 
 permissions:
   contents: read
-  issues: write       # 用于评论
-  pull-requests: write # 用于添加/移除标签
+  issues: write
+  pull-requests: write
 
 jobs:
   deploy:
-    name: 通过评论触发部署
-    if: (github.event_name == 'issue_comment' && github.event.comment.body == 'deploy') || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    name: 部署到生产环境
     runs-on: [self-hosted, website]
+    if: |
+      (github.event_name == 'push' && contains(fromJSON('["master", "main"]'), github.ref_name)) ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' && 
+       contains(github.event.comment.body, 'deploy') && 
+       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association))
+    
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v3
+      - name: 🔧 检出代码
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: 检查评论者权限
-        if: github.event_name == 'issue_comment'
-        uses: actions/github-script@v7
-        id: permission
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const auth = context.payload.comment.author_association;
-            if (!['OWNER','MEMBER'].includes(auth)) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: `❌ 您(${auth}) 无权限触发部署。`
-              });
-              core.setFailed('权限不足');
-            }
-            
-      - name: 获取PR信息
-        if: github.event_name == 'issue_comment'
-        uses: actions/github-script@v7
-        id: pr
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            const prNumber = context.issue.number;
-            const { data: pr } = await github.rest.pulls.get({ 
-              owner: context.repo.owner, 
-              repo: context.repo.repo, 
-              pull_number: prNumber 
-            });
-            if (!pr.merged || pr.base.ref !== 'master') {
-              await github.rest.issues.createComment({ 
-                owner: context.repo.owner, 
-                repo: context.repo.repo, 
-                issue_number: prNumber, 
-                body: `ℹ️ PR #${prNumber} 未合并到 master，无法部署。` 
-              });
-              core.setFailed('PR 未合并');
-            }
-            
-      - name: 执行部署脚本
+          
+      - name: 🔍 显示触发信息
         run: |
+          echo "触发事件: ${{ github.event_name }}"
+          echo "分支: ${{ github.ref_name }}"
+          echo "提交: ${{ github.sha }}"
+          
+      - name: 📝 评论确认开始部署
+        if: github.event_name == 'issue_comment'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🚀 开始部署到生产环境...\n提交: ${context.sha.substring(0, 7)}`
+            });
+            
+      - name: 🔍 验证部署环境
+        run: |
+          echo "检查部署脚本..."
+          if [ ! -f "./deploy.sh" ]; then
+            echo "❌ 部署脚本不存在"
+            exit 1
+          fi
+          echo "✅ 部署脚本存在"
+          
+      - name: 🚀 执行部署
+        run: |
+          echo "设置执行权限..."
           chmod +x ./deploy.sh
+          echo "开始部署..."
           sudo ./deploy.sh
           
-      - name: 部署完成反馈
+      - name: ✅ 部署成功通知
         if: success() && github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         with:
@@ -77,15 +80,14 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `✅ 部署成功完成: https://voidix.top`
+              body: `✅ **部署成功完成！**
+              
+              🌐 网站地址: https://voidix.top
+              📝 提交: ${context.sha.substring(0, 7)}
+              ⏰ 部署时间: ${new Date().toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'})}`
             });
             
-      - name: 部署成功日志
-        if: success()
-        run: |
-          echo "✅ 部署成功完成: https://voidix.top"
-          
-      - name: 部署失败反馈
+      - name: ❌ 部署失败通知
         if: failure() && github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         with:
@@ -95,10 +97,15 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `❌ 部署失败，请检查日志。`
+              body: `❌ **部署失败**
+              
+              请检查 [Actions 日志](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) 获取详细信息。`
             });
-            
-      - name: 部署失败日志
-        if: failure()
+              - name: 📊 部署结果日志
+        if: always()
         run: |
-          echo "❌ 部署失败，请检查日志。"
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ 部署成功完成: https://voidix.top"
+          else
+            echo "❌ 部署失败，请检查日志"
+          fi
