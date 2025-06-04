@@ -54,3 +54,25 @@
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
 }
+
+/* 改进无障碍对比度 - Lighthouse优化 */
+.text-gray-500-improved {
+  color: #6b7280; /* 原gray-500 */
+}
+
+.text-gray-400-improved {
+  color: #9ca3af; /* 提高对比度的替代方案 */
+}
+
+.text-gray-300-improved {
+  color: #d1d5db; /* 更高对比度的选项 */
+}
+
+/* 针对深色背景的高对比度文字 */
+.high-contrast-text {
+  color: #e5e7eb; /* gray-200 - 更好的对比度 */
+}
+
+.medium-contrast-text {
+  color: #d1d5db; /* gray-300 - 中等对比度 */
+}

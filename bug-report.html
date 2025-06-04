@@ -8,20 +8,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bug反馈 | Voidix</title>
+  <title>Bug反馈 | Voidix - 报告Minecraft服务器问题</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="向Voidix Minecraft服务器团队报告Bug和问题。帮助我们改善服务器体验，提供详细的问题描述以获得快速解决。" />
+  <meta name="keywords" content="Bug反馈,问题报告,服务器问题,Minecraft Bug,技术支持,Voidix反馈" />
+  <meta name="author" content="Voidix Team" />
+  <meta name="robots" content="index, follow" />
+    <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.voidix.top/bug-report.html" />
+  <meta property="og:title" content="Bug反馈 | Voidix" />
+  <meta property="og:description" content="向Voidix Minecraft服务器团队报告Bug和问题。帮助我们改善服务器体验。" />
+  
+  <!-- Additional SEO -->
+  <link rel="canonical" href="https://www.voidix.top/bug-report.html" />
+  <meta name="theme-color" content="#151f38" />
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Framer Motion -->
   <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-  
-  <link
+    <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
           rel="stylesheet" />
   <!-- Custom CSS -->
   <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/seo-enhancements.css" />
+  
+  <!-- Bug Report Page Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Bug反馈",
+    "description": "向Voidix Minecraft服务器团队报告Bug和问题。帮助我们改善服务器体验，提供详细的问题描述以获得快速解决。",    "url": "https://voidix.top/bug-report.html",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Voidix",
+      "url": "https://voidix.top"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://voidix.top/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Bug反馈"
+        }
+      ]
+    }
+  }
+  </script>
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter']">
+<!-- 跳转到主内容的链接 -->
+<a href="#main-content" class="skip-to-content">跳转到主内容</a>
+
 <!-- Navigation Bar -->
 <nav class="fixed w-full bg-[#151f38]/90 backdrop-blur-md z-50 border-b border-gray-700">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,8 +133,16 @@
 </nav>
 
 <!-- Main Content Area for Bug Report -->
-<main class="pt-24 pb-16">
+<main class="pt-24 pb-16" id="main-content">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- 面包屑导航 -->
+    <nav aria-label="面包屑导航" class="breadcrumb-nav mb-6">
+      <ol class="breadcrumb">
+        <li><a href="index.html">首页</a></li>
+        <li aria-current="page">Bug反馈</li>
+      </ol>
+    </nav>
+    
     <div
             class="bg-[#1a1f2e]/50 border border-[#2a365c] rounded-2xl p-8 backdrop-blur-sm shadow-xl">
       <h1 class="text-3xl font-bold mb-8 gradient-text">Bug 反馈</h1>
@@ -178,84 +235,122 @@
 
 <!-- Footer Section -->
 <footer class="bg-gray-800/50 border-t border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
-            <div>
-                <h3 class="text-lg font-bold mb-6">Voidix</h3>
-                <p class="text-gray-400 text-sm">
-                    下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar的精神。</p>
-            </div>
-            <div>
-                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">快速链接</h3>
-                <ul class="space-y-3">
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#about">关于我们</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#servers">服务器</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#versions">跨版本</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="#team">管理团队</a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">技术支持</h3>
-                <ul class="space-y-3">
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors" href="faq.html">常见问题</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                           href="bug-report.html">Bug反馈</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                           href="status.html">状态页</a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6">联系我们</h3>
-                <ul class="space-y-3">
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                           href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr" target="_blank">QQ群: 186438621</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                           href="https://discord.gg/uXC3XrwVrk" target="_blank">Discord</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                           href="https://github.com/Voidix-Network/" target="_blank">GitHub</a>
-                    </li>
-                    <li>
-                        <a class="text-gray-400 hover:text-white text-sm transition-colors"
-                           href="mailto:support@voidix.top">support@voidix.top</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="mt-12 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center text-center">
-            <div class="mb-4 md:mb-0 md:text-left">
-                <p class="text-gray-500 text-xs md:text-sm">
-                    &copy; 2025 Voidix Minecraft Server. 保留所有权利.
-                </p>
-                <p class="text-gray-500 text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                    本服务器为非商业公益项目，与Mojang无官方关联。
-                </p>
-            </div>
-            <div class="md:text-right">
-                <p class="text-gray-500 text-xs md:text-sm">
-                    源代码采用 <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" class="text-blue-400 hover:text-blue-300">AGPLv3</a> | 内容采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" class="text-blue-400 hover:text-blue-300">CC BY-SA 4.0</a>. <a href="LICENSE.md" class="text-blue-400 hover:text-blue-300">查看完整许可证信息</a>.
-                </p>
-            </div>
-        </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+      <div>
+        <h3 class="text-lg font-bold mb-6">Voidix</h3>
+        <p class="text-gray-400 text-sm">
+          下一代公平Minecraft体验，由开发者NekoEpisode和CYsonHab创建，继承VBPIXEL和EternalStar的精神。
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6"
+        >快速链接</h3
+        >
+        <ul class="space-y-3">
+          <li>
+            <a
+                    href="index.html#about"
+                    class="text-gray-400 hover:text-white text-sm transition-colors"
+            >关于我们</a
+            >
+          </li>
+          <li>
+            <a
+                    href="index.html#servers"
+                    class="text-gray-400 hover:text-white text-sm transition-colors"
+            >服务器</a
+            >
+          </li>
+          <li>
+            <a
+                    href="index.html#versions"
+                    class="text-gray-400 hover:text-white text-sm transition-colors">
+              跨版本
+            </a>
+          </li>
+          <li>
+            <a
+                    href="index.html#team"
+                    class="text-gray-400 hover:text-white text-sm transition-colors"
+            >管理团队</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6"
+        >技术支持</h3
+        >
+        <ul class="space-y-3">
+          <li>
+            <a href="faq.html" class="text-gray-400 hover:text-white text-sm transition-colors"
+            >常见问题</a
+            >
+          </li>
+          <li>
+            <a
+                    href="bug-report.html"
+                    class="text-gray-400 hover:text-white text-sm transition-colors"
+            >Bug反馈</a
+            >
+          </li>
+          <li>
+            <a
+                    href="status.html"
+                    class="text-gray-400 hover:text-white text-sm transition-colors"
+            >状态页</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-6"
+        >联系我们</h3
+        >
+        <ul class="space-y-3">
+          <li>
+            <a
+                    href="https://qm.qq.com/cgi-bin/qm/qr?k=aMRoacVuxcGVSzEwfjb49oN4CWCv6yHj&jump_from=webapi&authKey=hw0EhRKGDGN1vmHD4AfK2yJCzPzSA+AXGJOEcugZpsA7KfK9GhNXpe9GNWCjCcmr"
+                    target="_blank"
+                    class="text-gray-400 hover:text-white text-sm transition-colors">
+              QQ群: 186438621
+            </a>
+          </li>
+          <li>
+            <a
+                    href="https://discord.gg/uXC3XrwVrk"
+                    target="_blank"
+                    class="text-gray-400 hover:text-white text-sm transition-colors">
+              Discord
+            </a>
+          </li>
+          <li>
+            <a
+                    href="https://github.com/Voidix-Network/"
+                    target="_blank"
+                    class="text-gray-400 hover:text-white text-sm transition-colors">
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a
+                    href="mailto:support@voidix.top"
+                    class="text-gray-400 hover:text-white text-sm transition-colors">
+              support@voidix.top
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
+    <div
+            class="mt-16 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center">
+      <p class="text-gray-500 text-sm">&copy; 2025 Voidix Minecraft Server. 保留所有权利。</p>
+      <p class="text-gray-500 text-sm mt-4 md:mt-0"
+      >本服务器为非商业公益项目，与Mojang Studios无官方关联。</p
+      >
+    </div>
+  </div>
 </footer>
 
 <script defer src="assets/js/script.js"></script>

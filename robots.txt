@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# 站点地图
+Sitemap: https://www.voidix.top/sitemap.xml
+
+# 抓取延迟（可选）
+Crawl-delay: 1
+
+# 允许抓取的特定路径
+Allow: /assets/
+Allow: /*.html
+Allow: /*.css
+Allow: /*.js
+
+# 不允许抓取的路径（如果有的话）
+# Disallow: /private/
+# Disallow: /admin/
