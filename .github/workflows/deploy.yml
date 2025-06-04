@@ -92,8 +92,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.issues.createComment({
+          script: |            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
@@ -101,7 +100,8 @@ jobs:
               
               请检查 [Actions 日志](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) 获取详细信息。`
             });
-              - name: 📊 部署结果日志
+            
+      - name: 📊 部署结果日志
         if: always()
         run: |
           if [ "${{ job.status }}" == "success" ]; then
