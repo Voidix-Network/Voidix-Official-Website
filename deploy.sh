@@ -10,7 +10,8 @@ echo "🚀 开始部署 Voidix 官方网站..."
 WEBSITE_DIR="/www/voidix"
 NGINX_CONF_SOURCE="nginx-production.conf"
 NGINX_CONF_DEST="/etc/nginx/sites-enabled/voidix.conf"
-BACKUP_DIR="/var/backups/voidix/$(date +%Y%m%d_%H%M%S)"
+BACKUP_ROOT="/var/backups/voidix"
+BACKUP_DIR="$BACKUP_ROOT/$(date +%Y%m%d_%H%M%S)"
 
 # 颜色输出
 RED='\033[0;31m'
@@ -44,8 +45,13 @@ check_permissions() {
 create_backup() {
     log_info "创建当前部署的备份..."
     
+    # 确保备份根目录存在
+    sudo mkdir -p "$BACKUP_ROOT"
+    
+    # 创建时间戳备份目录
+    sudo mkdir -p "$BACKUP_DIR"
+    
     if [ -d "$WEBSITE_DIR" ]; then
-        sudo mkdir -p "$BACKUP_DIR"
         sudo cp -r "$WEBSITE_DIR" "$BACKUP_DIR/website"
         log_info "网站文件已备份到: $BACKUP_DIR/website"
     fi
@@ -178,9 +184,9 @@ verify_deployment() {
 cleanup_old_backups() {
     log_info "清理旧备份..."
     
-    if [ -d "/var/backups/voidix" ]; then
+    if [ -d "$BACKUP_ROOT" ]; then
         # 保留最近的5个备份
-        sudo find /var/backups/voidix -maxdepth 1 -type d -name "20*" | \
+        sudo find "$BACKUP_ROOT" -maxdepth 1 -type d -name "20*" | \
             sudo sort -r | \
             sudo tail -n +6 | \
             sudo xargs -r rm -rf
