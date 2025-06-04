@@ -29,6 +29,61 @@ sudo cp "$NGINX_CONF_SOURCE" "$NGINX_CONF_DEST.tmp"
 sudo nginx -t
 ```
 
+### 问题3：SSL共享内存区域冲突
+**错误信息**：
+```
+[emerg] the size 10485760 of shared memory zone "SSL" conflicts with already declared size 1048576
+```
+
+**原因**：多个配置文件使用相同的SSL会话缓存名称"SSL"，但大小不同
+**解决方案**：为每个配置使用唯一的会话缓存名称
+```nginx
+# 重定向服务器使用不同名称
+ssl_session_cache shared:VOIDIX_REDIRECT_SSL:10m;
+
+# 主服务器使用不同名称
+ssl_session_cache shared:VOIDIX_SSL:10m;
+```
+
+### 问题4：Nginx共享内存区域大小为零
+**错误信息**：
+```
+[emerg] zero size shared memory zone "conn_limit_per_ip"
+```
+
+**原因**：在server块中使用了`limit_conn`，但在http上下文中没有定义对应的`limit_conn_zone`
+**解决方案**：
+1. 注释掉server块中的limit_conn和limit_req指令
+2. 在主nginx.conf的http块中添加正确的zone定义
+```nginx
+# 在主nginx.conf中添加
+http {
+    limit_conn_zone $binary_remote_addr zone=conn_limit_per_ip:10m;
+    limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=10r/s;
+    # ... 其他配置 ...
+}
+
+# 然后在站点配置中使用
+server {    # ... 其他配置 ...
+    limit_conn conn_limit_per_ip 20;
+    limit_req zone=req_limit_per_ip burst=20 nodelay;
+}
+```
+
+### 问题5：服务器名称冲突警告
+**错误信息**：
+```
+[warn] conflicting server name "voidix.top" on 0.0.0.0:80, ignored
+```
+
+**原因**：多个配置文件（或同一文件的多个server块）为同一个IP:端口组合定义了相同的server_name
+**解决方案**：
+1. 这通常只是警告，不会阻止nginx启动
+2. 如果需要解决，可以检查所有nginx配置并确保每个IP:端口组合的server_name是唯一的
+3. 如果是多个配置文件定义了相同的server_name，可以删除或禁用不需要的配置
+
+**注意**：当使用`include sites-enabled/*`方式加载多个配置文件时，容易出现此类冲突
+
 ## 🔧 Nginx配置相关问题
 
 ### 配置文件结构说明

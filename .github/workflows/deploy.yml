@@ -72,7 +72,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
+          script: |            
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -98,7 +98,7 @@ jobs:
               body: `❌ 部署失败，请检查日志。`
             });
             
-      - name: 部署失败日志
-        if: failure()
+      - name: 📊 部署结果日志
+        if: always()
         run: |
           echo "❌ 部署失败，请检查日志。"
