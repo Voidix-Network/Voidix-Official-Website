@@ -137,8 +137,8 @@ check_nginx_cache_config() {
     
     local nginx_conf="/etc/nginx/nginx.conf"
     
-    # 使用更精确的正则表达式检查CDN缓存配置（使用POSIX兼容的空白字符类）
-    if ! sudo grep -qE "^[[:space:]]*proxy_cache_path[[:space:]]+[^;]*cdn_cache[^;]*;" "$nginx_conf"; then
+    # 检查CDN缓存配置 - 支持多行配置格式
+    if ! sudo grep -qE "^[[:space:]]*proxy_cache_path[[:space:]]+.*" "$nginx_conf" || ! sudo grep -qE "keys_zone=cdn_cache" "$nginx_conf"; then
         log_warn "检测到nginx.conf中缺少CDN缓存配置"
         log_warn "需要在nginx.conf的http块中添加以下配置："
         log_warn ""
