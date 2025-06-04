@@ -28,10 +28,12 @@ window.VOIDIX_SHARED_CONFIG = {
     websocket: {
         url: 'wss://server.voidix.top:10203',
         // maxReconnectAttempts and reconnectIntervalSequence control the WebSocket reconnection strategy.
-        maxReconnectAttempts: 10,
+        maxReconnectAttempts: 3, // 降低重试次数，减少控制台错误
         // Sequence of retry intervals in milliseconds. The length should ideally match maxReconnectAttempts.
-        // Example: 5s, 5s, 5s, 15s, 15s, 15s, 30s, 30s, 30s, 30s
-        reconnectIntervalSequence: [5000, 5000, 5000, 15000, 15000, 15000, 30000, 30000, 30000, 30000]
+        // Example: 10s, 30s, 60s
+        reconnectIntervalSequence: [10000, 30000, 60000],
+        // 添加禁用标志，如果需要完全禁用WebSocket连接
+        disabled: false // 设置为 true 可以禁用WebSocket连接
     },
 
     timeConstants: {
