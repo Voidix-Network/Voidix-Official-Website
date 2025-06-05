@@ -395,27 +395,21 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {number} currentTotalRunningTime - Total server running time in seconds.
      */
     function updateUptimeDisplay(currentRunningTime, currentTotalRunningTime) {
-        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG; 
-        // console.log('[DEBUG] updateUptimeDisplay CALLED. currentRunningTime:', currentRunningTime, 'currentTotalRunningTime:', currentTotalRunningTime);
+        const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG; // Alias for brevity
 
         if (uptimeDaysEl.desktop) {
-            uptimeDaysEl.desktop.className = 'text-base font-bold flex justify-center items-center whitespace-nowrap'; // Reset to base
-            uptimeDaysEl.desktop.innerHTML = SHARED_CONFIG.formatDuration(currentRunningTime, 'default'); 
+            uptimeDaysEl.desktop.innerHTML = SHARED_CONFIG.formatDuration(currentRunningTime, 'short');
         }
         if (uptimeDaysEl.mobile) {
-            uptimeDaysEl.mobile.className = 'text-base font-bold flex justify-center items-center whitespace-nowrap'; // Reset to base
-            uptimeDaysEl.mobile.innerHTML = SHARED_CONFIG.formatDuration(currentRunningTime, 'default'); 
+            uptimeDaysEl.mobile.innerHTML = SHARED_CONFIG.formatDuration(currentRunningTime, 'short');
         }
 
         if (gamemodeCountEl.desktop) {
-            gamemodeCountEl.desktop.className = 'text-base font-bold flex justify-center items-center whitespace-nowrap'; // Reset to base
-            gamemodeCountEl.desktop.innerHTML = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'totalUptime'); 
+            gamemodeCountEl.desktop.innerHTML = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'default');
         }
         if (gamemodeCountEl.mobile) {
-            gamemodeCountEl.mobile.className = 'text-base font-bold flex justify-center items-center whitespace-nowrap'; // Reset to base
-            gamemodeCountEl.mobile.innerHTML = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'totalUptime'); 
+            gamemodeCountEl.mobile.innerHTML = SHARED_CONFIG.formatDuration(currentTotalRunningTime, 'default');
         }
-        // console.log('[DEBUG] updateUptimeDisplay: Updated uptime elements.'); // DEBUG
     }
 
     /**
@@ -457,15 +451,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             updateUptimeDisplay(currentRunningTime, currentTotalRunningTime);
         }, 1000);
-    }
-
-    /**
+    }    /**
      * Handles 'full' WebSocket messages for the index page.
      * Updates server data and refreshes UI elements like player counts, server badges, and uptime.
      * @param {object} data The parsed data object from the WebSocket message.
      */
     function handleIndexFullMessage(data) {
-        // console.log('[DEBUG] Processing "full". serverData.isMaint:', serverData.isMaintenance, 'forceShowMaint:', forceShowMaintenance);
         let isMaintenanceFromFull = data.isMaintenance;
         let maintenanceStartTimeFromFull = data.maintenanceStartTime;
 
@@ -488,75 +479,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (forceShowMaintenance) {
             serverData.isMaintenance = true;
-            // console.log('[DEBUG] "full": forceShowMaint TRUE. Calling displayMaintStatus.');
             displayMaintenanceStatusOnIndex();
         } else {
             serverData.isMaintenance = (typeof isMaintenanceFromFull === 'boolean') ? isMaintenanceFromFull : false;
             serverData.maintenanceStartTime = maintenanceStartTimeFromFull || null;
-            // console.log('[DEBUG] "full": forceShowMaint FALSE. serverData.isMaint set to:', serverData.isMaintenance);
             
             if (serverData.isMaintenance) {
-                // console.log('[DEBUG] "full": serverData.isMaint TRUE. Calling displayMaintStatus.');
                 displayMaintenanceStatusOnIndex();
             } else {
-                // console.log('[DEBUG] "full": serverData.isMaint FALSE. Updating normal UI.');
                 updateTotalOnlinePlayers();
                 updateServerStatusBadges();
                 startRealtimeUptimeUpdates();
             }
         }
-        // console.log('[DEBUG] "full" message processing END.');
-    }
-
-    /**
+    }    /**
      * Handles 'maintenance_status_update' WebSocket messages for the index page.
      * Updates maintenance state and refreshes UI accordingly.
      * @param {object} data The parsed data object from the WebSocket message.
      */
     function handleIndexMaintenanceUpdate(data) {
         const isEnteringMaintenance = (data.status === true || data.status === 'true');
-        // console.log('[DEBUG] Processing "maint_update". raw status:', data.status, 'isEnteringMaint:', isEnteringMaintenance);
         serverData.maintenanceStartTime = data.maintenanceStartTime || null;
 
         if (isEnteringMaintenance) {
             forceShowMaintenance = true;
             serverData.isMaintenance = true;
-            // console.log('[DEBUG] "maint_update" (true): Set forceShowMaint=T, serverData.isMaint=T. Calling displayMaintStatus.');
             displayMaintenanceStatusOnIndex();
         } else {
             forceShowMaintenance = false;
             serverData.isMaintenance = false;
-            // console.log('[DEBUG] "maint_update" (false): Set forceShowMaint=F, serverData.isMaint=F. Updating normal UI.');
             updateTotalOnlinePlayers();
             updateServerStatusBadges();
             startRealtimeUptimeUpdates();
         }
-        // console.log('[DEBUG] "maintenance_status_update" processing END.');
-    }
-
-    /**
+    }    /**
      * Handles 'players_update_add' and 'players_update_remove' WebSocket messages for the index page.
      * Updates the total online player count if not in maintenance.
      * @param {object} data The parsed data object from the WebSocket message.
      */
     function handleIndexPlayerCountUpdate(data) {
-        // console.log('[DEBUG] Processing "player_update". serverData.isMaint:', serverData.isMaintenance);
         if (!serverData.isMaintenance && data.totalOnlinePlayers !== undefined) {
             serverData.players.online = data.totalOnlinePlayers.toString();
             updateTotalOnlinePlayers();
-        } else {
-            // console.log('[DEBUG] "player_update": In maint or no totalOnlinePlayers. No UI update for player count.');
         }
-        // console.log('[DEBUG] "players_update_add/remove" processing END.');
-    }
-
-    /**
+    }    /**
      * Handles 'server_update' WebSocket messages for the index page.
      * Updates specific server online counts and refreshes server status badges.
      * @param {object} data The parsed data object from the WebSocket message.
      */
     function handleIndexServerUpdate(data) {
-        // console.log('[DEBUG] Processing "server_update". serverData.isMaint BEFORE:', serverData.isMaintenance);
         if (data.servers) {
              for (const serverName in data.servers) {
                 const newOnlineCount = data.servers[serverName]; // This is the direct count.
@@ -571,22 +542,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         online: newOnlineCount,
                         isOnline: true // Default for a newly appearing server in this message type.
                     };
-                    // console.log(`[DEBUG] "server_update": Server ${serverName} was not in serverData.servers. Initialized with count ${newOnlineCount}.`);
                 }
             }
         }
         if (!serverData.isMaintenance) {
-            // console.log('[DEBUG] "server_update": NOT in maint. Calling updateServerStatusBadges.');
             updateServerStatusBadges();
         } else {
-            // console.log('[DEBUG] "server_update": IN maint. Manually setting dots to yellow.');
             Object.values(statusElementsSimplified).forEach(server => {
                 if (server.dot) {
                     server.dot.className = `${window.VOIDIX_SHARED_CONFIG.statusClasses.indexPage.dotBase} ${window.VOIDIX_SHARED_CONFIG.statusClasses.indexPage.colorYellow}`;
                 }
             });
         }
-        // console.log('[DEBUG] "server_update" processing END.');
     }
 
     /**
@@ -598,13 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (connectionTimeoutTimer) clearTimeout(connectionTimeoutTimer);
 
         ws = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
-        // console.log('[DEBUG] Attempting to connect to Voidix WebSocket...');
+
         // setInitialLoadingStatus(); // Called by onclose/onerror or explicit UI update needed before connect
 
         // Start a 5-second timeout for the connection attempt
         connectionTimeoutTimer = setTimeout(() => {
             if (ws.readyState !== WebSocket.OPEN) {
-                // console.log('[DEBUG] WebSocket connection attempt timed out after 5 seconds. Closing and retrying.');
+
                 ws.close(); // This will trigger onclose, which handles reconnection logic
             }
         }, 5000); // 5 seconds timeout

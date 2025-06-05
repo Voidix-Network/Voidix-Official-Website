@@ -104,12 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
                  // If still not found after re-fetch, log a more critical error, as the element might genuinely be missing from the DOM.
                  console.error('[Status Page] Critical: Could not find statusEl for knockioffa even after re-fetch attempt.');
             }
-        }
-
-        // If (after a potential re-fetch for knockioffa) statusEl is still missing,
+        }        // If (after a potential re-fetch for knockioffa) statusEl is still missing,
         // log a warning and return to prevent subsequent errors.
         if (!serverInfo || !serverInfo.statusEl) {
-            // console.warn(`[Status Page] Skipping update for ${serverKey} as statusEl is missing or not found in config.`);
             return;
         }
 
@@ -146,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 allKeysPresent = false;
                 if (serverKey === 'minigames_aggregate' || serverKey === 'bedwars_sub_aggregate') {
                     // This log is kept as it indicates a potential data issue for aggregates
-                    // console.log(`[DEBUG Status WS] Aggregation warning for '${serverKey}': SubKey '${subKey}' NOT FOUND in currentServerData.servers.`);
+
                 }
             }
         });
@@ -294,7 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function handleMaintenanceUpdate(data) {
         const isEnteringMaintenance = (data.status === true || data.status === 'true');
-        // console.log(`[DEBUG] Status WS: Processing "maint_update". raw status: ${data.status}, isEnteringMaint: ${isEnteringMaintenance}`);
+
         currentServerData.maintenanceStartTime = data.maintenanceStartTime || null;
         
         // Update currentServerData.isMaintenance state based on the message
@@ -353,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 delete currentServerData.players.currentPlayers[playerUsernameToRemove];
             } else {
-                // console.warn('[DEBUG] Status WS: Player to remove (by UUID) not found in local cache:', data.player.uuid);
+
             }
         }
         Object.keys(serverStatusListConfig).forEach(key => updateServerDisplay(key));
@@ -396,7 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (statusPageConnectionTimeoutTimer) clearTimeout(statusPageConnectionTimeoutTimer);
 
         wsStatusPage = new WebSocket(window.VOIDIX_SHARED_CONFIG.websocket.url);
-        // console.log('[DEBUG] Status WS: Attempting connection...');
+
         
         // if (currentServerData.isMaintenance) { 
         //     displayMaintenanceInfoOnStatusPage();
@@ -408,14 +405,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         statusPageConnectionTimeoutTimer = setTimeout(() => {
             if (wsStatusPage.readyState !== WebSocket.OPEN) {
-                // console.log('[DEBUG] Status WS: Connection attempt timed out. Closing and retrying.');
+
                 wsStatusPage.close(); // Triggers onclose for reconnect
             }
         }, 5000);
 
         wsStatusPage.onopen = () => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Connection successful
-            // console.log('[DEBUG] Status WS: Connected (onopen)');
+
             statusPageReconnectAttempts = 0; // Reset on successful connection
         };
 
@@ -424,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = JSON.parse(event.data);
                 
                 // Minimal logging for received message type, avoiding full payload logging in production.
-                // console.log(`Status WS MSG: type: ${data.type}`);
+
 
                 switch (data.type) {
                     case 'full':
@@ -443,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         handleServerUpdate(data);
                         break;
                     default:
-                        // console.warn(`[DEBUG] Status WS: Received unhandled message type: ${data.type}`);
+
                 }
             } catch (error) {
                 console.error('[Status Page] Error processing WebSocket message:', error, 'Raw data:', event.data);
@@ -460,7 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         wsStatusPage.onclose = (event) => {
             clearTimeout(statusPageConnectionTimeoutTimer); // Clear timeout on close
-            // console.log(`[DEBUG] Status WS: Disconnected. Code: ${event.code}, Reason: "${event.reason}".`);
+
             // setDisconnectedStatusOnStatusPage(); // Old logic: Update UI (Replaced by conditional logic below)
             
             const SHARED_CONFIG = window.VOIDIX_SHARED_CONFIG;
@@ -474,10 +471,10 @@ document.addEventListener("DOMContentLoaded", () => {
                                    : intervalSequence[intervalSequence.length - 1];
 
                 statusPageReconnectAttempts++;
-                // console.log(`[DEBUG] Status WS: Attempting reconnect ${statusPageReconnectAttempts}/${maxAttempts} in ${nextInterval / 1000}s...`);
+
                 setTimeout(connectStatusPageWebSocket, nextInterval);
             } else {
-                // console.log(`[DEBUG] Status WS: Max reconnect attempts (${maxAttempts}) reached. Displaying disconnected status.`);
+
                 setDisconnectedStatusOnStatusPage(); // Show permanent "Disconnected"
             }
         };
@@ -721,7 +718,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const seconds = date.getSeconds().toString().padStart(2, '0');
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         } catch (e) {
-            // console.error("[DEBUG] Status Page: Error formatting maintenance start time:", e);
+
             return window.VOIDIX_SHARED_CONFIG.statusTexts.timeFormatError;
         }
     }
@@ -974,7 +971,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     tooltip.addEventListener('mouseleave', hidePlayerTooltip);
                 }
             } else {
-                // console.warn('[DEBUG] Status Page: Could not find tooltip hover target for serverKey:', serverKey, serverInfo.dotEl ? serverInfo.dotEl.id : 'No dotEl');
+
             }
         });
     }
@@ -985,12 +982,12 @@ document.addEventListener("DOMContentLoaded", () => {
      * Logs a warning if a display name element is configured but no corresponding name is found in the shared config.
      */
     function initializeServerDisplayNames() {
-        // console.log('[DEBUG] Initializing server display names from sharedConfig...');
+
         Object.values(serverStatusListConfig).forEach(serverInfo => {
             if (serverInfo.displayNameEl && serverInfo.name) {
                 serverInfo.displayNameEl.textContent = serverInfo.name;
             } else if (serverInfo.displayNameEl && !serverInfo.name) {
-                // console.warn(`[DEBUG] Server entry for displayNameEl ID: ${serverInfo.displayNameEl.id} is missing 'name' in serverStatusListConfig or VOIDIX_SHARED_CONFIG.serverDisplayNames.`);
+
             }
         });
     }
