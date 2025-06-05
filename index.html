@@ -46,10 +46,9 @@
     <link rel="canonical" href="https://www.voidix.net/" />
     <meta name="theme-color" content="#151f38" />
     <meta name="msapplication-TileColor" content="#151f38" />
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+      <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
     
     <!-- Structured Data for SEO -->
     <script type="application/ld+json">
@@ -88,10 +87,9 @@
       "isPartOf": {
         "@type": "Organization",
         "name": "Voidix"
-      }    }
-    </script>    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
-    <link rel="manifest" href="/assets/images/site.webmanifest" />
+      }    }    </script>    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link rel="manifest" href="assets/images/site.webmanifest" />
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
     <!-- React and ReactDOM CDN -->
@@ -1171,4 +1169,29 @@ window.addEventListener('DOMContentLoaded', () => {
 <script defer src="assets/js/sharedConfig.js"></script>
 <script defer src="assets/js/index-page.js"></script>
 <script defer src="assets/js/menu.js"></script>
+
+<!-- 全局错误处理 -->
+<script>
+  // 全局 JavaScript 错误处理
+  window.addEventListener('error', function(event) {
+    console.error('JavaScript Error:', {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error
+    });
+  });
+
+  // 处理未捕获的 Promise 拒绝
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('Unhandled Promise Rejection:', event.reason);
+    event.preventDefault();
+  });
+
+  // 页面加载错误监控
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Index page loaded successfully');
+  });
+</script>
 </body>

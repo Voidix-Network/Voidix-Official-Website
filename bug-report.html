@@ -31,19 +31,16 @@
   <meta property="og:description" content="向Voidix Minecraft服务器团队报告Bug和问题。帮助我们改善服务器体验。" />
   <meta property="og:image" content="https://www.voidix.net/assets/images/android-chrome-512x512.png" />
   
-  <!-- Additional SEO -->
-<!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png" />
+  <!-- Additional SEO -->  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
   <link rel="manifest" href="/assets/images/site.webmanifest" />
   <link rel="canonical" href="https://www.voidix.net/bug-report.html" />
-  <meta name="theme-color" content="#151f38" />
-  <!-- Tailwind CSS -->
+  <meta name="theme-color" content="#151f38" />  <!-- Tailwind CSS -->
   <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
-  <!-- Framer Motion -->
-  <script src="https://cdn.voidix.net/framer-motion@10.16.4/dist/framer-motion.js"></script>
-    <link
+  <!-- 字体 -->
+  <link
           href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
           rel="stylesheet" />
   <!-- Custom CSS -->
@@ -369,5 +366,35 @@
 
 <script defer src="assets/js/script.js"></script>
 <script defer src="assets/js/menu.js"></script>
+
+<!-- 全局错误处理 -->
+<script>
+  // 全局 JavaScript 错误处理
+  window.addEventListener('error', function(event) {
+    console.error('JavaScript Error:', {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error
+    });
+    
+    // 可以在这里添加错误上报逻辑
+    // 例如发送到错误监控服务
+  });
+
+  // 处理未捕获的 Promise 拒绝
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('Unhandled Promise Rejection:', event.reason);
+    
+    // 防止错误显示在控制台
+    event.preventDefault();
+  });
+
+  // 页面加载错误监控
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Bug Report page loaded successfully');
+  });
+</script>
 </body>
 </html>
