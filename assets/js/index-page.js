@@ -3,6 +3,8 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
+// assets/js/index-page.js
+
 // Manages dynamic content and WebSocket communication for the main index page.
 document.addEventListener('DOMContentLoaded', () => {
     // Tabs (Java/Bedrock Connection)
@@ -290,17 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         clearInterval(uptimeIntervalId);
-    }
-
-    /**
-     * @deprecated This function is a remnant of older logic that updated a gamemode count.
-     * The HTML elements it once targeted (gamemode-count-desktop/mobile) are now used to display
-     * total server running time, which is handled by `updateUptimeDisplay`.
-     * This function currently has no active logic.
-     */
-    function updateGamemodeCount() {
-        // This function is deprecated. Its original functionality to update gamemode count
-        // is no longer active as the associated HTML elements are now used for total uptime display.
     }
 
     /**

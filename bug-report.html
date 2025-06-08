@@ -7,13 +7,6 @@
 <html lang="zh-CN">
 <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-8ELKKS8MPD');
-  </script>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,14 +37,14 @@
   <link rel="manifest" href="/assets/images/site.webmanifest" />
   <link rel="canonical" href="https://www.voidix.net/bug-report.html" />
   <meta name="theme-color" content="#151f38" />  <!-- Tailwind CSS -->
-  <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
-  <!-- 字体 -->
+  <!-- 注意：CDN资源受防盗链保护，仅允许从www.voidix.net域名访问 -->
+  <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>  <!-- 字体 -->
   <link
           href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
           rel="stylesheet" />
+  <!-- 注意：上述字体资源受CDN防盗链保护 -->
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <link rel="stylesheet" href="assets/css/seo-enhancements.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
   
   <!-- Bug Report Page Structured Data -->
   <script type="application/ld+json">
@@ -154,11 +147,10 @@
 <main class="pt-24 pb-16" id="main-content">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- 面包屑导航 -->
-    <nav aria-label="面包屑导航" class="breadcrumb-nav mb-6">
-      <ol class="breadcrumb">
-        <li><a href="index.html">首页</a></li>
-        <li aria-current="page">Bug反馈</li>
-      </ol>
+    <nav class="breadcrumb mb-6" aria-label="面包屑导航">
+      <a href="index.html">首页</a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current" aria-current="page">Bug反馈</span>
     </nav>
     
     <div

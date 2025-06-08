@@ -32,25 +32,13 @@ CC BY-SA 4.0 许可证的摘要可在此处找到：[https://creativecommons.org
     *   网站：[https://tailwindcss.com](https://tailwindcss.com)
     *   许可证文本：可在 [https://github.com/tailwindlabs/tailwindcss/blob/master/LICENSE](https://github.com/tailwindlabs/tailwindcss/blob/master/LICENSE) 找到
 
-2.  **React**
-    *   许可证：MIT 许可证
-    *   版权：Copyright (c) Meta Platforms, Inc. and affiliates.
-    *   网站：[https://react.dev](https://react.dev)
-    *   许可证文本：可在 [https://github.com/facebook/react/blob/main/LICENSE](https://github.com/facebook/react/blob/main/LICENSE) 找到
-
-3.  **ReactDOM**
-    *   许可证：MIT 许可证
-    *   版权：Copyright (c) Meta Platforms, Inc. and affiliates.
-    *   网站：[https://react.dev](https://react.dev) (与 React 一同使用)
-    *   许可证文本：可在 [https://github.com/facebook/react/blob/main/LICENSE](https://github.com/facebook/react/blob/main/LICENSE) 找到 (与 React 相同)
-
-4.  **AOS (Animate On Scroll)**
+2.  **AOS (Animate On Scroll)**
     *   许可证：MIT 许可证
     *   版权：Copyright (c) 2015 Michał Sajnóg
     *   网站：[https://michalsnik.github.io/aos/](https://michalsnik.github.io/aos/)
     *   许可证文本：可在 [https://github.com/michalsnik/aos/blob/next/LICENSE](https://github.com/michalsnik/aos/blob/next/LICENSE) 找到
 
-5.  **Google Fonts (Inter)**
+3.  **Google Fonts (Inter)**
     *   许可证：SIL Open Font License, Version 1.1 (OFL-1.1)
     *   版权：Copyright (c) 2016 The Inter Project Authors ([https://github.com/rsms/inter](https://github.com/rsms/inter))
     *   网站：[https://fonts.google.com/specimen/Inter](https://fonts.google.com/specimen/Inter)
@@ -112,25 +100,13 @@ This project utilizes the following third-party libraries and assets. Their orig
     *   Website: [https://tailwindcss.com](https://tailwindcss.com)
     *   License Text: Can be found at [https://github.com/tailwindlabs/tailwindcss/blob/master/LICENSE](https://github.com/tailwindlabs/tailwindcss/blob/master/LICENSE)
 
-2.  **React**
-    *   License: MIT License
-    *   Copyright: Copyright (c) Meta Platforms, Inc. and affiliates.
-    *   Website: [https://react.dev](https://react.dev)
-    *   License Text: Can be found at [https://github.com/facebook/react/blob/main/LICENSE](https://github.com/facebook/react/blob/main/LICENSE)
-
-3.  **ReactDOM**
-    *   License: MIT License
-    *   Copyright: Copyright (c) Meta Platforms, Inc. and affiliates.
-    *   Website: [https://react.dev](https://react.dev) (used with React)
-    *   License Text: Can be found at [https://github.com/facebook/react/blob/main/LICENSE](https://github.com/facebook/react/blob/main/LICENSE) (same as React)
-
-4.  **AOS (Animate On Scroll)**
+2.  **AOS (Animate On Scroll)**
     *   License: MIT License
     *   Copyright: Copyright (c) 2015 Michał Sajnóg
     *   Website: [https://michalsnik.github.io/aos/](https://michalsnik.github.io/aos/)
     *   License Text: Can be found at [https://github.com/michalsnik/aos/blob/next/LICENSE](https://github.com/michalsnik/aos/blob/next/LICENSE)
 
-5.  **Google Fonts (Inter)**
+3.  **Google Fonts (Inter)**
     *   License: SIL Open Font License, Version 1.1 (OFL-1.1)
     *   Copyright: Copyright (c) 2016 The Inter Project Authors ([https://github.com/rsms/inter](https://github.com/rsms/inter))
     *   Website: [https://fonts.google.com/specimen/Inter](https://fonts.google.com/specimen/Inter)

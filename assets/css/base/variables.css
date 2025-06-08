@@ -1,0 +1,36 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* CSS自定义属性 - 统一管理设计标记 */
+:root {
+  /* 渐变色彩 */
+  --gradient-primary: linear-gradient(90deg, #6a93ff, #7367f0);
+  --gradient-vbpixel: linear-gradient(90deg, #00aeff, #0067ff);
+  
+  /* 动画时长 */
+  --animation-float-duration: 6s;
+  --transition-hover-duration: 0.3s;
+  --transition-accordion-duration: 0.3s;
+  
+  /* 阴影 */
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 变换 */
+  --transform-hover-up: translateY(-5px);
+  --transform-float-down: translateY(-10px);
+  
+  /* 改进的无障碍颜色 */
+  --color-gray-500-improved: #6b7280;
+  --color-gray-400-improved: #9ca3af;
+  --color-gray-300-improved: #d1d5db;
+  --color-high-contrast: #e5e7eb;
+  --color-medium-contrast: #d1d5db;
+  
+  /* 深色主题适配颜色 */
+  --color-dark-bg: rgba(31, 41, 55, 0.8);
+  --color-dark-text: #e5e7eb;
+  --color-dark-muted: #9ca3af;
+}

@@ -1,0 +1,153 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* 
+  常见问题页面 (faq.html) 专用样式
+  包含FAQ页面特有的手风琴组件和交互效果
+*/
+
+/* === FAQ页面主容器 === */
+.faq-container {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* === FAQ手风琴组件 === */
+.faq-accordion {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.faq-item {
+  border-bottom: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.5rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-question:hover {
+  background-color: rgba(75, 85, 99, 0.1);
+}
+
+.faq-question:focus {
+  outline: 2px solid #4f46e5;
+  outline-offset: -2px;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+  background-color: rgba(31, 41, 55, 0.3);
+}
+
+.faq-answer.active {
+  max-height: 500px;
+  padding: 1.5rem;
+}
+
+.faq-icon {
+  transition: transform 0.3s ease;
+  color: #6b7280;
+}
+
+.faq-icon.rotated {
+  transform: rotate(180deg);
+  color: #4f46e5;
+}
+
+/* === 面包屑导航 === */
+.breadcrumb {
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+}
+
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-item:hover {
+  color: #d1d5db;
+}
+
+.breadcrumb-separator {
+  margin: 0 0.5rem;
+  color: #6b7280;
+}
+
+/* === 搜索框样式 === */
+.faq-search {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.faq-search input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  background-color: #1f2937;
+  color: #f9fafb;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.faq-search input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+.faq-search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+/* === 响应式设计 === */
+@media (min-width: 768px) {
+  .faq-container {
+    max-width: 48rem;
+    padding: 3rem 1.5rem;
+  }
+  
+  .faq-question {
+    padding: 2rem;
+  }
+  
+  .faq-answer.active {
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .faq-container {
+    max-width: 56rem;
+    padding: 4rem 2rem;
+  }
+}

@@ -1,0 +1,211 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* 
+  Bug反馈页面 (bug-report.html) 专用样式
+  包含表单组件和交互反馈效果
+*/
+
+/* === Bug反馈页面主容器 === */
+.bug-report-container {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* === 表单样式 === */
+.bug-report-form {
+  background-color: rgba(31, 41, 55, 0.5);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #f3f4f6;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  background-color: #1f2937;
+  color: #f9fafb;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+/* === 文件上传样式 === */
+.file-upload-area {
+  border: 2px dashed #374151;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.file-upload-area:hover {
+  border-color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.05);
+}
+
+.file-upload-area.dragover {
+  border-color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+.file-upload-icon {
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.file-upload-text {
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.file-upload-hint {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* === 提交按钮样式 === */
+.submit-button {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* === 表单验证样式 === */
+.form-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.error-message {
+  color: #fca5a5;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-success {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+.success-message {
+  color: #86efac;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* === 加载状态 === */
+.loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === 进度指示器 === */
+.form-progress {
+  height: 0.25rem;
+  background-color: #374151;
+  border-radius: 0.125rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.form-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  transition: width 0.3s ease;
+  border-radius: 0.125rem;
+}
+
+/* === 响应式设计 === */
+@media (min-width: 768px) {
+  .bug-report-container {
+    padding: 3rem 1.5rem;
+  }
+  
+  .bug-report-form {
+    padding: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bug-report-container {
+    max-width: 56rem;
+    padding: 4rem 2rem;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  .form-grid .form-group.full-width {
+    grid-column: 1 / -1;
+  }
+}

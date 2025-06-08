@@ -8,21 +8,20 @@
 
 <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-8ELKKS8MPD');
-    </script>
+    <script defer src="assets/js/analytics.js"></script>
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    
-    <!-- CDN预连接优化 -->
+      <!-- CDN预连接优化 -->
     <link rel="preconnect" href="https://cdn.voidix.net" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.voidix.net">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    
+    <!-- 
+      CDN防盗链保护说明:
+      - cdn.voidix.net 启用了防盗链保护，仅允许来自 voidix.net 域名的访问
+      - 如需在其他域名使用资源，请联系管理员配置白名单
+    -->
     
     <title>页面出错 | Voidix - 错误页面</title>
     
@@ -46,16 +45,7 @@
     <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
             rel="stylesheet" />    <!-- Custom CSS -->
-    <link href="assets/css/style.css" rel="stylesheet" />
-    <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
-    <style>
-        .gradient-text {
-            background: linear-gradient(90deg, #4f46e5, #9333ea);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
+    <link href="assets/css/main.css" rel="stylesheet" />
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter'] flex flex-col min-h-screen">

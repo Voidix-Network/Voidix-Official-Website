@@ -1,0 +1,39 @@
+{
+  "name": "voidix-official-website",
+  "version": "1.0.0",
+  "description": "Voidix official website with webpack CSS compression",
+  "main": "build-entries/index.js",  "scripts": {
+    "dev": "webpack serve --mode development",
+    "build": "npm run clean && webpack --mode production",
+    "clean": "rimraf dist dev-build deploy",
+    "deploy": "node scripts/deploy-unified.js full",
+    "deploy:prepare": "node scripts/deploy-unified.js prepare",
+    "deploy:nginx": "node scripts/deploy-unified.js deploy",
+    "deploy:backup": "node scripts/deploy-unified.js backup",
+    "test:integration": "node scripts/test-deployment-integration.js"
+  },
+  "keywords": [
+    "voidix",
+    "website",
+    "css",
+    "webpack"
+  ],
+  "author": "",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.1",
+    "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "postcss": "^8.5.4",
+    "postcss-import": "^16.1.0",
+    "postcss-loader": "^8.1.1",
+    "rimraf": "^5.0.5",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.2"
+  }
+}

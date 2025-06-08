@@ -9,13 +9,7 @@
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-8ELKKS8MPD');
-    </script>
+    <script defer src="assets/js/analytics.js"></script>
     
     <meta charset="utf-8" />    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     
@@ -94,22 +88,19 @@
         "@type": "Organization",
         "name": "Voidix"
       }    }    </script>    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
-    <link rel="manifest" href="assets/images/site.webmanifest" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />    <link rel="manifest" href="assets/images/site.webmanifest" />
+    
+    <!-- CDN资源 (防盗链保护: 仅允许localhost和*.voidix.net访问) -->
     <!-- 关键资源：立即加载 -->
     <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
-    
     <!-- 非关键资源：延迟加载 -->
-    <script defer crossorigin src="https://cdn.voidix.net/react@18.3.1/umd/react.production.min.js"></script>
-    <script defer crossorigin src="https://cdn.voidix.net/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
     <!-- 轻量级动画库：页面加载后再初始化 -->
     <script defer src="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.js"></script>
     <link href="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- 字体 -->
     <link
-            href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" />    <!-- Custom CSS -->
-    <link href="assets/css/style.css" rel="stylesheet" />
-    <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
+            href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" /><!-- Custom CSS -->
+    <link href="assets/css/main.css" rel="stylesheet" />
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -1159,46 +1150,12 @@
             <p class="text-gray-300 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p></div>
     </div>
 </footer>
-<!-- 简化的页面初始化脚本 -->
-<script>
-// 等待页面加载完成
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('页面资源已加载，开始初始化');
-  
-  // 确保所有外部脚本都已加载
-  setTimeout(() => {
-    console.log('页面初始化完成');
-  }, 100);
-});
-</script>
+<!-- 页面初始化脚本 -->
 
+<script defer src="assets/js/page-init.js"></script>
 <script defer src="assets/js/script.js"></script>
 <script defer src="assets/js/sharedConfig.js"></script>
 <script defer src="assets/js/index-page.js"></script>
 <script defer src="assets/js/menu.js"></script>
-
-<!-- 全局错误处理 -->
-<script>
-  // 全局 JavaScript 错误处理
-  window.addEventListener('error', function(event) {
-    console.error('JavaScript Error:', {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-      error: event.error
-    });
-  });
-
-  // 处理未捕获的 Promise 拒绝
-  window.addEventListener('unhandledrejection', function(event) {
-    console.error('Unhandled Promise Rejection:', event.reason);
-    event.preventDefault();
-  });
-
-  // 页面加载错误监控
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('Index page loaded successfully');
-  });
-</script>
+<script defer src="assets/js/error-handler.js"></script>
 </body>

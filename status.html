@@ -7,13 +7,7 @@
 <html lang="zh-CN">
 <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-8ELKKS8MPD');
-  </script>
+  <script defer src="assets/js/analytics.js"></script>
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -48,20 +42,16 @@
   <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
-  <link rel="manifest" href="assets/images/site.webmanifest" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />  <link rel="manifest" href="assets/images/site.webmanifest" />
   
+  <!-- CDN资源 (防盗链保护: 仅允许localhost和*.voidix.net访问) -->
   <!-- Tailwind CSS -->
   <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
-  <!-- React and ReactDOM -->
-  <script src="https://cdn.voidix.net/react@18.3.1/umd/react.production.min.js" crossorigin></script>  <script src="https://cdn.voidix.net/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
   <!-- 字体 -->
   <link
           href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
           rel="stylesheet" /><!-- Custom CSS -->
-  <link href="assets/css/style.css" rel="stylesheet" />
-  <link href="assets/css/status-page.css" rel="stylesheet" />
-  <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
+  <link href="assets/css/main.css" rel="stylesheet" />
   
   <!-- Status Page Structured Data -->
   <script type="application/ld+json">
@@ -441,7 +431,7 @@
 <!-- General script for navbar, framer motion etc. -->
 
 <!-- Player List Tooltip -->
-<div id="player-tooltip" class="absolute z-50 p-3 bg-gray-900 text-white text-sm rounded-lg shadow-xl border border-gray-700/50 max-w-xs transition-opacity duration-200 opacity-0 hidden" style="pointer-events: auto;">
+<div id="player-tooltip" class="absolute z-50 p-3 bg-gray-900 text-white text-sm rounded-lg shadow-xl border border-gray-700/50 max-w-xs transition-opacity duration-200 opacity-0 hidden">
   <h4 class="font-semibold mb-2 text-base border-b border-gray-700 pb-1">在线玩家</h4>
   <ul id="player-tooltip-list" class="list-none p-0 m-0 space-y-1 mt-2">
     <!-- Player names will be injected here -->
@@ -449,51 +439,6 @@
   <div id="player-tooltip-empty" class="hidden text-gray-400 mt-2">此服务器当前没有玩家在线。</div>
 </div>
 
-<!-- Global Error Handling -->
-<script>
-  // Global JavaScript Error Handler
-  window.addEventListener('error', function(event) {
-    console.error('Global JavaScript Error:', {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-      error: event.error
-    });
-  });
-
-  // Promise Rejection Handler
-  window.addEventListener('unhandledrejection', function(event) {
-    console.error('Unhandled Promise Rejection:', event.reason);
-  });
-
-  // Page Load Error Monitoring
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('Status page loaded successfully');
-    
-    // Monitor for resource loading errors
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-      img.addEventListener('error', function() {
-        console.warn('Image failed to load:', img.src);
-      });
-    });
-    
-    const links = document.querySelectorAll('link[rel="stylesheet"]');
-    links.forEach(link => {
-      link.addEventListener('error', function() {
-        console.warn('Stylesheet failed to load:', link.href);
-      });
-    });
-
-    // Monitor React app initialization errors
-    if (typeof React === 'undefined') {
-      console.warn('React library not loaded properly');
-    }
-    if (typeof ReactDOM === 'undefined') {
-      console.warn('ReactDOM library not loaded properly');
-    }
-  });
-</script>
+<script defer src="assets/js/error-handler.js"></script>
 </body>
 </html>

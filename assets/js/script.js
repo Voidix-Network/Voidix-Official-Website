@@ -3,8 +3,9 @@
   To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
   or the LICENSE_CODE file.
 */
-// General script for navbar, animations, tabs, accordions, and smooth scrolling.
+// assets/js/script.js
 
+// General script for navbar, animations, tabs, accordions, and smooth scrolling.
 /**
  * 初始化简单的动画系统，替代 Framer Motion
  * 使用 CSS 过渡和 Intersection Observer API
@@ -15,26 +16,22 @@ const initializeAnimations = () => {
   styleSheet.textContent = `
     .motion-element {
       transition: all 0.5s ease-out;
-    }
-    
+      }
     .motion-element[data-animate] {
       opacity: 0;
       transform: translateY(20px);
-    }
-    
+      }
     .motion-element.animated {
       opacity: 1 !important;
       transform: translate(0, 0) !important;
     }
   `;
   document.head.appendChild(styleSheet);
-
   // 创建 Intersection Observer
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const element = entry.target;
-        
         try {
           // 解析动画属性
           const initialProps = element.dataset.initial ? JSON.parse(element.dataset.initial) : {};
@@ -42,7 +39,6 @@ const initializeAnimations = () => {
           const transitionProps = element.dataset.transition ? JSON.parse(element.dataset.transition) : {};
           const viewportProps = element.dataset.viewport ? JSON.parse(element.dataset.viewport) : { once: true };
           const whileInViewProps = element.dataset.whileinview ? JSON.parse(element.dataset.whileinview) : null;
-          
           // 应用初始样式
           if (initialProps.opacity !== undefined) {
             element.style.opacity = initialProps.opacity;
@@ -53,7 +49,6 @@ const initializeAnimations = () => {
           if (initialProps.x !== undefined) {
             element.style.transform = `translateX(${initialProps.x}px)`;
           }
-          
           // 应用过渡时间
           if (transitionProps.duration) {
             element.style.transitionDuration = `${transitionProps.duration}s`;
@@ -61,14 +56,11 @@ const initializeAnimations = () => {
           if (transitionProps.delay) {
             element.style.transitionDelay = `${transitionProps.delay}s`;
           }
-          
           // 选择要应用的目标属性（优先使用 whileInViewProps）
           const targetProps = whileInViewProps || animateProps;
-          
           // 延迟应用动画到的样式
           setTimeout(() => {
             element.classList.add('animated');
-            
             if (targetProps.opacity !== undefined) {
               element.style.opacity = targetProps.opacity;
             }
@@ -79,12 +71,10 @@ const initializeAnimations = () => {
               element.style.transform = `translateX(${targetProps.x}px)`;
             }
           }, (transitionProps.delay || 0) * 1000);
-          
           // 如果设置了 once: true，观察一次后就停止观察
           if (viewportProps.once) {
             observer.unobserve(element);
           }
-          
         } catch (e) {
           console.error('Error parsing animation attributes for element:', element, e);
           // 简单地添加 animated 类作为后备
@@ -96,16 +86,13 @@ const initializeAnimations = () => {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
   });
-
   // 观察所有动画元素
   const motionElements = document.querySelectorAll('.motion-element');
   motionElements.forEach(el => {
     observer.observe(el);
   });
-  
   console.log(`Initialized animations for ${motionElements.length} elements`);
 };
-
 /**
  * Sets up tab functionality for elements with .tab-btn class and data-tab-target attribute.
  * Handles switching active tabs and displaying corresponding content.
@@ -129,7 +116,6 @@ const setupTabs = () => {
       });
       btn.classList.add('active', 'border-indigo-400', 'text-white');
       btn.classList.remove('text-gray-400');
-
       contentContainer.querySelectorAll('.tab-content').forEach(c => {
         c.classList.remove('active');
         c.classList.add('hidden');
@@ -142,7 +128,6 @@ const setupTabs = () => {
     });
   });
 };
-
 /**
  * Sets up accordion functionality for elements with .accordion-btn class.
  * Toggles visibility of the next sibling element (the content) and rotates an icon.

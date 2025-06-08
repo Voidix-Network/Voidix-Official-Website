@@ -35,23 +35,13 @@
   /* amber-400 */
 }
 
-/* Keyframe animation for the pulsing effect on online status dots */
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
-}
 
 /* Styles for the player list tooltip, shown on hover over server entries */
 /* Visibility and content managed by assets/js/status-page.js */
 #player-tooltip {
   max-width: 250px; /* Adjust as needed */
   word-wrap: break-word;
+  pointer-events: auto; /* Allow interaction with tooltip content */
 }
 /* Styles for the scrollable list within the player tooltip */
 #player-tooltip ul {
@@ -93,4 +83,4 @@ svg.status-dot.offline {
 }
 svg.status-dot.maintenance {
   fill: #fbbf24; /* amber-400 */
-} 
+}
