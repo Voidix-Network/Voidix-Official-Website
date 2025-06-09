@@ -5,7 +5,6 @@
 */
 // assets/js/sharedConfig.js
 // Defines a global configuration object for shared keys, names, settings, and utility functions.
-
 window.VOIDIX_SHARED_CONFIG = {
     // Existing shared items
     minigameKeys: ["bedwars", "bedwars_solo", "bedwars_other", "knockioffa"],
@@ -25,7 +24,6 @@ window.VOIDIX_SHARED_CONFIG = {
         lobby1: "小游戏大厅",
         knockioffa: "击退战场 (knockioffa)"
     },
-
     /**
      * Server configuration mapping for dynamic setup
      * Maps server keys to their UI element IDs and display configurations
@@ -40,7 +38,6 @@ window.VOIDIX_SHARED_CONFIG = {
             keys: ["bedwars", "bedwars_solo", "bedwars_other"],
             isAggregate: true
         },
-        
         // Individual servers with standard configurations
         bedwars: {
             statusPageElements: {
@@ -98,9 +95,7 @@ window.VOIDIX_SHARED_CONFIG = {
             },
             keys: ["knockioffa"]
         }
-    },
-
-    // New shared items:
+    },    
     websocket: {
         url: 'wss://server.voidix.top:10203',
         // maxReconnectAttempts and reconnectIntervalSequence control the WebSocket reconnection strategy.
@@ -111,14 +106,12 @@ window.VOIDIX_SHARED_CONFIG = {
         // 添加禁用标志，如果需要完全禁用WebSocket连接
         disabled: false // 设置为 true 可以禁用WebSocket连接
     },
-
     timeConstants: {
         SECONDS_IN_MINUTE: 60,
         SECONDS_IN_HOUR: 3600,
         SECONDS_IN_DAY: 24 * 3600,
         SECONDS_IN_YEAR: 365 * 24 * 3600, // Simplified year, does not account for leap years.
     },
-
     /**
      * Standardized status texts for UI display.
      * Currently contains Chinese (Simplified) strings and some HTML entities where appropriate.
@@ -134,7 +127,7 @@ window.VOIDIX_SHARED_CONFIG = {
         errorConnecting: '连接错误', // Generic connection error text.
         maintenance: '维护中',
         maintenanceStartTimePrefix: '维护开始于: ',
-        connectionFailedPermanently: '连接失败，请检查网络或稍后重试。',
+        connectionFailedPermanently: '连接失败',
         reconnecting: '重连中...', // Indicates that a WebSocket reconnection attempt is in progress.
         playerDataLoading: '玩家数据加载中...',
         noPlayersOnline: '该服务器当前没有玩家在线。',
@@ -142,7 +135,6 @@ window.VOIDIX_SHARED_CONFIG = {
         invalidTimestamp: '无效的时间戳',
         timeFormatError: '时间格式错误'
     },
-
     statusClasses: {
         // Base classes for status dots on the index page (applied to all server status dots)
         indexPage: {
@@ -167,7 +159,6 @@ window.VOIDIX_SHARED_CONFIG = {
         textMonoRed: 'font-mono text-red-400',
         textMonoYellow: 'font-mono text-yellow-400'
     },
-
     /**
      * Builds server status list configuration dynamically from serverConfig
      * @returns {Object} Configuration object for server status elements
@@ -175,7 +166,6 @@ window.VOIDIX_SHARED_CONFIG = {
     buildServerStatusConfig: function() {
         const config = {};
         const shared = window.VOIDIX_SHARED_CONFIG;
-        
         // Handle special aggregates first
         config.minigames_aggregate = {
             statusEl: document.getElementById("minigames-aggregate-status"),
@@ -184,7 +174,6 @@ window.VOIDIX_SHARED_CONFIG = {
             keys: shared.minigameKeys,
             name: shared.serverDisplayNames.minigames_aggregate
         };
-        
         config.bedwars_sub_aggregate = {
             statusEl: document.getElementById("bedwars-sub-aggregate-status"),
             dotEl: null,
@@ -192,7 +181,6 @@ window.VOIDIX_SHARED_CONFIG = {
             keys: ["bedwars", "bedwars_solo", "bedwars_other"],
             name: shared.serverDisplayNames.bedwars_sub_aggregate
         };
-        
         // Build individual server configs dynamically
         Object.keys(shared.serverConfig).forEach(serverKey => {
             const serverConf = shared.serverConfig[serverKey];
@@ -206,10 +194,8 @@ window.VOIDIX_SHARED_CONFIG = {
                 };
             }
         });
-        
         return config;
     },
-
     /**
      * Builds index page status elements configuration dynamically
      * @returns {Object} Configuration object for index page status elements
@@ -217,7 +203,6 @@ window.VOIDIX_SHARED_CONFIG = {
     buildIndexStatusConfig: function() {
         const config = {};
         const shared = window.VOIDIX_SHARED_CONFIG;
-        
         // Build configurations for servers that have index page elements
         Object.keys(shared.serverConfig).forEach(serverKey => {
             const serverConf = shared.serverConfig[serverKey];
@@ -228,16 +213,13 @@ window.VOIDIX_SHARED_CONFIG = {
                 };
             }
         });
-        
         // Add minigames aggregate for index page (using 'minigame' key as used in index page)
         config.minigame = {
             badge: document.getElementById('minigame-status-badge-desktop'),
             dot: document.getElementById('minigame-status-dot-desktop')
         };
-        
         return config;
     },
-
     /**
      * Formats a duration in seconds into a human-readable string.
      * @param {number|string|null|undefined} totalSeconds The total duration in seconds.
@@ -246,18 +228,14 @@ window.VOIDIX_SHARED_CONFIG = {
      */
     formatDuration: function(totalSeconds, type = 'default') {
         const shared = window.VOIDIX_SHARED_CONFIG; // Alias for easier access to other shared props
-
         if (totalSeconds === undefined || totalSeconds === null) return shared.statusTexts.loading;
-
         let numericSeconds = parseFloat(totalSeconds); // Allow string input
         if (isNaN(numericSeconds) || numericSeconds < 0) {
             numericSeconds = 0; // Default to 0 if input is invalid or negative.
         }
-
         const days = Math.floor(numericSeconds / shared.timeConstants.SECONDS_IN_DAY);
         const hours = Math.floor((numericSeconds % shared.timeConstants.SECONDS_IN_DAY) / shared.timeConstants.SECONDS_IN_HOUR);
         const minutes = Math.floor((numericSeconds % shared.timeConstants.SECONDS_IN_HOUR) / shared.timeConstants.SECONDS_IN_MINUTE);
-
         if (type === 'totalUptime') { // Formatting for "Total Running Time" (e.g., on index page)
             if (numericSeconds >= shared.timeConstants.SECONDS_IN_YEAR) {
                 const years = Math.floor(numericSeconds / shared.timeConstants.SECONDS_IN_YEAR);
@@ -272,7 +250,6 @@ window.VOIDIX_SHARED_CONFIG = {
             if (numericSeconds > 0 && numericSeconds < shared.timeConstants.SECONDS_IN_MINUTE) return shared.statusTexts.lessThanAMinute; // e.g., "<1分"
             return `${minutes}分`; // e.g., "30分" or "0分" if less than a minute (and not 0 initially and caught by lessThanAMinute)
         }
-
         // Default formatting (typically for individual server uptimes on status page)
         if (days >= 100) return `${days}天`; // If very long, just show days, e.g., "120天"
         if (days > 0) return `${days}天 ${hours}时`;   // e.g., "10天 5时"

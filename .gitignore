@@ -1,5 +1,36 @@
-/memory-bank
-/node_modules
-/.DS_Store
-/.idea
-/.vscode
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependencies
+node_modules/
+# package-lock.json  # 注释掉，CI/CD需要此文件
+yarn.lock
+
+# Webpack build outputs
+dist/
+build/
+.cache/
+.temp/
+
+# Generated files
+*.min.css
+*.min.js
+assets/css/**/*.min.css
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# OS
+Thumbs.db

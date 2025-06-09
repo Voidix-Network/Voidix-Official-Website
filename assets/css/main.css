@@ -1,0 +1,63 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* 
+  Voidix CSS主入口文件
+  模块化CSS架构 - 按ITCSS方法论分层引入
+  
+  架构层次：
+  1. 基础层 (Base) - 重置、变量、字体、基础元素
+  2. 组件层 (Components) - 可复用的UI组件
+  3. 页面层 (Pages) - 页面特定样式
+  4. 工具层 (Utilities) - 实用工具类
+*/
+
+/* === 基础层 (Base Layer) === */
+@import url('base/reset.css');
+@import url('base/variables.css');
+@import url('base/typography.css');
+@import url('base/animations.css');
+@import url('base/base.css');
+
+/* === 组件层 (Components Layer) === */
+@import url('components/buttons.css');
+@import url('components/text.css');
+@import url('components/interactive.css');
+
+/* === 页面层 (Pages Layer) === */
+@import url('pages/index.css');
+@import url('pages/status.css');
+@import url('pages/faq.css');
+@import url('pages/error.css');
+@import url('pages/bug-report.css');
+
+/* === 实用工具层 (Utilities Layer) === */
+@import url('utilities/seo.css');
+
+/* === 从旧文件迁移的内容 === */
+/* 这些样式暂时保留，将逐步重构到相应模块 */
+
+/* 改进无障碍对比度 - Lighthouse优化 */
+.text-gray-500-improved {
+  color: #6b7280; /* 原gray-500 */
+}
+
+.text-gray-400-improved {
+  color: #9ca3af; /* 提高对比度的替代方案 */
+}
+
+.text-gray-300-improved {
+  color: #d1d5db; /* 更高对比度的选项 */
+}
+
+/* 针对深色背景的高对比度文字 */
+.high-contrast-text {
+  color: #e5e7eb; /* gray-200 - 更好的对比度 */
+}
+
+.medium-contrast-text {
+  color: #d1d5db; /* gray-300 - 中等对比度 */
+}

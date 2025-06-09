@@ -15,18 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuItems = document.getElementById('mobile-menu-items');
     const hamburgerIcon = document.getElementById('hamburger-icon');
     let line1, line2, line3; // Lines of the hamburger icon for animation
-
     if (hamburgerIcon) {
         line1 = hamburgerIcon.querySelector('.line1');
         line2 = hamburgerIcon.querySelector('.line2');
         line3 = hamburgerIcon.querySelector('.line3');
     }
-
     if (mobileMenuButton && mobileMenuItems && line1 && line2 && line3) {
         mobileMenuButton.addEventListener('click', () => {
             const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
             mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
-
             if (!isExpanded) {
                 mobileMenuItems.classList.remove('max-h-0', 'opacity-0');
                 mobileMenuItems.classList.add('max-h-96');
@@ -42,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
     // Smooth Scroll for Anchor Links & Mobile Menu Closure
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -51,20 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (hrefAttribute && hrefAttribute.length > 1) {
                 const targetId = hrefAttribute.substring(1); // Remove #
                 const targetElement = document.getElementById(targetId);
-
                 if (targetElement) {
                     e.preventDefault();
                     targetElement.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
-
                     // Close mobile menu if it's open after clicking an anchor link
                     if (mobileMenuItems && !mobileMenuItems.classList.contains('max-h-0')) {
                         mobileMenuItems.classList.add('max-h-0', 'opacity-0');
                         mobileMenuItems.classList.remove('max-h-96');
                         mobileMenuButton.setAttribute('aria-expanded', 'false');
-
                         if (line1 && line2 && line3) {
                             line1.classList.remove('translate-y-[6px]', 'rotate-45');
                             line2.classList.remove('opacity-0');

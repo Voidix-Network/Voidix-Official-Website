@@ -1,0 +1,48 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* 文本相关组件 */
+
+/* 渐变文字 */
+.gradient-text {
+  font-weight: 700;
+  background-image: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.vbpixel-gradient-text {
+  font-weight: 700;
+  background-image: var(--gradient-vbpixel);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 改进无障碍对比度的文字颜色 */
+.text-gray-500-improved {
+  color: var(--color-gray-500-improved);
+}
+
+.text-gray-400-improved {
+  color: var(--color-gray-400-improved);
+}
+
+.text-gray-300-improved {
+  color: var(--color-gray-300-improved);
+}
+
+/* 针对深色背景的高对比度文字 */
+.high-contrast-text {
+  color: var(--color-high-contrast);
+}
+
+.medium-contrast-text {
+  color: var(--color-medium-contrast);
+}

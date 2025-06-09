@@ -1,0 +1,54 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* 
+  错误页面 (error.html) 专用样式
+  包含错误页面特有的渐变文本和视觉效果
+*/
+
+/* === 错误页面渐变文本 === */
+.gradient-text {
+  background: linear-gradient(90deg, #4f46e5, #9333ea);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* === 错误页面特定样式 === */
+.error-container {
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .error-code {
+    font-size: 9rem;
+  }
+}
+
+/* === 错误页面动画效果 === */
+.error-fade-in {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

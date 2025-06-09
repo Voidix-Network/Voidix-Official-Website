@@ -9,15 +9,15 @@
 <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-8ELKKS8MPD');
-    </script>
+    <script defer src="assets/js/analytics.js"></script>
     
     <meta charset="utf-8" />    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    
+    <!-- CDN预连接优化 -->
+    <link rel="preconnect" href="https://cdn.voidix.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.voidix.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    
     <!-- CSP策略由nginx配置控制，移除HTML中的CSP避免冲突 -->
     <title>Voidix - 最好玩的Minecraft小游戏服务器 | 免费我的世界休闲体验</title>
     
@@ -32,7 +32,7 @@
     <meta property="og:url" content="https://www.voidix.net/" />
     <meta property="og:title" content="Voidix - 最好玩的Minecraft小游戏服务器 | 免费我的世界休闲体验" />
     <meta property="og:description" content="Voidix是最好玩的Minecraft小游戏服务器，提供完全免费的我的世界休闲体验。支持跨版本兼容，多种小游戏模式，打造最佳的MC休闲社区。" />
-    <meta property="og:image" content="https://www.voidix.net/assets/images/og-image.png" />
+    <meta property="og:image" content="https://www.voidix.net/assets/images/android-chrome-512x512.png" />
     <meta property="og:site_name" content="Voidix" />
     <meta property="og:locale" content="zh_CN" />
     
@@ -41,15 +41,14 @@
     <meta property="twitter:url" content="https://www.voidix.net/" />
     <meta property="twitter:title" content="Voidix - 最好玩的Minecraft小游戏服务器 | 免费我的世界休闲体验" />
     <meta property="twitter:description" content="Voidix是最好玩的Minecraft小游戏服务器，提供完全免费的我的世界休闲体验。支持跨版本兼容，多种小游戏模式，打造最佳的MC休闲社区。" />
-    <meta property="twitter:image" content="https://www.voidix.net/assets/images/og-image.png" />
+    <meta property="twitter:image" content="https://www.voidix.net/assets/images/android-chrome-512x512.png" />
       <!-- Additional SEO -->
     <link rel="canonical" href="https://www.voidix.net/" />
     <meta name="theme-color" content="#151f38" />
     <meta name="msapplication-TileColor" content="#151f38" />
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
     
     <!-- Structured Data for SEO -->
     <script type="application/ld+json">
@@ -58,7 +57,7 @@
       "@type": "Organization",
       "name": "Voidix",
       "url": "https://www.voidix.net",
-      "logo": "https://www.voidix.net/favicon.ico",
+      "logo": "https://www.voidix.net/assets/images/favicon.ico",
       "description": "Voidix是一个公平至上的Minecraft服务器，支持跨版本游戏体验。提供生存、创造等多种游戏模式，致力于打造最佳的我的世界社区。",
       "foundingDate": "2024",
       "contactPoint": {
@@ -88,21 +87,20 @@
       "isPartOf": {
         "@type": "Organization",
         "name": "Voidix"
-      }    }
-    </script>    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />    <!-- Tailwind CSS CDN -->
+      }    }    </script>    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />    <link rel="manifest" href="assets/images/site.webmanifest" />
+    
+    <!-- CDN资源 (防盗链保护: 仅允许localhost和*.voidix.net访问) -->
+    <!-- 关键资源：立即加载 -->
     <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
-    <!-- React and ReactDOM CDN -->
-    <script crossorigin src="https://cdn.voidix.net/react@18.3.1/umd/react.production.min.js"></script>
-    <script crossorigin src="https://cdn.voidix.net/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
-    <!-- 使用轻量级的动画库替代 Framer Motion -->
-    <script src="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.js"></script>
+    <!-- 非关键资源：延迟加载 -->
+    <!-- 轻量级动画库：页面加载后再初始化 -->
+    <script defer src="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.js"></script>
     <link href="https://cdn.voidix.net/unpkg/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- 字体 -->
     <link
-            href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" />    <!-- Custom CSS -->
-    <link href="assets/css/style.css" rel="stylesheet" />
-    <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
+            href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"            rel="stylesheet" /><!-- Custom CSS -->
+    <link href="assets/css/main.css" rel="stylesheet" />
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -111,7 +109,7 @@
       "@type": "Organization",
       "name": "Voidix",
       "description": "公平至上的Minecraft服务器，支持跨版本游戏体验",      "url": "https://voidix.net",
-      "logo": "https://voidix.net/assets/images/logo.png",
+      "logo": "https://voidix.net/assets/images/android-chrome-512x512.png",
       "sameAs": [
         "https://discord.gg/voidix",
         "https://github.com/voidix"
@@ -1152,21 +1150,12 @@
             <p class="text-gray-300 text-sm mt-4 md:mt-0">本服务器为非商业公益项目，与Mojang Studios无官方关联。</p></div>
     </div>
 </footer>
-<!-- 简化的页面初始化脚本 -->
-<script>
-// 等待页面加载完成
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('页面资源已加载，开始初始化');
-  
-  // 确保所有外部脚本都已加载
-  setTimeout(() => {
-    console.log('页面初始化完成');
-  }, 100);
-});
-</script>
+<!-- 页面初始化脚本 -->
 
+<script defer src="assets/js/page-init.js"></script>
 <script defer src="assets/js/script.js"></script>
 <script defer src="assets/js/sharedConfig.js"></script>
 <script defer src="assets/js/index-page.js"></script>
 <script defer src="assets/js/menu.js"></script>
+<script defer src="assets/js/error-handler.js"></script>
 </body>

@@ -8,16 +8,21 @@
 
 <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-8ELKKS8MPD');
-    </script>
+    <script defer src="assets/js/analytics.js"></script>
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+      <!-- CDN预连接优化 -->
+    <link rel="preconnect" href="https://cdn.voidix.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.voidix.net">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    
+    <!-- 
+      CDN防盗链保护说明:
+      - cdn.voidix.net 启用了防盗链保护，仅允许来自 voidix.net 域名的访问
+      - 如需在其他域名使用资源，请联系管理员配置白名单
+    -->
+    
     <title>页面出错 | Voidix - 错误页面</title>
     
     <!-- SEO Meta Tags -->
@@ -25,25 +30,22 @@
     <meta name="keywords" content="错误页面,404错误,页面未找到,Voidix错误,技术支持" />
     <meta name="author" content="Voidix Team" />
     <meta name="robots" content="noindex, nofollow" />
-    
-    <!-- Additional SEO -->
+      <!-- Additional SEO -->
     <meta name="theme-color" content="#151f38" />
+      <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />
+    <link rel="manifest" href="/assets/images/site.webmanifest" />
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 字体 -->
     <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
             rel="stylesheet" />    <!-- Custom CSS -->
-    <link href="assets/css/style.css" rel="stylesheet" />
-    <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
-    <style>
-        .gradient-text {
-            background: linear-gradient(90deg, #4f46e5, #9333ea);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
+    <link href="assets/css/main.css" rel="stylesheet" />
 </head>
 
 <body class="bg-[#111827] text-gray-100 font-['Inter'] flex flex-col min-h-screen">
@@ -181,5 +183,30 @@
     </div>
 </footer>
 <script defer src="assets/js/menu.js"></script>
+
+<!-- 全局错误处理 -->
+<script>
+  // 全局 JavaScript 错误处理
+  window.addEventListener('error', function(event) {
+    console.error('JavaScript Error:', {
+      message: event.message,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+      error: event.error
+    });
+  });
+
+  // 处理未捕获的 Promise 拒绝
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('Unhandled Promise Rejection:', event.reason);
+    event.preventDefault();
+  });
+
+  // 页面加载错误监控
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Error page loaded successfully');
+  });
+</script>
 </body>
 </html> 

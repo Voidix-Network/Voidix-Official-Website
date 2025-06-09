@@ -1,0 +1,202 @@
+/*
+  This code is licensed under the GNU Affero General Public License, version 3.
+  To view a copy of this license, see https://www.gnu.org/licenses/agpl-3.0.html
+  or the LICENSE_CODE file.
+*/
+
+/* SEO增强样式 */
+
+/* 跳转链接 */
+.skip-to-content {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: 999 !important;
+  padding: 1rem !important;
+  background: #000 !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  font-weight: bold !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.skip-to-content:focus {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* 结构化数据相关样式 */
+.structured-data {
+  display: none !important;
+}
+
+/* SEO友好的隐藏文本 */
+.seo-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* 页面标题和描述的SEO优化 */
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.page-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* 面包屑导航 - 现代简洁风格 */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin-bottom: 1.5rem;
+  list-style: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* 支持 ol/li 结构的面包屑 */
+.breadcrumb-item {
+  color: var(--color-gray-400-improved);
+  transition: color var(--transition-hover-duration) ease;
+  opacity: 0.7;
+}
+
+.breadcrumb-item:last-child {
+  color: var(--color-dark-text);
+  font-weight: 600;
+  opacity: 1;
+}
+
+.breadcrumb-item a {
+  color: inherit;
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all var(--transition-hover-duration) ease;
+  position: relative;
+}
+
+.breadcrumb-item a:hover {
+  color: #6a93ff;
+  background-color: rgba(106, 147, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: " / ";
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--color-gray-500-improved);
+  user-select: none;
+}
+
+.breadcrumb-item:hover {
+  opacity: 1;
+}
+
+/* 支持 直接元素结构的面包屑 */
+.breadcrumb > a {
+  color: var(--color-gray-400-improved);
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all var(--transition-hover-duration) ease;
+  opacity: 0.7;
+}
+
+.breadcrumb > a:hover {
+  color: #6a93ff;
+  background-color: rgba(106, 147, 255, 0.1);
+  transform: translateY(-1px);
+  opacity: 1;
+}
+
+.breadcrumb-separator {
+  color: var(--color-gray-500-improved);
+  margin: 0 0.5rem;
+  user-select: none;
+}
+
+.breadcrumb-current {
+  color: var(--color-dark-text);
+  font-weight: 600;
+}
+
+/* 语言和地区标识 */
+
+[lang="zh-CN"] {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* 搜索引擎优化的图片样式 */
+img[alt] {
+  /* 确保所有图片都有alt属性 */
+  max-width: 100%;
+  height: auto;
+}
+
+/* 无障碍和SEO友好的表单 */
+label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* 页面加载性能优化相关样式 */
+.preload-critical {
+  /* 关键资源预加载提示 */
+  content-visibility: auto;
+}
+
+/* Rich Snippets 结构化数据样式 */
+.rich-snippet {
+  display: none;
+}
+
+/* 社交媒体分享优化 */
+.social-share-meta {
+  display: none;
+}
+
+/* 移动端SEO优化 */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-description {
+    font-size: 1rem;
+  }
+}
+
+/* 打印样式优化 */
+@media print {
+  .skip-to-content,
+  .social-share,
+  .navigation,
+  .sidebar {
+    display: none !important;
+  }
+  
+  .page-title {
+    color: #000 !important;
+  }
+}

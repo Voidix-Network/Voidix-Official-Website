@@ -3,6 +3,9 @@ name: Website Deployment
 on:
   push:
     branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
     inputs:
       force_deploy:
@@ -18,16 +21,189 @@ permissions:
   issues: write
   pull-requests: write
 
+env:
+  NODE_VERSION: '18'
+  NGINX_WEB_ROOT: /var/www/voidix.net
+  BACKUP_DIR: /var/backups/voidix-website
+  DEPLOY_USER: www-data
+  DEPLOY_GROUP: www-data
+  COMMENT_BODY: ${{ github.event.comment.body }}
+
 jobs:
-  deploy:
-    name: 部署到生产环境
+  # 智能变更检测 - 支持多提交PR
+  changes-detection:
+    name: 🔍 智能变更检测
     runs-on: [self-hosted, website]
+    outputs:
+      should-deploy: ${{ steps.changes.outputs.should-deploy }}
+      changes-summary: ${{ steps.changes.outputs.changes-summary }}
+      total-changes: ${{ steps.changes.outputs.total-changes }}
+      
+    steps:
+      - name: 🔧 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史记录，支持多提交PR检测
+          
+      - name: 📊 智能变更检测 (支持多提交PR)
+        id: changes
+        run: |
+          echo "=== 开始智能变更检测 (支持多提交PR) ==="
+          
+          # 确定基准提交（对比的起点）- 支持多种触发场景
+          case "${{ github.event_name }}" in
+            "push")
+              # 推送事件：检查当前推送的所有提交
+              if [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+                BASE_COMMIT="${{ github.event.before }}"
+                echo "🔄 推送事件 - 基准提交: $BASE_COMMIT"
+                echo "📝 检测推送中的所有提交变更"
+              else
+                # 新分支的情况，检查最近1个提交
+                BASE_COMMIT="HEAD~1"
+                echo "🆕 新分支推送 - 检查最近1个提交"
+              fi
+              ;;
+            "pull_request")
+              # PR事件：检查PR中的所有变更 (支持多提交)
+              BASE_COMMIT="${{ github.event.pull_request.base.sha }}"
+              echo "🔀 PR事件 - 基准提交: $BASE_COMMIT"
+              echo "📦 PR #${{ github.event.pull_request.number }} 包含多个提交，检测所有变更"
+              echo "🎯 目标分支: ${{ github.event.pull_request.base.ref }}"
+              echo "🌿 源分支: ${{ github.event.pull_request.head.ref }}"
+              ;;
+            "workflow_dispatch")
+              # 手动触发：可选择强制部署或检查最近提交
+              if [ "${{ github.event.inputs.force_deploy }}" = "true" ]; then
+                echo "🚀 手动强制部署模式"
+                echo "should-deploy=true" >> $GITHUB_OUTPUT
+                echo "changes-summary=手动强制部署" >> $GITHUB_OUTPUT
+                echo "total-changes=0" >> $GITHUB_OUTPUT
+                exit 0
+              else
+                BASE_COMMIT="HEAD~1"
+                echo "🎛️ 手动触发 - 检查最近1个提交"
+              fi
+              ;;
+              "issue_comment")
+              # 评论触发：检查最近提交
+              # 使用全局环境变量 COMMENT_BODY 以防止代码注入
+              if [[ "$COMMENT_BODY" =~ deploy ]]; then
+                BASE_COMMIT="HEAD~1"
+                echo "💬 评论触发部署 - 检查最近1个提交"
+              else
+                echo "❌ 评论不包含部署指令"
+                echo "should-deploy=false" >> $GITHUB_OUTPUT
+                exit 0
+              fi
+              ;;
+            *)
+              echo "⚠️ 未知触发事件: ${{ github.event_name }}"
+              BASE_COMMIT="HEAD~1"
+              ;;
+          esac
+          
+          # 获取变更的文件列表 (多提交PR支持)
+          echo "🔍 检测 $BASE_COMMIT 到 HEAD 之间的变更..."
+          CHANGED_FILES=$(git diff --name-only "$BASE_COMMIT" HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "ℹ️ 未检测到文件变更"
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+            echo "changes-summary=无文件变更" >> $GITHUB_OUTPUT
+            echo "total-changes=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "📋 变更的文件列表:"
+          echo "$CHANGED_FILES" | sed 's/^/  📄 /'
+          
+          # 检查是否有需要部署的文件变更
+          DEPLOY_WORTHY_PATTERN='\.(html|css|js|json|yml|yaml|sh)$|^assets/|^scripts/|^build-entries/|webpack\.config\.js|package\.json'
+          DEPLOY_WORTHY_CHANGES=$(echo "$CHANGED_FILES" | grep -E "$DEPLOY_WORTHY_PATTERN" || true)
+          
+          # 统计变更
+          TOTAL_CHANGES=$(echo "$CHANGED_FILES" | wc -l)
+          echo "total-changes=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
+          
+          if [ -n "$DEPLOY_WORTHY_CHANGES" ]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+            echo "✅ 检测到需要部署的文件变更:"
+            echo "$DEPLOY_WORTHY_CHANGES" | sed 's/^/  🔧 /'
+            
+            # 分类统计并显示变更类型
+            HTML_CHANGES=$(echo "$DEPLOY_WORTHY_CHANGES" | grep '\.html$' | wc -l)
+            CSS_CHANGES=$(echo "$DEPLOY_WORTHY_CHANGES" | grep '\.css$' | wc -l)
+            JS_CHANGES=$(echo "$DEPLOY_WORTHY_CHANGES" | grep '\.js$' | wc -l)
+            CONFIG_CHANGES=$(echo "$DEPLOY_WORTHY_CHANGES" | grep -E '\.(json|yml|yaml)$|webpack\.config\.js' | wc -l)
+            ASSET_CHANGES=$(echo "$DEPLOY_WORTHY_CHANGES" | grep '^assets/' | wc -l)
+            SCRIPT_CHANGES=$(echo "$DEPLOY_WORTHY_CHANGES" | grep '^scripts/' | wc -l)
+            
+            # 构建变更摘要
+            SUMMARY_PARTS=()
+            [ "$HTML_CHANGES" -gt 0 ] && SUMMARY_PARTS+=("HTML:$HTML_CHANGES")
+            [ "$CSS_CHANGES" -gt 0 ] && SUMMARY_PARTS+=("CSS:$CSS_CHANGES")
+            [ "$JS_CHANGES" -gt 0 ] && SUMMARY_PARTS+=("JS:$JS_CHANGES")
+            [ "$CONFIG_CHANGES" -gt 0 ] && SUMMARY_PARTS+=("配置:$CONFIG_CHANGES")
+            [ "$ASSET_CHANGES" -gt 0 ] && SUMMARY_PARTS+=("资源:$ASSET_CHANGES")
+            [ "$SCRIPT_CHANGES" -gt 0 ] && SUMMARY_PARTS+=("脚本:$SCRIPT_CHANGES")
+            
+            CHANGES_SUMMARY=$(IFS=,; echo "${SUMMARY_PARTS[*]}")
+            echo "changes-summary=$CHANGES_SUMMARY" >> $GITHUB_OUTPUT
+            
+            echo "📊 变更统计:"
+            [ "$HTML_CHANGES" -gt 0 ] && echo "  🌐 HTML文件: $HTML_CHANGES 个"
+            [ "$CSS_CHANGES" -gt 0 ] && echo "  🎨 CSS文件: $CSS_CHANGES 个"
+            [ "$JS_CHANGES" -gt 0 ] && echo "  ⚡ JavaScript文件: $JS_CHANGES 个"
+            [ "$CONFIG_CHANGES" -gt 0 ] && echo "  ⚙️ 配置文件: $CONFIG_CHANGES 个"
+            [ "$ASSET_CHANGES" -gt 0 ] && echo "  🖼️ 资源文件: $ASSET_CHANGES 个"
+            [ "$SCRIPT_CHANGES" -gt 0 ] && echo "  📜 脚本文件: $SCRIPT_CHANGES 个"
+            
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+            echo "changes-summary=仅文档变更" >> $GITHUB_OUTPUT
+            echo "ℹ️ 仅文档或其他非关键文件变更，跳过部署"
+            echo "📄 变更的文件类型:"
+            echo "$CHANGED_FILES" | sed 's/^/  📝 /'
+          fi
+          
+          echo "📈 变更检测完成: 总计 $TOTAL_CHANGES 个文件"
+  # 快速质量检查
+  quality-checks:
+    name: 🧪 质量检查
+    runs-on: [self-hosted, website]
+    needs: changes-detection
+    if: needs.changes-detection.outputs.should-deploy == 'true'
+    
+    steps:
+      - name: 🔧 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 📦 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📥 安装依赖
+        run: npm ci --prefer-offline --no-audit
+          
+      - name: 🧪 运行集成测试
+        run: npm run test:integration
+
+  # 生产环境部署
+  deploy:
+    name: 🚀 生产环境部署
+    runs-on: [self-hosted, website]
+    needs: [changes-detection, quality-checks]
     if: |
-      (github.event_name == 'push' && contains(fromJSON('["master", "main"]'), github.ref_name)) ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issue_comment' && 
-       contains(github.event.comment.body, 'deploy') && 
-       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association))
+      needs.changes-detection.outputs.should-deploy == 'true' &&
+      ((github.event_name == 'push' && contains(fromJSON('["master", "main"]'), github.ref_name)) ||
+       (github.event_name == 'workflow_dispatch') ||
+       (github.event_name == 'issue_comment' && 
+        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)))
+    
+    timeout-minutes: 15
     
     steps:
       - name: 🔧 检出代码
@@ -35,60 +211,49 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: 🔍 显示触发信息
+      - name: 📦 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🗃️ 恢复依赖缓存
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+            
+      - name: 📥 安装依赖
+        run: npm ci --prefer-offline --no-audit
+        
+      - name: 🎨 构建项目
+        run: npm run build
+        
+      - name: 📊 显示构建结果
         run: |
-          echo "触发事件: ${{ github.event_name }}"
-          echo "分支: ${{ github.ref_name }}"
-          echo "提交: ${{ github.sha }}"
+          echo "=== 构建完成 ==="
+          echo "📋 变更摘要: ${{ needs.changes-detection.outputs.changes-summary }}"
+          echo "📈 文件变更数: ${{ needs.changes-detection.outputs.total-changes }}"
+          
+          if [ -d "dist/css" ]; then
+            echo "🎨 CSS构建结果:"
+            find dist/css -name "*.css" -exec sh -c 'echo "  $(basename "$1"): $(wc -c < "$1") bytes"' _ {} \;
+          fi
+          
+      - name: 🔍 显示部署信息
+        run: |
+          echo "🚀 部署信息:"
+          echo "  事件类型: ${{ github.event_name }}"
+          echo "  分支: ${{ github.ref_name }}"
+          echo "  提交: ${{ github.sha }}"
+          echo "  变更摘要: ${{ needs.changes-detection.outputs.changes-summary }}"
           
       - name: 📝 评论确认开始部署
         if: github.event_name == 'issue_comment'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |            
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `🚀 开始部署到生产环境...\n提交: ${context.sha.substring(0, 7)}`
-            });
-            
-      - name: 🔍 验证部署环境
-        run: |
-          echo "检查部署脚本..."
-          if [ ! -f "./deploy.sh" ]; then
-            echo "❌ 部署脚本不存在"
-            exit 1
-          fi
-          echo "✅ 部署脚本存在"
-          
-      - name: 🚀 执行部署
-        run: |
-          echo "设置执行权限..."
-          chmod +x ./deploy.sh
-          echo "开始部署..."
-          sudo ./deploy.sh
-          
-      - name: ✅ 部署成功通知
-        if: success() && github.event_name == 'issue_comment'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |            
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `✅ **部署成功完成！**
-              
-              🌐 网站地址: https://voidix.net
-              📝 提交: ${context.sha.substring(0, 7)}
-              ⏰ 部署时间: ${new Date().toLocaleString('zh-CN', {timeZone: 'Asia/Shanghai'})}`
-            });
-            
-      - name: ❌ 部署失败通知
-        if: failure() && github.event_name == 'issue_comment'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -97,16 +262,159 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `❌ **部署失败**
-              
-              请检查 [Actions 日志](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) 获取详细信息。`
+              body: `🚀 开始部署到生产环境...\n📋 变更: ${{ needs.changes-detection.outputs.changes-summary }}\n📦 提交: ${context.sha.substring(0, 7)}\n📈 总文件数: ${{ needs.changes-detection.outputs.total-changes }}`
             });
+
+      - name: 🔍 验证部署环境
+        run: |
+          echo "🔧 检查部署脚本..."
+          [ -f "./scripts/deploy-unified.js" ] || { echo "❌ Node.js部署脚本缺失"; exit 1; }
+          [ -f "./scripts/deploy.sh" ] || { echo "❌ Bash部署脚本缺失"; exit 1; }
+          echo "✅ 部署脚本完整"
+          
+          echo "💾 检查系统资源..."
+          df -h / | tail -1 | awk '{print "磁盘使用率: " $5}'
+          
+          echo "🌐 检查服务状态..."
+          systemctl is-active nginx >/dev/null && echo "✅ Nginx运行正常" || echo "⚠️ Nginx状态异常"
+          
+          echo "📁 检查构建结果..."
+          [ -d "./dist" ] || { echo "❌ dist目录不存在"; exit 1; }
+          echo "✅ 构建文件准备就绪"
+
+      - name: 🏥 部署前健康检查
+        run: |
+          echo "🔍 执行部署前健康检查..."
+          
+          # 检查当前网站状态
+          if curl -f -s --max-time 10 https://voidix.net >/dev/null; then
+            echo "✅ 当前网站可正常访问"
+          else
+            echo "⚠️ 当前网站访问异常，继续部署以修复"
+          fi
+          
+          # 检查磁盘空间（至少保留1GB）
+          available_kb=$(df / | tail -1 | awk '{print $4}')
+          if [ "$available_kb" -lt 1048576 ]; then
+            echo "❌ 磁盘空间不足: ${available_kb}KB"
+            exit 1
+          fi
+          echo "✅ 磁盘空间充足: ${available_kb}KB"
+
+      - name: 🚀 执行部署
+        run: |
+          echo "🔧 设置执行权限..."
+          chmod +x ./scripts/deploy.sh
+          
+          echo "🚀 开始部署..."
+          deploy_start=$(date +%s)
+          
+          # 执行部署
+          if sudo -E ./scripts/deploy.sh; then
+            deploy_end=$(date +%s)
+            duration=$((deploy_end - deploy_start))
+            echo "✅ 部署成功完成，耗时: ${duration}秒"
+          else
+            echo "❌ 部署失败"
+            exit 1
+          fi
+          
+      - name: ✅ 部署后验证
+        run: |
+          echo "🔍 执行部署后验证..."
+          
+          # 等待服务稳定
+          sleep 5
+          
+          # 验证网站可访问性
+          max_attempts=5
+          for attempt in $(seq 1 $max_attempts); do
+            echo "🌐 尝试访问网站 (${attempt}/${max_attempts})..."
             
-      - name: 📊 部署结果日志
+            if curl -f -s --max-time 10 https://voidix.net >/dev/null; then
+              echo "✅ 网站验证成功"
+              break
+            elif [ $attempt -eq $max_attempts ]; then
+              echo "❌ 网站验证失败"
+              exit 1
+            else
+              echo "⏳ 等待服务重启..."
+              sleep 10
+            fi
+          done
+          
+          # 验证关键页面
+          for page in "/" "/status.html" "/faq.html"; do
+            if curl -f -s --max-time 10 "https://voidix.net${page}" >/dev/null; then
+              echo "✅ 页面验证成功: ${page}"
+            else
+              echo "❌ 页面验证失败: ${page}"
+              exit 1
+            fi
+          done
+          
+      - name: 📊 部署结果报告
         if: always()
         run: |
           if [ "${{ job.status }}" == "success" ]; then
-            echo "✅ 部署成功完成: https://voidix.net"
+            echo "🎉 部署成功完成!"
+            echo "🌐 网站地址: https://voidix.net"
+            echo "📋 变更摘要: ${{ needs.changes-detection.outputs.changes-summary }}"
+            echo "📈 处理文件: ${{ needs.changes-detection.outputs.total-changes }} 个"
+            echo "⚡ 多提交PR智能检测: ✅ 已优化"
           else
-            echo "❌ 部署失败，请检查日志"
+            echo "❌ 部署失败，请检查上述日志"
           fi
+          
+      - name: 💬 评论部署结果
+        if: always() && github.event_name == 'issue_comment'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const status = '${{ job.status }}' === 'success' ? '✅ 成功' : '❌ 失败';
+            const message = `🚀 部署${status}\n📋 变更: ${{ needs.changes-detection.outputs.changes-summary }}\n📈 文件数: ${{ needs.changes-detection.outputs.total-changes }}\n🌐 网站: https://voidix.net`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: message
+            });
+
+  # PR环境预览部署 (仅用于PR)
+  preview-deploy:
+    name: 🔍 PR预览部署
+    runs-on: [self-hosted, website]
+    needs: [changes-detection, quality-checks]
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.changes-detection.outputs.should-deploy == 'true'
+    
+    steps:
+      - name: 🔧 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 📦 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📥 安装依赖
+        run: npm ci --prefer-offline --no-audit
+        
+      - name: 🎨 构建预览版本
+        run: npm run build
+        
+      - name: 💬 PR评论预览信息
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🔍 **PR预览构建完成**\n📋 变更摘要: ${{ needs.changes-detection.outputs.changes-summary }}\n📈 文件变更: ${{ needs.changes-detection.outputs.total-changes }} 个\n⚡ **多提交PR支持**: 已检测到PR中的所有提交变更\n\n✅ 构建成功，准备好合并到主分支`
+            });

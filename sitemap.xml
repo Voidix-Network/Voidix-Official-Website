@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 主页 - 最高优先级 -->
   <url>
     <loc>https://www.voidix.net/</loc>
-    <lastmod>2025-06-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2025-06-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  
+  <!-- 状态页面 - 高优先级，每日更新 -->
   <url>
     <loc>https://www.voidix.net/status.html</loc>
-    <lastmod>2025-06-05</lastmod>
+    <lastmod>2025-06-09</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
+  
+  <!-- FAQ页面 - 重要支持页面 -->
   <url>
     <loc>https://www.voidix.net/faq.html</loc>
-    <lastmod>2025-06-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2025-06-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
+  
+  <!-- Bug报告页面 - 用户互动页面 -->
   <url>
     <loc>https://www.voidix.net/bug-report.html</loc>
-    <lastmod>2025-06-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2025-06-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
+  
+  <!-- 错误页面 - 降低优先级但仍需索引 -->
   <url>
     <loc>https://www.voidix.net/error.html</loc>
-    <lastmod>2025-06-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.3</priority>
+    <lastmod>2025-06-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
   </url>
 </urlset>

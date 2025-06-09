@@ -7,16 +7,16 @@
 <html lang="zh-CN">
 <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ELKKS8MPD"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-8ELKKS8MPD');
-  </script>
+  <script defer src="assets/js/analytics.js"></script>
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  
+  <!-- CDN预连接优化 -->
+  <link rel="preconnect" href="https://cdn.voidix.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.voidix.net">
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+  
   <title>服务器状态 | Voidix - 实时监控Minecraft服务器运行状态</title>
   
   <!-- SEO Meta Tags -->
@@ -29,30 +29,29 @@
   <meta property="og:url" content="https://www.voidix.net/status.html" />
   <meta property="og:title" content="服务器状态 | Voidix" />
   <meta property="og:description" content="查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。" />
-  <meta property="og:image" content="https://www.voidix.net/assets/images/status-og-image.png" />
+  <meta property="og:image" content="https://www.voidix.net/assets/images/android-chrome-512x512.png" />
   
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://www.voidix.net/status.html" />
   <meta property="twitter:title" content="服务器状态 | Voidix" />
-  <meta property="twitter:description" content="查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。" />
-    <!-- Additional SEO -->
+  <meta property="twitter:description" content="查看Voidix Minecraft服务器的实时状态，包括在线玩家数量、服务器延迟和运行状态。" />  <!-- Additional SEO -->
   <link rel="canonical" href="https://voidix.net/status.html" />
   <meta name="theme-color" content="#151f38" />
+    <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png" />  <link rel="manifest" href="assets/images/site.webmanifest" />
+  
+  <!-- CDN资源 (防盗链保护: 仅允许localhost和*.voidix.net访问) -->
   <!-- Tailwind CSS -->
   <script src="https://cdn.voidix.net/tailwindcss@3.4.16/"></script>
-  <!-- React and ReactDOM -->
-  <script src="https://cdn.voidix.net/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-  <script src="https://cdn.voidix.net/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-  <!-- Framer Motion -->
-  <script src="https://cdn.voidix.net/framer-motion@10.16.4/dist/framer-motion.js"></script>
   <!-- 字体 -->
   <link
           href="https://cdn.voidix.net/fonts/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
-          rel="stylesheet" />  <!-- Custom CSS -->
-  <link href="assets/css/style.css" rel="stylesheet" />
-  <link href="assets/css/status-page.css" rel="stylesheet" />
-  <link href="assets/css/seo-enhancements.css" rel="stylesheet" />
+          rel="stylesheet" /><!-- Custom CSS -->
+  <link href="assets/css/main.css" rel="stylesheet" />
   
   <!-- Status Page Structured Data -->
   <script type="application/ld+json">
@@ -432,12 +431,14 @@
 <!-- General script for navbar, framer motion etc. -->
 
 <!-- Player List Tooltip -->
-<div id="player-tooltip" class="absolute z-50 p-3 bg-gray-900 text-white text-sm rounded-lg shadow-xl border border-gray-700/50 max-w-xs transition-opacity duration-200 opacity-0 hidden" style="pointer-events: auto;">
+<div id="player-tooltip" class="absolute z-50 p-3 bg-gray-900 text-white text-sm rounded-lg shadow-xl border border-gray-700/50 max-w-xs transition-opacity duration-200 opacity-0 hidden">
   <h4 class="font-semibold mb-2 text-base border-b border-gray-700 pb-1">在线玩家</h4>
   <ul id="player-tooltip-list" class="list-none p-0 m-0 space-y-1 mt-2">
     <!-- Player names will be injected here -->
   </ul>
   <div id="player-tooltip-empty" class="hidden text-gray-400 mt-2">此服务器当前没有玩家在线。</div>
 </div>
+
+<script defer src="assets/js/error-handler.js"></script>
 </body>
 </html>
