@@ -86,14 +86,17 @@ jobs:
               ;;
             "issue_comment")
               # 评论触发：检查最近提交
-              if [[ "${{ github.event.comment.body }}" =~ deploy ]]; then
-                BASE_COMMIT="HEAD~1"
-                echo "💬 评论触发部署 - 检查最近1个提交"
-              else
-                echo "❌ 评论不包含部署指令"
-                echo "should-deploy=false" >> $GITHUB_OUTPUT
-                exit 0
-              fi
+              env:
+                COMMENT_BODY: ${{ github.event.comment.body }}
+              run: |
+                if [[ "$COMMENT_BODY" =~ deploy ]]; then
+                  BASE_COMMIT="HEAD~1"
+                  echo "💬 评论触发部署 - 检查最近1个提交"
+                else
+                  echo "❌ 评论不包含部署指令"
+                  echo "should-deploy=false" >> $GITHUB_OUTPUT
+                  exit 0
+                fi
               ;;
             *)
               echo "⚠️ 未知触发事件: ${{ github.event_name }}"
