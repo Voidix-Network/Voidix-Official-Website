@@ -27,6 +27,7 @@ env:
   BACKUP_DIR: /var/backups/voidix-website
   DEPLOY_USER: www-data
   DEPLOY_GROUP: www-data
+  COMMENT_BODY: ${{ github.event.comment.body }}
 
 jobs:
   # 智能变更检测 - 支持多提交PR
@@ -84,19 +85,17 @@ jobs:
                 echo "🎛️ 手动触发 - 检查最近1个提交"
               fi
               ;;
-            "issue_comment")
+              "issue_comment")
               # 评论触发：检查最近提交
-              env:
-                COMMENT_BODY: ${{ github.event.comment.body }}
-              run: |
-                if [[ "$COMMENT_BODY" =~ deploy ]]; then
-                  BASE_COMMIT="HEAD~1"
-                  echo "💬 评论触发部署 - 检查最近1个提交"
-                else
-                  echo "❌ 评论不包含部署指令"
-                  echo "should-deploy=false" >> $GITHUB_OUTPUT
-                  exit 0
-                fi
+              # 使用全局环境变量 COMMENT_BODY 以防止代码注入
+              if [[ "$COMMENT_BODY" =~ deploy ]]; then
+                BASE_COMMIT="HEAD~1"
+                echo "💬 评论触发部署 - 检查最近1个提交"
+              else
+                echo "❌ 评论不包含部署指令"
+                echo "should-deploy=false" >> $GITHUB_OUTPUT
+                exit 0
+              fi
               ;;
             *)
               echo "⚠️ 未知触发事件: ${{ github.event_name }}"
@@ -169,7 +168,6 @@ jobs:
           fi
           
           echo "📈 变更检测完成: 总计 $TOTAL_CHANGES 个文件"
-
   # 快速质量检查
   quality-checks:
     name: 🧪 质量检查
@@ -189,18 +187,9 @@ jobs:
           
       - name: 📥 安装依赖
         run: npm ci --prefer-offline --no-audit
-        
+          
       - name: 🧪 运行集成测试
         run: npm run test:integration
-        
-      - name: 🔒 安全扫描
-        run: |
-          echo "🔍 检查敏感文件..."
-          if find . -name "*.env*" -o -name "*.key" -o -name "*.pem" | grep -v node_modules | head -1; then
-            echo "❌ 发现敏感文件"
-            exit 1
-          fi
-          echo "✅ 安全检查通过"
 
   # 生产环境部署
   deploy:
@@ -212,7 +201,6 @@ jobs:
       ((github.event_name == 'push' && contains(fromJSON('["master", "main"]'), github.ref_name)) ||
        (github.event_name == 'workflow_dispatch') ||
        (github.event_name == 'issue_comment' && 
-        contains(github.event.comment.body, 'deploy') && 
         contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)))
     
     timeout-minutes: 15

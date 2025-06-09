@@ -9,7 +9,7 @@
 
 # Dependencies
 node_modules/
-package-lock.json
+# package-lock.json  # 注释掉，CI/CD需要此文件
 yarn.lock
 
 # Webpack build outputs
