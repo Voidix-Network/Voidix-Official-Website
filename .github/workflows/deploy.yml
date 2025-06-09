@@ -297,9 +297,14 @@ jobs:
           available_kb=$(df / | tail -1 | awk '{print $4}')
           if [ "$available_kb" -lt 1048576 ]; then
             echo "❌ 磁盘空间不足: ${available_kb}KB"
-            exit 1
-          fi
+            exit 1          fi
           echo "✅ 磁盘空间充足: ${available_kb}KB"
+
+      - name: 📦 确保 Node.js 环境 (部署用)
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
       - name: 🚀 执行部署
         run: |
